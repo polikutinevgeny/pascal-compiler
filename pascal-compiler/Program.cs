@@ -11,18 +11,36 @@ namespace PascalCompiler
     {
         static void Main(string[] args)
         {
-            StreamReader reader = new StreamReader(args[0]);
-            Tokenizer tokenizer = new Tokenizer(reader);
-            if (args[1] == "-t")
+            const string description = 
+                "Pascal compiler by Polikutin Evgeny (FEFU, B8303a, 2017).\n" +
+                "Usage: pascal-compiler filename [-t]\n" +
+                "Options:\n" +
+                "\t-t\tStart tokenizer.";
+            if (args.Length == 0)
             {
-                foreach(var token in tokenizer.Tokens())
-                {
-                    Console.Write(token.SourceString);
-                }   
+                Console.WriteLine(description);
+                Console.ReadLine();
+                return;
             }
-            Console.ReadLine();
-            reader.Close();
-            reader.Dispose();
+            HashSet<string> parameters = new HashSet<string>(args.Skip(1));
+            if (parameters.Contains("-t"))
+            {
+                using (var reader = new StreamReader(args[0]))
+                {
+                    try
+                    {
+                        foreach (var token in (new Tokenizer(reader)).Tokens())
+                        {
+                            Console.WriteLine(token);
+                        }
+                    }
+                    catch (Tokenizer.TokenizerException e)
+                    {
+                        Console.WriteLine("{0} at {1}:{2}", e.Message, e.Line, e.Position);
+                    }
+                }
+                Console.ReadLine();
+            }
         }
     }
 }

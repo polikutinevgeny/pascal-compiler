@@ -27,6 +27,7 @@ namespace PascalCompiler
 
         public enum TokenSubType
         {
+            None,
             And,
             Array,
             Begin,
@@ -88,10 +89,10 @@ namespace PascalCompiler
 
         public class Token
         {
-            public TokenType Type;
-            public String SourceString;
-            public uint Line;
-            public uint Position;
+            public TokenType Type { get; set; }
+            public String SourceString { get; set; }
+            public uint Line { get; set; }
+            public uint Position { get; set; }
 
             public Token(TokenType type, string sourceString, uint line, uint position)
             {
@@ -100,26 +101,41 @@ namespace PascalCompiler
                 Line = line;
                 Position = position;
             }
+
+            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|";
         }
 
         public class IntToken : Token
         {
-            public ulong Value;
+            public ulong Value { get; set; }
 
             public IntToken(TokenType type, string sourceString, uint line, uint position, ulong value) : base(type, sourceString, line, position) => Value = value;
+
+            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
         }
 
         public class StringToken : Token
         {
-            public String Value;
+            public String Value { get; set; }
 
             public StringToken(TokenType type, String sourceString, uint line, uint position, String value) : base(type, sourceString, line, position) => Value = value;
+
+            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
+        }
+
+        public class DoubleToken : Token
+        {
+            public double Value { get; set; }
+
+            public DoubleToken(TokenType type, string sourceString, uint line, uint position, double value) : base(type, sourceString, line, position) => Value = value;
+
+            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
         }
 
         public class TokenizerException : Exception
         {
-            public uint Line;
-            public uint Position;
+            public uint Line { get; set; }
+            public uint Position { get; set; }
 
             public TokenizerException(string message, uint line, uint position) : base(message)
             {
@@ -131,25 +147,39 @@ namespace PascalCompiler
         public System.Collections.Generic.IEnumerable<Token> Tokens()
         {
             uint line = 1;
-            uint pos = 1;
+            uint pos = 0;
             State state = State.Stop;
-            while (!reader.EndOfStream && buffer.Count > 0)
+            string current = "";
+            while (!reader.EndOfStream || buffer.Count > 0)
             {
                 char c = Read();
                 ++pos;
+                State newState;
                 try
                 {
-                    state = StateTable[(int)state, c];
+                    newState = StateTable[(int)state, c];
                 }
-                catch(IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
-                    throw new TokenizerException(String.Format("Unknown character: '{1}'", c), line, pos);
+                    throw new TokenizerException($"Unknown character: '{c}'(#{(uint)c})", line, pos);
                 }
-                switch(state)
+                switch (newState)
                 {
+                    case State.Identifier:
+                        current += c;
+                        break;
+                    case State.Stop:
+                        yield return new Token(TokenType.Identifier, current, line, pos);
+                        current = "";
+                        break;
+                    case State.NewLine:
+                        ++line;
+                        pos = 0;
+                        break;
                     default:
-                        throw new TokenizerException(String.Format("Unexpected character: '{1}'", c), line, pos);
+                        throw new TokenizerException($"Unexpected character: '{c}'(#{(uint)c})", line, pos);
                 }
+                state = newState;
             }
             yield break;
         }
