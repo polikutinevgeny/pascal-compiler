@@ -13,123 +13,51 @@ namespace PascalCompiler
 
         private StreamReader reader;
 
-        public enum TokenType
-        {
-            Identifier,
-            Integer,
-            Float,
-            String,
-            Operator,
-            Separator,
-            ReservedWord,
-            Directive,
-        }
-
-        public enum TokenSubType
-        {
-            None,
-            And,
-            Array,
-            Begin,
-            Case,
-            Const,
-            Div,
-            Do,
-            Downto,
-            Else,
-            End,
-            File,
-            For,
-            Function,
-            Goto,
-            If,
-            In,
-            Label,
-            Mod,
-            Nil,
-            Not,
-            Of,
-            Or,
-            Packed,
-            Procedure,
-            Program,
-            Record,
-            Repeat,
-            Set,
-            Then,
-            To,
-            Type,
-            Until,
-            Var,
-            While,
-            With,
-            Forward,
-            Plus,
-            Minus,
-            Asterisk,
-            Slash,
-            Equal,
-            Less,
-            Greater,
-            LBracket,
-            RBracket,
-            Dot,
-            Comma,
-            Colon,
-            Semicolon,
-            Caret,
-            LParenthesis,
-            RParenthesis,
-            NEqual,
-            EqLess,
-            EqGreater,
-            Assign,
-            Range,
-        }
-
         public class Token
         {
             public TokenType Type { get; set; }
+            public TokenSubType SubType { get; set; }
             public String SourceString { get; set; }
             public uint Line { get; set; }
             public uint Position { get; set; }
 
-            public Token(TokenType type, string sourceString, uint line, uint position)
+            public Token(TokenType type, TokenSubType subType, string sourceString, uint line, uint position)
             {
                 Type = type;
+                SubType = subType;
                 SourceString = sourceString;
                 Line = line;
                 Position = position;
             }
 
-            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|";
+            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20} ({SubType, -15})|{SourceString,-30}|";
         }
 
         public class IntToken : Token
         {
             public ulong Value { get; set; }
 
-            public IntToken(TokenType type, string sourceString, uint line, uint position, ulong value) : base(type, sourceString, line, position) => Value = value;
+            public IntToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, ulong value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
+            public override string ToString() => base.ToString() + $"{Value,-30}";
         }
 
         public class StringToken : Token
         {
             public String Value { get; set; }
 
-            public StringToken(TokenType type, String sourceString, uint line, uint position, String value) : base(type, sourceString, line, position) => Value = value;
+            public StringToken(TokenType type, TokenSubType subType, String sourceString, uint line, uint position, String value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
+            public override string ToString() => base.ToString() + $"{Value,-30}";
         }
 
         public class DoubleToken : Token
         {
             public double Value { get; set; }
 
-            public DoubleToken(TokenType type, string sourceString, uint line, uint position, double value) : base(type, sourceString, line, position) => Value = value;
+            public DoubleToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, double value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20}|{SourceString,-30}|{Value,-30}";
+            public override string ToString() => base.ToString() + $"{Value,-30}";
         }
 
         public class TokenizerException : Exception
@@ -169,7 +97,7 @@ namespace PascalCompiler
                         current += c;
                         break;
                     case State.Stop:
-                        yield return new Token(TokenType.Identifier, current, line, pos);
+                        yield return new Token(TokenType.Identifier, TokenSubType.Identifier, current, line, pos);
                         current = "";
                         break;
                     case State.NewLine:
