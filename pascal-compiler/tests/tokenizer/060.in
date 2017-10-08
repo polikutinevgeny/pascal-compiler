@@ -1,0 +1,6 @@
+program programmers_day;
+var
+   isGoodDay: boolean;
+begin
+   isGoodDay:= }
+   

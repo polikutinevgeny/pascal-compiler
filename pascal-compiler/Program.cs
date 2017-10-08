@@ -18,35 +18,42 @@ namespace PascalCompiler
             {
                 if (options.Mode == "tokenize")
                 {
-                    using (var reader = new StreamReader(options.InputFile))
-                    using (var writer = new StreamWriter(options.OutputFile))
+                    try
                     {
-                        writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{0, -50}", "Line", "Pos", "Type", "Subtype", "Source", "Value (if apllicable)");
-                        writer.WriteLine(new String('-', 142));
-                        try
+                        using (var reader = new StreamReader(options.InputFile))
+                        using (var writer = new StreamWriter(options.OutputFile))
                         {
-                            foreach (var t in (new Tokenizer(reader)).Tokens())
+                            writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{0, -50}", "Line", "Pos", "Type", "Subtype", "Source", "Value (if apllicable)");
+                            writer.WriteLine(new String('-', 142));
+                            try
                             {
-                                writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|", t.Line, t.Position, t.Type, t.SubType, t.SourceString);
-                                if (t is Tokenizer.IntToken)
+                                foreach (var t in (new Tokenizer(reader)).Tokens())
                                 {
-                                    writer.Write("{0, -50}", (t as Tokenizer.IntToken).Value);
+                                    writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|", t.Line, t.Position, t.Type, t.SubType, t.SourceString);
+                                    if (t is Tokenizer.IntToken)
+                                    {
+                                        writer.Write("{0, -50}", (t as Tokenizer.IntToken).Value);
+                                    }
+                                    if (t is Tokenizer.DoubleToken)
+                                    {
+                                        writer.Write("{0, -50}", (t as Tokenizer.DoubleToken).Value);
+                                    }
+                                    if (t is Tokenizer.StringToken)
+                                    {
+                                        writer.Write("{0, -50}", (t as Tokenizer.StringToken).Value.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+                                    }
+                                    writer.WriteLine();
                                 }
-                                if (t is Tokenizer.DoubleToken)
-                                {
-                                    writer.Write("{0, -50}", (t as Tokenizer.DoubleToken).Value);
-                                }
-                                if (t is Tokenizer.StringToken)
-                                {
-                                    writer.Write("{0, -50}", (t as Tokenizer.StringToken).Value.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
-                                }
-                                writer.WriteLine();
+                            }
+                            catch (Tokenizer.TokenizerException e)
+                            {
+                                writer.WriteLine("{0} at {1}:{2}", e.Message, e.Line, e.Position);
                             }
                         }
-                        catch (Tokenizer.TokenizerException e)
-                        {
-                            writer.WriteLine("{0} at {1}:{2}", e.Message, e.Line, e.Position);
-                        }
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        Console.WriteLine($"{e.FileName} not found");
                     }
                 }
             }

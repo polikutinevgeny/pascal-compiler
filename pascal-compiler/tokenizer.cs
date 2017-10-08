@@ -105,10 +105,6 @@ namespace PascalCompiler
             while (true)
             {
                 char c = Read();
-                if (c == '\0')
-                {
-                    yield break;
-                }
                 c = c != 65535 ? c : '\0';
                 ++pos;
                 State newState;
@@ -267,6 +263,10 @@ namespace PascalCompiler
                     pos = 0;
                 }
                 state = newState;
+                if (c == '\0')
+                {
+                    yield break;
+                }
             }
         }
 

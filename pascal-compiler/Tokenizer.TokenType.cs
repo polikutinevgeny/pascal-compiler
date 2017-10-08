@@ -124,6 +124,11 @@ namespace PascalCompiler
             FloatConstant,
             StringConstant,
             Range,
+            // Hint directives
+            Deprecated,
+            Experimental,
+            Platform,
+            Unimplemented,
         }
 
         public readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>()
@@ -230,6 +235,10 @@ namespace PascalCompiler
             {"resourcestring", TokenSubType.Resourcestring },
             {"threadvar", TokenSubType.Threadvar },
             {"try", TokenSubType.Try },
+            {"deprecated", TokenSubType.Deprecated },
+            {"experimental", TokenSubType.Experimental },
+            {"platform", TokenSubType.Platform },
+            {"unimplemented", TokenSubType.Unimplemented },
         };
     }
 }

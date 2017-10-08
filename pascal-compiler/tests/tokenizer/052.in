@@ -1,0 +1,10 @@
+program ulala;
+
+{this is a very good text}
+
+i := 4;
+while true do
+begin
+   i+= 20;
+   if i > 3232423432 then exit;
+end;

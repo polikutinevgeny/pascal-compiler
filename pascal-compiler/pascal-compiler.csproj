@@ -56,6 +56,7 @@
     <None Include="App.config" />
     <None Include="input.pas" />
     <None Include="packages.config" />
+    <None Include="test.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="tokenizer_table.py" />
