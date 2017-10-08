@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Globalization;
 
 namespace PascalCompiler
 {
@@ -13,7 +14,7 @@ namespace PascalCompiler
 
         private StreamReader reader;
 
-        public class Token
+        public class Token : IDisposable
         {
             public TokenType Type { get; set; }
             public TokenSubType SubType { get; set; }
@@ -30,7 +31,12 @@ namespace PascalCompiler
                 Position = position;
             }
 
-            public override string ToString() => $"|{Line,-5}|{Position,-5}|{Type,-20} ({SubType, -15})|{SourceString,-30}|";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position}";
+
+            public void Dispose()
+            {
+
+            }
         }
 
         public class IntToken : Token
@@ -39,7 +45,7 @@ namespace PascalCompiler
 
             public IntToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, ulong value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => base.ToString() + $"{Value,-30}";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{Value}'";
         }
 
         public class StringToken : Token
@@ -48,7 +54,7 @@ namespace PascalCompiler
 
             public StringToken(TokenType type, TokenSubType subType, String sourceString, uint line, uint position, String value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => base.ToString() + $"{Value,-30}";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{Value}'";
         }
 
         public class DoubleToken : Token
@@ -57,7 +63,8 @@ namespace PascalCompiler
 
             public DoubleToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, double value) : base(type, subType, sourceString, line, position) => Value = value;
 
-            public override string ToString() => base.ToString() + $"{Value,-30}";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{Value}'";
+
         }
 
         public class TokenizerException : Exception
@@ -70,6 +77,23 @@ namespace PascalCompiler
                 Line = line;
                 Position = position;
             }
+        }
+
+        public class ConvertException : Exception
+        {
+
+            public uint Position { get; set; }
+
+            public ConvertException(string message, uint position) : base(message) => Position = position;
+        }
+
+        public class ConvertOverflowException : Exception
+        {
+
+            public uint Position { get; set; }
+
+            public ConvertOverflowException(string message, uint position) : base(message) => Position = position;
+
         }
 
         public System.Collections.Generic.IEnumerable<Token> Tokens()
@@ -121,7 +145,14 @@ namespace PascalCompiler
                             PushBack(c);
                             break;
                         case State.Identifier:
-                            yield return new Token(TokenType.Identifier, TokenSubType.Identifier, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            if (TokenSubTypeDict.ContainsKey(lexeme.Substring(0, lexeme.Length - 1)))
+                            {
+                                yield return new Token(TokenType.ReservedWord, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)], lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            }
+                            else
+                            {
+                                yield return new Token(TokenType.Identifier, TokenSubType.Identifier, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            }
                             lexeme = "";
                             PushBack(c);
                             --pos;
@@ -133,20 +164,97 @@ namespace PascalCompiler
                             PushBack(lexeme[lexeme.Length - 2]);
                             lexeme = "";
                             break;
+                        case State.FloatFrac:
+                        case State.FloatExpValue:
+                            NumberFormatInfo provider = new NumberFormatInfo();
+                            provider.NumberDecimalSeparator = ".";
+                            yield return new DoubleToken(TokenType.Constant, TokenSubType.FloatConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, Convert.ToDouble(lexeme.Substring(0, lexeme.Length - 1), provider));
+                            PushBack(c);
+                            lexeme = "";
+                            --pos;
+                            break;
                         case State.Integer:
-                            yield return new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                            {
+                                Token temp;
+                                try
+                                {
+                                    temp = new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                                }
+                                catch (OverflowException e)
+                                {
+                                    throw new TokenizerException("Integer is too big", line, pos - (uint)lexeme.Length + 1);
+                                }
+                                yield return temp;
+                            }
                             PushBack(c);
                             lexeme = "";
                             --pos;
                             break;
+                        case State.PlusOperator:
+                        case State.MinusOperator:
+                        case State.AsteriskOperator:
+                        case State.SlashOperator:
+                        case State.DotOperator:
+                        case State.Less:
+                        case State.More:
                         case State.Operator:
-                            yield return new Token(TokenType.Operator, TokenSubType.Operator, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            yield return new Token(TokenType.Operator, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)], lexeme.Substring(0, lexeme.Length - 1), line, pos);
                             lexeme = "";
                             PushBack(c);
                             --pos;
                             break;
+                        case State.Colon:
+                        case State.Parenthesis:
                         case State.Separator:
-                            yield return new Token(TokenType.Separator, TokenSubType.Operator, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            yield return new Token(TokenType.Separator, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)], lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            lexeme = "";
+                            PushBack(c);
+                            --pos;
+                            break;
+                        case State.StringLiteralClosed:
+                        case State.StringLiteralCharBinValue:
+                        case State.StringLiteralCharHexValue:
+                        case State.StringLiteralCharOctValue:
+                        case State.StringLiteralCharDec:
+                            {
+                                Token temp;
+                                try
+                                {
+                                    temp = new StringToken(TokenType.Constant, TokenSubType.StringConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, DecodeChars(lexeme.Substring(0, lexeme.Length - 1)));
+                                }
+                                catch (ConvertException e)
+                                {
+                                    throw new TokenizerException("Invalid char base (This means the FSM has failed)", line, pos - (uint)lexeme.Length + 1 + e.Position);
+                                }
+                                catch (ConvertOverflowException e)
+                                {
+                                    throw new TokenizerException("Char value is too big", line, pos - (uint)lexeme.Length + 1 + e.Position);
+                                }
+                                yield return temp;
+                            }
+                            lexeme = "";
+                            PushBack(c);
+                            --pos;
+                            break;
+                        case State.BinNumberValue:
+                        case State.OctNumber:
+                        case State.HexNumberValue:
+                            {
+                                Token temp;
+                                try
+                                {
+                                    temp = new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, DecodeNumber(lexeme.Substring(0, lexeme.Length - 1)));
+                                }
+                                catch (ConvertException e)
+                                {
+                                    throw new TokenizerException("Invalid integer base (This means the FSM has failed)", line, pos - (uint)lexeme.Length + 1 + e.Position);
+                                }
+                                catch (OverflowException e)
+                                {
+                                    throw new TokenizerException("Integer is too big", line, pos - (uint)lexeme.Length + 1);
+                                }
+                                yield return temp;
+                            }
                             lexeme = "";
                             PushBack(c);
                             --pos;
@@ -170,5 +278,88 @@ namespace PascalCompiler
         }
 
         private void PushBack(char ch) => buffer.Push(ch);
+
+        private ulong DecodeNumber(string input)
+        {
+            switch (input[0])
+            {
+                case '%':
+                    return Convert.ToUInt64(input.Substring(1), 2);
+                case '&':
+                    return Convert.ToUInt64(input.Substring(1), 8);
+                case '$':
+                    return Convert.ToUInt64(input.Substring(1), 16);
+                default:
+                    throw new ConvertException("Illegal base of integer constant", 0);
+            }
+        }
+
+        private string DecodeChars(string input)
+        {
+            string output = "";
+            bool quoted = false;
+            for (var i = 0; i < input.Length; ++i)
+            {
+                if (input[i] == '\'')
+                {
+                    if (quoted)
+                    {
+                        if (i < input.Length - 1 && input[i + 1] == '\'')
+                        {
+                            output += '\'';
+                            ++i;
+                        }
+                        else
+                        {
+                            quoted = false;
+                        }
+                    }
+                    else
+                    {
+                        quoted = true;
+                    }
+                }
+                else if (input[i] == '#' && !quoted)
+                {
+                    char type = input[++i];
+                    int pos = i++;
+                    string temp = Char.IsDigit(type) ? type.ToString() : "";
+                    for (; i < input.Length && input[i] != '\'' && input[i] != '#'; ++i)
+                    {
+                        temp += input[i];
+                    }
+                    try
+                    {
+                        switch (type)
+                        {
+                            case '%':
+                                output += (char)Convert.ToInt32(temp, 2);
+                                break;
+                            case '&':
+                                output += (char)Convert.ToInt32(temp, 8);
+                                break;
+                            case '$':
+                                output += (char)Convert.ToInt32(temp, 16);
+                                break;
+                            case char c when (Char.IsDigit(c)):
+                                output += (char)Convert.ToInt32(temp);
+                                break;
+                            default:
+                                throw new ConvertException("Illegal base of char constant", (uint)i);
+                        }
+                    }
+                    catch (OverflowException e)
+                    {
+                        throw new ConvertOverflowException("Integer is too big", (uint)i);
+                    }
+                    --i;
+                }
+                else
+                {
+                    output += input[i];
+                }
+            }
+            return output;
+        }
     }
 }

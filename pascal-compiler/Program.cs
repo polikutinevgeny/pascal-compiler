@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using CommandLine;
+using CommandLine.Text;
 
 namespace PascalCompiler
 {
@@ -11,35 +13,42 @@ namespace PascalCompiler
     {
         static void Main(string[] args)
         {
-            const string description = 
-                "Pascal compiler by Polikutin Evgeny (FEFU, B8303a, 2017).\n" +
-                "Usage: pascal-compiler filename [-t]\n" +
-                "Options:\n" +
-                "\t-t\tStart tokenizer.";
-            if (args.Length == 0)
+            var options = new Options();
+            if (CommandLine.Parser.Default.ParseArguments(args, options))
             {
-                Console.WriteLine(description);
-                Console.ReadLine();
-                return;
-            }
-            HashSet<string> parameters = new HashSet<string>(args.Skip(1));
-            if (parameters.Contains("-t"))
-            {
-                using (var reader = new StreamReader(args[0]))
+                if (options.Mode == "tokenize")
                 {
-                    try
+                    using (var reader = new StreamReader(options.InputFile))
+                    using (var writer = new StreamWriter(options.OutputFile))
                     {
-                        foreach (var token in (new Tokenizer(reader)).Tokens())
+                        writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{0, -50}", "Line", "Pos", "Type", "Subtype", "Source", "Value (if apllicable)");
+                        writer.WriteLine(new String('-', 142));
+                        try
                         {
-                            Console.WriteLine(token);
+                            foreach (var t in (new Tokenizer(reader)).Tokens())
+                            {
+                                writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|", t.Line, t.Position, t.Type, t.SubType, t.SourceString);
+                                if (t is Tokenizer.IntToken)
+                                {
+                                    writer.Write("{0, -50}", (t as Tokenizer.IntToken).Value);
+                                }
+                                if (t is Tokenizer.DoubleToken)
+                                {
+                                    writer.Write("{0, -50}", (t as Tokenizer.DoubleToken).Value);
+                                }
+                                if (t is Tokenizer.StringToken)
+                                {
+                                    writer.Write("{0, -50}", (t as Tokenizer.StringToken).Value.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+                                }
+                                writer.WriteLine();
+                            }
+                        }
+                        catch (Tokenizer.TokenizerException e)
+                        {
+                            writer.WriteLine("{0} at {1}:{2}", e.Message, e.Line, e.Position);
                         }
                     }
-                    catch (Tokenizer.TokenizerException e)
-                    {
-                        Console.WriteLine("{0} at {1}:{2}", e.Message, e.Line, e.Position);
-                    }
                 }
-                Console.ReadLine();
             }
         }
     }
