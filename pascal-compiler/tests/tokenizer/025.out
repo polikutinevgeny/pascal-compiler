@@ -1,0 +1,7 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |FloatConstant            |25.0                               |25                                                
+1    |5    |Operator    |Minus                    |-                                  |-                                                 
+1    |6    |Identifier  |Identifier               |e                                  |e                                                 
+1    |7    |Operator    |Minus                    |-                                  |-                                                 
+1    |8    |Constant    |IntegerConstant          |3                                  |3                                                 

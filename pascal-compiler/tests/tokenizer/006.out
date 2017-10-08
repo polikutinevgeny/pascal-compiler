@@ -1,0 +1,10 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |IntegerConstant          |243                                |243                                               
+2    |1    |Constant    |IntegerConstant          |$f3                                |243                                               
+2    |5    |Constant    |IntegerConstant          |$F3                                |243                                               
+3    |1    |Constant    |IntegerConstant          |&363                               |243                                               
+4    |1    |Constant    |IntegerConstant          |%11110011                          |243                                               
+5    |1    |Constant    |IntegerConstant          |$243                               |579                                               
+6    |1    |Constant    |IntegerConstant          |&243                               |163                                               
+7    |1    |Constant    |IntegerConstant          |%1010                              |10                                                

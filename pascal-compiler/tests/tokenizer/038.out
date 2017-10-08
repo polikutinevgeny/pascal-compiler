@@ -1,0 +1,9 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Identifier  |Identifier               |true                               |true                                              
+2    |1    |Identifier  |Identifier               |real                               |real                                              
+3    |1    |Identifier  |Identifier               |double                             |double                                            
+4    |1    |Identifier  |Identifier               |result                             |result                                            
+5    |1    |ReservedWord|String                   |string                             |string                                            
+6    |1    |Identifier  |Identifier               |boolean                            |boolean                                           
+7    |1    |Identifier  |Identifier               |false                              |false                                             

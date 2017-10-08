@@ -1,0 +1,26 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |ReservedWord|Program                  |program                            |program                                           
+1    |9    |Identifier  |Identifier               |shmogram                           |shmogram                                          
+1    |17   |Separator   |Semicolon                |;                                  |;                                                 
+5    |1    |Identifier  |Identifier               |i                                  |i                                                 
+5    |3    |Operator    |Assign                   |:=                                 |:=                                                
+5    |6    |Constant    |IntegerConstant          |4                                  |4                                                 
+5    |7    |Separator   |Semicolon                |;                                  |;                                                 
+6    |1    |ReservedWord|While                    |while                              |while                                             
+6    |7    |Identifier  |Identifier               |true                               |true                                              
+6    |12   |ReservedWord|Do                       |do                                 |do                                                
+7    |1    |ReservedWord|Begin                    |begin                              |begin                                             
+8    |4    |Identifier  |Identifier               |i                                  |i                                                 
+8    |5    |Operator    |PlusAssign               |+=                                 |+=                                                
+8    |8    |Constant    |IntegerConstant          |20                                 |20                                                
+8    |10   |Separator   |Semicolon                |;                                  |;                                                 
+9    |4    |ReservedWord|If                       |if                                 |if                                                
+9    |7    |Identifier  |Identifier               |i                                  |i                                                 
+9    |9    |Operator    |More                     |>                                  |>                                                 
+9    |11   |Constant    |IntegerConstant          |1                                  |1                                                 
+9    |13   |ReservedWord|Then                     |then                               |then                                              
+9    |18   |Identifier  |Identifier               |exit                               |exit                                              
+9    |22   |Separator   |Semicolon                |;                                  |;                                                 
+10   |1    |ReservedWord|End                      |end                                |end                                               
+10   |4    |Separator   |Semicolon                |;                                  |;                                                 

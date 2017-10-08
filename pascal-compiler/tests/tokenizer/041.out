@@ -1,0 +1,6 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |ReservedWord|And                      |and                                |and                                               
+2    |1    |ReservedWord|Or                       |or                                 |or                                                
+3    |1    |ReservedWord|Xor                      |xor                                |xor                                               
+4    |1    |ReservedWord|Not                      |not                                |not                                               

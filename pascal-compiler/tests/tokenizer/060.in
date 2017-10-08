@@ -1,6 +1,6 @@
-program programmers_day;
+program orgram;
 var
-   isGoodDay: boolean;
+   moolean: boolean;
 begin
-   isGoodDay:= }
+   moolean:= }
    

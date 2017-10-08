@@ -7,11 +7,11 @@ const
    THE_END = false;
 var
    a: integer;
-label LOH:
+label lBl:
 
    function isEmptyStr(a: string);
    begin
       exit;
       result := a = '';
-      goto LOH;
+      goto LbL;
    end;

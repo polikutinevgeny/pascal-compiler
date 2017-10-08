@@ -1,0 +1,6 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |IntegerConstant          |1                                  |1                                                 
+1    |2    |Operator    |Range                    |..                                 |..                                                
+1    |4    |Operator    |Dot                      |.                                  |.                                                 
+1    |5    |Constant    |IntegerConstant          |20                                 |20                                                

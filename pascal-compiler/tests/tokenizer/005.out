@@ -1,0 +1,9 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |IntegerConstant          |0                                  |0                                                 
+2    |1    |Constant    |IntegerConstant          |01                                 |1                                                 
+3    |1    |Constant    |IntegerConstant          |123                                |123                                               
+4    |1    |Constant    |IntegerConstant          |0001                               |1                                                 
+5    |1    |Constant    |IntegerConstant          |0032                               |32                                                
+5    |6    |Constant    |IntegerConstant          |32                                 |32                                                
+5    |9    |Constant    |IntegerConstant          |01010                              |1010                                              

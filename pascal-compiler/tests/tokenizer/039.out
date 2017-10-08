@@ -1,0 +1,9 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Operator    |Minus                    |-                                  |-                                                 
+2    |1    |Operator    |Plus                     |+                                  |+                                                 
+3    |1    |Operator    |Asterisk                 |*                                  |*                                                 
+4    |1    |Operator    |Slash                    |/                                  |/                                                 
+5    |1    |Constant    |IntegerConstant          |5                                  |5                                                 
+5    |3    |ReservedWord|Div                      |div                                |div                                               
+5    |7    |Constant    |IntegerConstant          |2                                  |2                                                 

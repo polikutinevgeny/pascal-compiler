@@ -1,0 +1,10 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Identifier  |Identifier               |abc                                |abc                                               
+2    |1    |Identifier  |Identifier               |_abcd                              |_abcd                                             
+3    |1    |Identifier  |Identifier               |_abcd132                           |_abcd132                                          
+4    |1    |Identifier  |Identifier               |AbCdDef                            |abcddef                                           
+5    |1    |ReservedWord|Var                      |VaR                                |var                                               
+6    |1    |ReservedWord|Var                      |var                                |var                                               
+7    |1    |ReservedWord|Program                  |program                            |program                                           
+8    |1    |Identifier  |Identifier               |programm                           |programm                                          

@@ -1,0 +1,4 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |StringConstant           |'abc'                              |abc                                               
+1    |7    |Constant    |StringConstant           |'abc'                              |abc                                               

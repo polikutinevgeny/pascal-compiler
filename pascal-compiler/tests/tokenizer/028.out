@@ -1,0 +1,7 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Constant    |StringConstant           |'abcde'                            |abcde                                             
+2    |1    |Constant    |StringConstant           |'abc''de'                          |abc'de                                            
+3    |1    |Constant    |StringConstant           |'abc''''de'                        |abc''de                                           
+4    |1    |Constant    |StringConstant           |'abc''''''de'                      |abc'''de                                          
+5    |1    |Constant    |StringConstant           |'abcd''''''''de'                   |abcd''''de                                        

@@ -1,0 +1,8 @@
+Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Operator    |Less                     |<                                  |<                                                 
+2    |1    |Operator    |LEqual                   |<=                                 |<=                                                
+3    |1    |Operator    |GEqual                   |>=                                 |>=                                                
+4    |1    |Operator    |More                     |>                                  |>                                                 
+5    |1    |Operator    |Equal                    |=                                  |=                                                 
+6    |1    |Operator    |Assign                   |:=                                 |:=                                                
