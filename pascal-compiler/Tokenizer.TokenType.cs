@@ -105,17 +105,21 @@
             Finalization,
             Finally,
             Initialization,
-            //Inline, // Was already defined
+            // Inline, // Was already defined
             Is,
             Library,
             On,
             Out,
-            //Packed, // Was already defined
+            // Packed, // Was already defined
             Property,
             Raise,
             Resourcestring,
             Threadvar,
             Try,
+            // Some other tokens
+            IntegerConstant,
+            FloatConstant,
+            StringConstant,
         }
     }
 }

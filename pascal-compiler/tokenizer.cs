@@ -76,11 +76,16 @@ namespace PascalCompiler
         {
             uint line = 1;
             uint pos = 0;
-            State state = State.Stop;
-            string current = "";
-            while (!reader.EndOfStream || buffer.Count > 0)
+            State state = State.Start;
+            string lexeme = "";
+            while (true)
             {
                 char c = Read();
+                if (c == '\0')
+                {
+                    yield break;
+                }
+                c = c != 65535 ? c : '\0';
                 ++pos;
                 State newState;
                 try
@@ -91,30 +96,78 @@ namespace PascalCompiler
                 {
                     throw new TokenizerException($"Unknown character: '{c}'(#{(uint)c})", line, pos);
                 }
-                switch (newState)
+                lexeme += c;
+                if (newState == State.UnexpectedChar)
                 {
-                    case State.Identifier:
-                        current += c;
-                        break;
-                    case State.Stop:
-                        yield return new Token(TokenType.Identifier, TokenSubType.Identifier, current, line, pos);
-                        current = "";
-                        break;
-                    case State.NewLine:
-                        ++line;
-                        pos = 0;
-                        break;
-                    default:
-                        throw new TokenizerException($"Unexpected character: '{c}'(#{(uint)c})", line, pos);
+                    throw new TokenizerException($"Unknown character: '{c}'(#{(uint)c})", line, pos);
+                }
+                if (newState == State.Start)
+                {
+                    switch (state)
+                    {
+                        case State.Comment:
+                        case State.MultilineCommentEnd:
+                            PushBack(c);
+                            --pos;
+                            lexeme = "";
+                            break;
+                        case State.Start:
+                            lexeme = "";
+                            break;
+                        case State.NewLine:
+                            ++line;
+                            pos = 0;
+                            lexeme = "";
+                            PushBack(c);
+                            break;
+                        case State.Identifier:
+                            yield return new Token(TokenType.Identifier, TokenSubType.Identifier, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            lexeme = "";
+                            PushBack(c);
+                            --pos;
+                            break;
+                        case State.FloatDot:
+                            pos -= 2;
+                            yield return new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 2), line, pos + 1, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 2)));
+                            PushBack(c);
+                            PushBack(lexeme[lexeme.Length - 2]);
+                            lexeme = "";
+                            break;
+                        case State.Integer:
+                            yield return new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                            PushBack(c);
+                            lexeme = "";
+                            --pos;
+                            break;
+                        case State.Operator:
+                            yield return new Token(TokenType.Operator, TokenSubType.Operator, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            lexeme = "";
+                            PushBack(c);
+                            --pos;
+                            break;
+                        case State.Separator:
+                            yield return new Token(TokenType.Separator, TokenSubType.Operator, lexeme.Substring(0, lexeme.Length - 1), line, pos);
+                            lexeme = "";
+                            PushBack(c);
+                            --pos;
+                            break;
+                    }
+                }
+                else if (state == State.MultilineCommentNewLine && (newState == State.MultilineComment || newState == State.MultilineCommentAsterisk || newState == State.MultilineCommentEnd))
+                {
+                    ++line;
+                    pos = 0;
                 }
                 state = newState;
             }
-            yield break;
         }
 
         private Stack<Char> buffer = new Stack<char>();
 
-        private char Read() => buffer.Count > 0 ? buffer.Pop() : (char)reader.Read();
+        private char Read()
+        {
+            return buffer.Count > 0 ? buffer.Pop() : (char)reader.Read();
+        }
 
         private void PushBack(char ch) => buffer.Push(ch);
     }
