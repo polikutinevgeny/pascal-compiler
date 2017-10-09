@@ -1,27 +1,27 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Identifier  |Identifier               |hello                              |1                                                 
-1    |7    |Operator    |Equal                    |=                                  |1                                                 
-1    |9    |Constant    |IntegerConstant          |6                                  |1                                                 
-2    |1    |ReservedWord|If                       |if                                 |2                                                 
-2    |4    |Identifier  |Identifier               |somethin                           |2                                                 
-2    |13   |Operator    |Less                     |<                                  |2                                                 
-2    |15   |Constant    |IntegerConstant          |20                                 |2                                                 
-2    |18   |ReservedWord|And                      |and                                |2                                                 
-2    |22   |Identifier  |Identifier               |hours                              |2                                                 
-2    |28   |Operator    |LEqual                   |<=                                 |2                                                 
-2    |31   |Identifier  |Identifier               |hello                              |2                                                 
-2    |38   |ReservedWord|Or                       |or                                 |2                                                 
-2    |41   |Constant    |IntegerConstant          |20                                 |2                                                 
-2    |44   |Operator    |More                     |>                                  |2                                                 
-2    |46   |Identifier  |Identifier               |something                          |2                                                 
-2    |56   |ReservedWord|And                      |and                                |2                                                 
-2    |60   |Identifier  |Identifier               |hello                              |2                                                 
-2    |66   |Operator    |GEqual                   |>=                                 |2                                                 
-2    |69   |Identifier  |Identifier               |hello                              |2                                                 
-2    |75   |ReservedWord|Then                     |then                               |2                                                 
-3    |4    |Identifier  |Identifier               |result                             |3                                                 
-3    |11   |Operator    |Assign                   |:=                                 |3                                                 
-3    |14   |Identifier  |Identifier               |result                             |3                                                 
-3    |21   |Operator    |NEqual                   |<>                                 |3                                                 
-3    |24   |Identifier  |Identifier               |goodmorning                        |3                                                 
+1    |1    |Identifier  |Identifier               |hello                              |hello                                             
+1    |7    |Operator    |Equal                    |=                                  |=                                                 
+1    |9    |Constant    |IntegerConstant          |6                                  |06                                                
+2    |1    |ReservedWord|If                       |if                                 |if                                                
+2    |4    |Identifier  |Identifier               |somethin                           |somethin                                          
+2    |13   |Operator    |Less                     |<                                  |<                                                 
+2    |15   |Constant    |IntegerConstant          |20                                 |20                                                
+2    |18   |ReservedWord|And                      |and                                |and                                               
+2    |22   |Identifier  |Identifier               |hours                              |hours                                             
+2    |28   |Operator    |LEqual                   |<=                                 |<=                                                
+2    |31   |Identifier  |Identifier               |hello                              |hello                                             
+2    |38   |ReservedWord|Or                       |or                                 |or                                                
+2    |41   |Constant    |IntegerConstant          |20                                 |20                                                
+2    |44   |Operator    |More                     |>                                  |>                                                 
+2    |46   |Identifier  |Identifier               |something                          |something                                         
+2    |56   |ReservedWord|And                      |and                                |and                                               
+2    |60   |Identifier  |Identifier               |hello                              |hello                                             
+2    |66   |Operator    |GEqual                   |>=                                 |>=                                                
+2    |69   |Identifier  |Identifier               |hello                              |hello                                             
+2    |75   |ReservedWord|Then                     |then                               |then                                              
+3    |4    |Identifier  |Identifier               |result                             |result                                            
+3    |11   |Operator    |Assign                   |:=                                 |:=                                                
+3    |14   |Identifier  |Identifier               |result                             |result                                            
+3    |21   |Operator    |NEqual                   |<>                                 |<>                                                
+3    |24   |Identifier  |Identifier               |goodmorning                        |goodmorning                                       

@@ -1,4 +1,4 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |FloatConstant            |432                                |1                                                 
-1    |8    |Identifier  |Identifier               |f                                  |1                                                 
+1    |1    |Constant    |FloatConstant            |432                                |0.432e3                                           
+1    |8    |Identifier  |Identifier               |f                                  |f                                                 

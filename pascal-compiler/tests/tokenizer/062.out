@@ -1,6 +1,6 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|While                    |while                              |1                                                 
-2    |1    |ReservedWord|If                       |if                                 |2                                                 
-3    |7    |Identifier  |Identifier               |p                                  |3                                                 
-5    |1    |Operator    |AddressOf                |@                                  |5                                                 
+1    |1    |ReservedWord|While                    |while                              |while                                             
+2    |1    |ReservedWord|If                       |if                                 |if                                                
+3    |7    |Identifier  |Identifier               |p                                  |p                                                 
+5    |1    |Operator    |AddressOf                |@                                  |@                                                 

@@ -425,7 +425,7 @@ namespace PascalCompiler
                     }
                     catch (OverflowException e)
                     {
-                        throw new ConvertOverflowException("Integer is too big", (uint)i);
+                        throw new ConvertOverflowException("Char value is too big", (uint)i);
                     }
                     --i;
                 }

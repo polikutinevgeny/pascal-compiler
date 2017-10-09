@@ -1,39 +1,39 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|Begin                    |begin                              |1                                                 
-2    |4    |ReservedWord|If                       |if                                 |2                                                 
-2    |7    |Separator   |LParenthesis             |(                                  |2                                                 
-2    |8    |Identifier  |Identifier               |true                               |2                                                 
-2    |13   |ReservedWord|And                      |and                                |2                                                 
-2    |17   |Separator   |LParenthesis             |(                                  |2                                                 
-2    |18   |Separator   |LParenthesis             |(                                  |2                                                 
-2    |19   |Constant    |IntegerConstant          |100                                |2                                                 
-2    |23   |Operator    |Minus                    |-                                  |2                                                 
-2    |25   |Identifier  |Identifier               |a                                  |2                                                 
-2    |27   |Operator    |Plus                     |+                                  |2                                                 
-2    |29   |Constant    |IntegerConstant          |200                                |2                                                 
-2    |32   |Separator   |RParenthesis             |)                                  |2                                                 
-2    |34   |Operator    |More                     |>                                  |2                                                 
-2    |36   |Constant    |IntegerConstant          |0                                  |2                                                 
-2    |37   |Separator   |RParenthesis             |)                                  |2                                                 
-2    |39   |ReservedWord|Or                       |or                                 |2                                                 
-2    |42   |Separator   |LParenthesis             |(                                  |2                                                 
-2    |43   |Identifier  |Identifier               |a                                  |2                                                 
-2    |45   |Operator    |Plus                     |+                                  |2                                                 
-2    |47   |Identifier  |Identifier               |b                                  |2                                                 
-2    |49   |Operator    |Equal                    |=                                  |2                                                 
-2    |51   |Constant    |IntegerConstant          |20                                 |2                                                 
-2    |53   |Separator   |RParenthesis             |)                                  |2                                                 
-2    |55   |ReservedWord|Or                       |or                                 |2                                                 
-2    |58   |Separator   |LParenthesis             |(                                  |2                                                 
-2    |59   |Identifier  |Identifier               |a                                  |2                                                 
-2    |61   |Operator    |NEqual                   |<>                                 |2                                                 
-2    |64   |Constant    |IntegerConstant          |20                                 |2                                                 
-2    |66   |Separator   |RParenthesis             |)                                  |2                                                 
-2    |67   |Separator   |RParenthesis             |)                                  |2                                                 
-2    |69   |ReservedWord|Then                     |then                               |2                                                 
-3    |7    |Identifier  |Identifier               |writeln                            |3                                                 
-3    |14   |Separator   |LParenthesis             |(                                  |3                                                 
-3    |15   |Constant    |StringConstant           |all good                           |3                                                 
-3    |25   |Separator   |RParenthesis             |)                                  |3                                                 
-4    |1    |ReservedWord|End                      |end                                |4                                                 
+1    |1    |ReservedWord|Begin                    |begin                              |begin                                             
+2    |4    |ReservedWord|If                       |if                                 |if                                                
+2    |7    |Separator   |LParenthesis             |(                                  |(                                                 
+2    |8    |Identifier  |Identifier               |true                               |true                                              
+2    |13   |ReservedWord|And                      |and                                |and                                               
+2    |17   |Separator   |LParenthesis             |(                                  |(                                                 
+2    |18   |Separator   |LParenthesis             |(                                  |(                                                 
+2    |19   |Constant    |IntegerConstant          |100                                |100                                               
+2    |23   |Operator    |Minus                    |-                                  |-                                                 
+2    |25   |Identifier  |Identifier               |a                                  |a                                                 
+2    |27   |Operator    |Plus                     |+                                  |+                                                 
+2    |29   |Constant    |IntegerConstant          |200                                |200                                               
+2    |32   |Separator   |RParenthesis             |)                                  |)                                                 
+2    |34   |Operator    |More                     |>                                  |>                                                 
+2    |36   |Constant    |IntegerConstant          |0                                  |0                                                 
+2    |37   |Separator   |RParenthesis             |)                                  |)                                                 
+2    |39   |ReservedWord|Or                       |or                                 |or                                                
+2    |42   |Separator   |LParenthesis             |(                                  |(                                                 
+2    |43   |Identifier  |Identifier               |a                                  |a                                                 
+2    |45   |Operator    |Plus                     |+                                  |+                                                 
+2    |47   |Identifier  |Identifier               |b                                  |b                                                 
+2    |49   |Operator    |Equal                    |=                                  |=                                                 
+2    |51   |Constant    |IntegerConstant          |20                                 |20                                                
+2    |53   |Separator   |RParenthesis             |)                                  |)                                                 
+2    |55   |ReservedWord|Or                       |or                                 |or                                                
+2    |58   |Separator   |LParenthesis             |(                                  |(                                                 
+2    |59   |Identifier  |Identifier               |a                                  |a                                                 
+2    |61   |Operator    |NEqual                   |<>                                 |<>                                                
+2    |64   |Constant    |IntegerConstant          |20                                 |20                                                
+2    |66   |Separator   |RParenthesis             |)                                  |)                                                 
+2    |67   |Separator   |RParenthesis             |)                                  |)                                                 
+2    |69   |ReservedWord|Then                     |then                               |then                                              
+3    |7    |Identifier  |Identifier               |writeln                            |writeln                                           
+3    |14   |Separator   |LParenthesis             |(                                  |(                                                 
+3    |15   |Constant    |StringConstant           |all good                           |'all good'                                        
+3    |25   |Separator   |RParenthesis             |)                                  |)                                                 
+4    |1    |ReservedWord|End                      |end                                |end                                               

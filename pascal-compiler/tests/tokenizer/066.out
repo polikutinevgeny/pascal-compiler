@@ -1,7 +1,7 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
 1    |1    |Constant    |IntegerConstant          |1                                  |1                                                 
-1    |2    |Operator    |Range                    |..                                 |1                                                 
-1    |4    |Identifier  |Identifier               |e                                  |1                                                 
-1    |5    |Operator    |Dot                      |.                                  |1                                                 
-1    |6    |Constant    |IntegerConstant          |20                                 |1                                                 
+1    |2    |Operator    |Range                    |..                                 |..                                                
+1    |4    |Identifier  |Identifier               |e                                  |e                                                 
+1    |5    |Operator    |Dot                      |.                                  |.                                                 
+1    |6    |Constant    |IntegerConstant          |20                                 |20                                                

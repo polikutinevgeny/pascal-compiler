@@ -11,6 +11,8 @@ namespace PascalCompiler
 {
     class Program
     {
+        // TODO Remove python code, consolidate switch statement, add more error types, add error tests.
+        // TODO Remove doubling code in convert fucntions
         static void Main(string[] args)
         {
             var options = new Options();
@@ -23,13 +25,16 @@ namespace PascalCompiler
                         using (var reader = new StreamReader(options.InputFile))
                         using (var writer = new StreamWriter(options.OutputFile))
                         {
-                            writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", "Line", "Pos", "Type", "Subtype", "Value", "Source");
+                            writer.WriteLine(
+                                "{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", 
+                                "Line", "Pos", "Type", "Subtype", "Value", "Source");
                             writer.WriteLine(new String('-', 142));
                             try
                             {
                                 foreach (var t in (new Tokenizer(reader)).Tokens())
                                 {
-                                    writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{0, -50}", 
+                                    writer.Write(
+                                        "{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", 
                                         t.Line, 
                                         t.Position, 
                                         t.Type, 

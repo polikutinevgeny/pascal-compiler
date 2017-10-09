@@ -1,9 +1,9 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Operator    |Minus                    |-                                  |1                                                 
-2    |1    |Operator    |Plus                     |+                                  |2                                                 
-3    |1    |Operator    |Asterisk                 |*                                  |3                                                 
-4    |1    |Operator    |Slash                    |/                                  |4                                                 
+1    |1    |Operator    |Minus                    |-                                  |-                                                 
+2    |1    |Operator    |Plus                     |+                                  |+                                                 
+3    |1    |Operator    |Asterisk                 |*                                  |*                                                 
+4    |1    |Operator    |Slash                    |/                                  |/                                                 
 5    |1    |Constant    |IntegerConstant          |5                                  |5                                                 
-5    |3    |ReservedWord|Div                      |div                                |5                                                 
-5    |7    |Constant    |IntegerConstant          |2                                  |5                                                 
+5    |3    |ReservedWord|Div                      |div                                |div                                               
+5    |7    |Constant    |IntegerConstant          |2                                  |2                                                 

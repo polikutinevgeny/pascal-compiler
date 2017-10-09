@@ -1,9 +1,9 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Identifier  |Identifier               |true                               |1                                                 
-2    |1    |Identifier  |Identifier               |real                               |2                                                 
-3    |1    |Identifier  |Identifier               |double                             |3                                                 
-4    |1    |Identifier  |Identifier               |result                             |4                                                 
-5    |1    |ReservedWord|String                   |string                             |5                                                 
-6    |1    |Identifier  |Identifier               |boolean                            |6                                                 
-7    |1    |Identifier  |Identifier               |false                              |7                                                 
+1    |1    |Identifier  |Identifier               |true                               |true                                              
+2    |1    |Identifier  |Identifier               |real                               |real                                              
+3    |1    |Identifier  |Identifier               |double                             |double                                            
+4    |1    |Identifier  |Identifier               |result                             |result                                            
+5    |1    |ReservedWord|String                   |string                             |string                                            
+6    |1    |Identifier  |Identifier               |boolean                            |boolean                                           
+7    |1    |Identifier  |Identifier               |false                              |false                                             

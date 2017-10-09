@@ -1,7 +1,8 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |StringConstant           |abcde                              |1                                                 
-2    |1    |Constant    |StringConstant           |abc'de                             |2                                                 
-3    |1    |Constant    |StringConstant           |abc''de                            |3                                                 
-4    |1    |Constant    |StringConstant           |abc'''de                           |4                                                 
-5    |1    |Constant    |StringConstant           |abcd''''de                         |5                                                 
+1    |1    |Constant    |StringConstant           |                                   |''                                                
+2    |1    |Constant    |StringConstant           |abcde                              |'abcde'                                           
+3    |1    |Constant    |StringConstant           |abc'de                             |'abc''de'                                         
+4    |1    |Constant    |StringConstant           |abc''de                            |'abc''''de'                                       
+5    |1    |Constant    |StringConstant           |abc'''de                           |'abc''''''de'                                     
+6    |1    |Constant    |StringConstant           |abcd''''de                         |'abcd''''''''de'                                  

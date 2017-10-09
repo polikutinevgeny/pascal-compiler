@@ -1,10 +1,10 @@
 Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |IntegerConstant          |243                                |1                                                 
-2    |1    |Constant    |IntegerConstant          |243                                |2                                                 
-2    |5    |Constant    |IntegerConstant          |243                                |2                                                 
-3    |1    |Constant    |IntegerConstant          |243                                |3                                                 
-4    |1    |Constant    |IntegerConstant          |243                                |4                                                 
-5    |1    |Constant    |IntegerConstant          |579                                |5                                                 
-6    |1    |Constant    |IntegerConstant          |163                                |6                                                 
-7    |1    |Constant    |IntegerConstant          |10                                 |7                                                 
+1    |1    |Constant    |IntegerConstant          |243                                |243                                               
+2    |1    |Constant    |IntegerConstant          |243                                |$f3                                               
+2    |5    |Constant    |IntegerConstant          |243                                |$F3                                               
+3    |1    |Constant    |IntegerConstant          |243                                |&363                                              
+4    |1    |Constant    |IntegerConstant          |243                                |%11110011                                         
+5    |1    |Constant    |IntegerConstant          |579                                |$243                                              
+6    |1    |Constant    |IntegerConstant          |163                                |&243                                              
+7    |1    |Constant    |IntegerConstant          |10                                 |%1010                                             
