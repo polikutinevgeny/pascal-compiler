@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9CA92B28-5F31-449F-B12A-F7006E61C700}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>pascal_compiler</RootNamespace>
-    <AssemblyName>pascal-compiler</AssemblyName>
+    <RootNamespace>PascalCompiler</RootNamespace>
+    <AssemblyName>PascalCompiler</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

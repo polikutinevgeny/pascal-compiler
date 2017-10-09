@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using CommandLine;
+﻿using CommandLine;
 using CommandLine.Text;
 
 namespace PascalCompiler
 {
-    class Options
+    internal class Options
     {
         [Option('m', "mode", Required = true,
           HelpText = "Compiler mode (tokenize)")]
@@ -24,7 +23,7 @@ namespace PascalCompiler
         [HelpOption(HelpText = "Display this help text.")]
         public string GetUsage()
         {
-            return HelpText.AutoBuild(this, (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
+            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
     }
 }

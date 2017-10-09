@@ -15,8 +15,8 @@ for d in os.listdir(r'tests/'):
         if name:
             total += 1
             c += 1
-            # subprocess.call([r'bin/Debug/pascal-compiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', r'tests/tokenizer/{}.out'.format(name.group('name'))])
-            subprocess.call([r'bin/Debug/pascal-compiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', 'temp.txt'])
+            # subprocess.call([r'bin/Debug/PascalCompiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', r'tests/tokenizer/{}.out'.format(name.group('name'))])
+            subprocess.call([r'bin/Debug/PascalCompiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', 'temp.txt'])
             f1, f2 = open(r'tests/tokenizer/{}.out'.format(name.group('name')), encoding='cp1251'), open('temp.txt', encoding='cp1251')
             if f1.read() != f2.read():
                 print('Test "{}" failed'.format(i))

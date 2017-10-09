@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Globalization;
+using System.IO;
 
 namespace PascalCompiler
 {
     public partial class Tokenizer
     {
-        public Tokenizer(StreamReader reader) => this.reader = reader;
+        public Tokenizer(StreamReader reader) => _reader = reader;
 
-        private StreamReader reader;
+        private readonly StreamReader _reader;
 
         public class Token : IDisposable
         {
@@ -21,9 +18,9 @@ namespace PascalCompiler
             public String SourceString { get; set; }
             public uint Line { get; set; }
             public uint Position { get; set; }
-            private string value;
+            private readonly string _value;
 
-            public virtual string GetStringValue() => value;
+            public virtual string GetStringValue() => _value;
 
 
             public Token(TokenType type, TokenSubType subType, string sourceString, uint line, uint position)
@@ -38,7 +35,7 @@ namespace PascalCompiler
             public Token(
                 TokenType type, TokenSubType subType, string sourceString,
                 uint line, uint position, string value) :
-                this(type, subType, sourceString, line, position) => this.value = value;
+                this(type, subType, sourceString, line, position) => _value = value;
 
             public override string ToString() => $"{Type}({SubType}) at {Line}:{Position}";
 
@@ -50,30 +47,30 @@ namespace PascalCompiler
 
         public class IntToken : Token
         {
-            private ulong value;
+            private readonly ulong _value;
 
-            public override string GetStringValue() => value.ToString();
+            public override string GetStringValue() => _value.ToString();
 
             public IntToken(
                 TokenType type, TokenSubType subType, string sourceString,
                 uint line, uint position, ulong value) :
-                base(type, subType, sourceString, line, position) => this.value = value;
+                base(type, subType, sourceString, line, position) => _value = value;
 
-            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{value}'";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{_value}'";
         }
 
         public class DoubleToken : Token
         {
-            private double value;
+            private readonly double _value;
 
-            public override string GetStringValue() => value.ToString();
+            public override string GetStringValue() => _value.ToString(CultureInfo.InvariantCulture);
 
             public DoubleToken(
                 TokenType type, TokenSubType subType, string sourceString,
                 uint line, uint position, double value) :
-                base(type, subType, sourceString, line, position) => this.value = value;
+                base(type, subType, sourceString, line, position) => _value = value;
 
-            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{value}'";
+            public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{_value}'";
 
         }
 
@@ -106,7 +103,7 @@ namespace PascalCompiler
 
         }
 
-        public System.Collections.Generic.IEnumerable<Token> Tokens()
+        public IEnumerable<Token> Tokens()
         {
             uint line = 1;
             uint pos = 0;
@@ -133,10 +130,7 @@ namespace PascalCompiler
                     {
                         throw new TokenizerException($"Unexpected character: '{c}'(#{(uint)c})", line, pos);
                     }
-                    else
-                    {
-                        throw new TokenizerException($"Unexpected end of file", line, pos);
-                    }
+                    throw new TokenizerException("Unexpected end of file", line, pos);
                 }
                 if (newState == State.Start)
                 {
@@ -218,7 +212,7 @@ namespace PascalCompiler
                                         line, pos - (uint)lexeme.Length + 1,
                                         Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
                                 }
-                                catch (OverflowException e)
+                                catch (OverflowException)
                                 {
                                     throw new TokenizerException(
                                         "Integer is too big", line, pos - (uint)lexeme.Length + 1);
@@ -314,7 +308,7 @@ namespace PascalCompiler
                                         "Invalid integer base (This means the FSM has failed)",
                                         line, pos - (uint)lexeme.Length + e.Position);
                                 }
-                                catch (OverflowException e)
+                                catch (OverflowException)
                                 {
                                     throw new TokenizerException(
                                         "Integer is too big",
@@ -345,14 +339,14 @@ namespace PascalCompiler
             }
         }
 
-        private Stack<Char> buffer = new Stack<char>();
+        private readonly Stack<Char> _buffer = new Stack<char>();
 
         private char Read()
         {
-            return buffer.Count > 0 ? buffer.Pop() : (char)reader.Read();
+            return _buffer.Count > 0 ? _buffer.Pop() : (char)_reader.Read();
         }
 
-        private void PushBack(char ch) => buffer.Push(ch);
+        private void PushBack(char ch) => _buffer.Push(ch);
 
         private ulong DecodeNumber(string input)
         {
@@ -420,10 +414,10 @@ namespace PascalCompiler
                                 output += (char)Convert.ToInt32(temp);
                                 break;
                             default:
-                                throw new ConvertException("Illegal base of char constant", (uint)i);
+                                throw new ConvertException("Illegal base of char constant", (uint)pos);
                         }
                     }
-                    catch (OverflowException e)
+                    catch (OverflowException)
                     {
                         throw new ConvertOverflowException("Char value is too big", (uint)i);
                     }

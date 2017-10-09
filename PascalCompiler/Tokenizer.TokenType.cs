@@ -10,7 +10,7 @@ namespace PascalCompiler
             Identifier,
             Operator,
             Separator,
-            Constant,
+            Constant
         }
 
         public enum TokenSubType
@@ -128,10 +128,10 @@ namespace PascalCompiler
             Deprecated,
             Experimental,
             Platform,
-            Unimplemented,
+            Unimplemented
         }
 
-        public readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>()
+        public readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
         {
             {"+", TokenSubType.Plus },
             {"-", TokenSubType.Minus },
@@ -238,7 +238,7 @@ namespace PascalCompiler
             {"deprecated", TokenSubType.Deprecated },
             {"experimental", TokenSubType.Experimental },
             {"platform", TokenSubType.Platform },
-            {"unimplemented", TokenSubType.Unimplemented },
+            {"unimplemented", TokenSubType.Unimplemented }
         };
     }
 }
