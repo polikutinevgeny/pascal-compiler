@@ -15,7 +15,7 @@ namespace PascalCompiler
         {
             public TokenType Type { get; set; }
             public TokenSubType SubType { get; set; }
-            public String SourceString { get; set; }
+            public string SourceString { get; set; }
             public uint Line { get; set; }
             public uint Position { get; set; }
             private readonly string _value;
@@ -107,11 +107,11 @@ namespace PascalCompiler
         {
             uint line = 1;
             uint pos = 0;
-            State state = State.Start;
-            string lexeme = "";
+            var state = State.Start;
+            var lexeme = "";
             while (true)
             {
-                char c = Read();
+                var c = Read();
                 c = c != 65535 ? c : '\0';
                 ++pos;
                 State newState;
@@ -188,7 +188,7 @@ namespace PascalCompiler
                             break;
                         case State.FloatFrac:
                         case State.FloatExpValue:
-                            NumberFormatInfo provider = new NumberFormatInfo();
+                            var provider = new NumberFormatInfo();
                             provider.NumberDecimalSeparator = ".";
                             yield return new DoubleToken(
                                 TokenType.Constant,
@@ -339,7 +339,7 @@ namespace PascalCompiler
             }
         }
 
-        private readonly Stack<Char> _buffer = new Stack<char>();
+        private readonly Stack<char> _buffer = new Stack<char>();
 
         private char Read()
         {
@@ -348,7 +348,7 @@ namespace PascalCompiler
 
         private void PushBack(char ch) => _buffer.Push(ch);
 
-        private ulong DecodeNumber(string input)
+        private static ulong DecodeNumber(string input)
         {
             switch (input[0])
             {
@@ -363,10 +363,10 @@ namespace PascalCompiler
             }
         }
 
-        private string DecodeChars(string input)
+        private static string DecodeChars(string input)
         {
-            string output = "";
-            bool quoted = false;
+            var output = "";
+            var quoted = false;
             for (var i = 0; i < input.Length; ++i)
             {
                 if (input[i] == '\'')
@@ -390,9 +390,9 @@ namespace PascalCompiler
                 }
                 else if (input[i] == '#' && !quoted)
                 {
-                    char type = input[++i];
-                    int pos = i++;
-                    string temp = Char.IsDigit(type) ? type.ToString() : "";
+                    var type = input[++i];
+                    var pos = i++;
+                    var temp = char.IsDigit(type) ? type.ToString() : "";
                     for (; i < input.Length && input[i] != '\'' && input[i] != '#'; ++i)
                     {
                         temp += input[i];
@@ -410,7 +410,7 @@ namespace PascalCompiler
                             case '$':
                                 output += (char)Convert.ToInt32(temp, 16);
                                 break;
-                            case char c when (Char.IsDigit(c)):
+                            case char c when char.IsDigit(c):
                                 output += (char)Convert.ToInt32(temp);
                                 break;
                             default:

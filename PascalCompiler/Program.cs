@@ -24,7 +24,7 @@ namespace PascalCompiler
                         writer.WriteLine(new string('-', 142));
                         try
                         {
-                            foreach (var t in (new Tokenizer(reader)).Tokens())
+                            foreach (Tokenizer.Token t in new Tokenizer(reader).Tokens())
                             {
                                 writer.Write(
                                     "{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", 
