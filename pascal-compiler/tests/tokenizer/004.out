@@ -1,6 +1,6 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |6    |Identifier  |Identifier               |f                                  |f                                                 
-5    |16   |Constant    |IntegerConstant          |4                                  |4                                                 
-7    |1    |Separator   |Semicolon                |;                                  |;                                                 
-8    |3    |Identifier  |Identifier               |k                                  |k                                                 
+1    |6    |Identifier  |Identifier               |f                                  |1                                                 
+5    |16   |Constant    |IntegerConstant          |4                                  |5                                                 
+7    |1    |Separator   |Semicolon                |;                                  |7                                                 
+8    |3    |Identifier  |Identifier               |k                                  |8                                                 

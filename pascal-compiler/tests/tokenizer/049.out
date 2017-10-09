@@ -1,24 +1,24 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|Var                      |var                                |var                                               
-2    |4    |Identifier  |Identifier               |a                                  |a                                                 
-2    |5    |Separator   |Colon                    |:                                  |:                                                 
-2    |7    |Identifier  |Identifier               |integer                            |integer                                           
-2    |14   |Separator   |Semicolon                |;                                  |;                                                 
-4    |4    |ReservedWord|Procedure                |procedure                          |procedure                                         
-4    |14   |Identifier  |Identifier               |inc                                |inc                                               
-4    |17   |Separator   |LParenthesis             |(                                  |(                                                 
-4    |18   |Identifier  |Identifier               |a                                  |a                                                 
-4    |19   |Separator   |Colon                    |:                                  |:                                                 
-4    |21   |Identifier  |Identifier               |integer                            |integer                                           
-4    |28   |Separator   |RParenthesis             |)                                  |)                                                 
-4    |29   |Separator   |Semicolon                |;                                  |;                                                 
-6    |7    |ReservedWord|For                      |for                                |for                                               
-6    |11   |Identifier  |Identifier               |i                                  |i                                                 
-6    |13   |Operator    |Assign                   |:=                                 |:=                                                
-6    |16   |Constant    |IntegerConstant          |0                                  |0                                                 
-6    |18   |ReservedWord|To                       |to                                 |to                                                
-6    |21   |Constant    |IntegerConstant          |10                                 |10                                                
-6    |24   |ReservedWord|Do                       |do                                 |do                                                
-8    |4    |ReservedWord|End                      |end                                |end                                               
-8    |7    |Separator   |Semicolon                |;                                  |;                                                 
+1    |1    |ReservedWord|Var                      |var                                |1                                                 
+2    |4    |Identifier  |Identifier               |a                                  |2                                                 
+2    |5    |Separator   |Colon                    |:                                  |2                                                 
+2    |7    |Identifier  |Identifier               |integer                            |2                                                 
+2    |14   |Separator   |Semicolon                |;                                  |2                                                 
+4    |4    |ReservedWord|Procedure                |procedure                          |4                                                 
+4    |14   |Identifier  |Identifier               |inc                                |4                                                 
+4    |17   |Separator   |LParenthesis             |(                                  |4                                                 
+4    |18   |Identifier  |Identifier               |a                                  |4                                                 
+4    |19   |Separator   |Colon                    |:                                  |4                                                 
+4    |21   |Identifier  |Identifier               |integer                            |4                                                 
+4    |28   |Separator   |RParenthesis             |)                                  |4                                                 
+4    |29   |Separator   |Semicolon                |;                                  |4                                                 
+6    |7    |ReservedWord|For                      |for                                |6                                                 
+6    |11   |Identifier  |Identifier               |i                                  |6                                                 
+6    |13   |Operator    |Assign                   |:=                                 |6                                                 
+6    |16   |Constant    |IntegerConstant          |0                                  |6                                                 
+6    |18   |ReservedWord|To                       |to                                 |6                                                 
+6    |21   |Constant    |IntegerConstant          |10                                 |6                                                 
+6    |24   |ReservedWord|Do                       |do                                 |6                                                 
+8    |4    |ReservedWord|End                      |end                                |8                                                 
+8    |7    |Separator   |Semicolon                |;                                  |8                                                 

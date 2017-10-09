@@ -1,5 +1,5 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |StringConstant           |#13#10'abcd''c'                    |\r\nabcd'c                                        
-2    |1    |Constant    |StringConstant           |'abcd'#13#10'c'                    |abcd\r\nc                                         
-3    |1    |Constant    |StringConstant           |'abcd''c'#13#10                    |abcd'c\r\n                                        
+1    |1    |Constant    |StringConstant           |\r\nabcd'c                         |1                                                 
+2    |1    |Constant    |StringConstant           |abcd\r\nc                          |2                                                 
+3    |1    |Constant    |StringConstant           |abcd'c\r\n                         |3                                                 

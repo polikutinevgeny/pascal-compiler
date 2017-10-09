@@ -1,4 +1,4 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |IntegerConstant          |$8463C                             |542268                                            
+1    |1    |Constant    |IntegerConstant          |542268                             |1                                                 
 Unexpected character: 'G'(#71) at 2:2

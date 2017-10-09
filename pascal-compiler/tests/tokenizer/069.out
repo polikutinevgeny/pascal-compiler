@@ -1,0 +1,6 @@
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |Separator   |LBracket                 |[                                  |1                                                 
+1    |2    |Constant    |IntegerConstant          |1234                               |1                                                 
+1    |6    |Separator   |RBracket                 |.)                                 |1                                                 
+1    |8    |Identifier  |Identifier               |hello                              |1                                                 

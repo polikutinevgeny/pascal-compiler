@@ -35,7 +35,10 @@ namespace PascalCompiler
                 Position = position;
             }
 
-            public Token(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, string value) : this(type, subType, sourceString, line, position) => this.value = value;
+            public Token(
+                TokenType type, TokenSubType subType, string sourceString,
+                uint line, uint position, string value) :
+                this(type, subType, sourceString, line, position) => this.value = value;
 
             public override string ToString() => $"{Type}({SubType}) at {Line}:{Position}";
 
@@ -51,7 +54,10 @@ namespace PascalCompiler
 
             public override string GetStringValue() => value.ToString();
 
-            public IntToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, ulong value) : base(type, subType, sourceString, line, position) => this.value = value;
+            public IntToken(
+                TokenType type, TokenSubType subType, string sourceString,
+                uint line, uint position, ulong value) :
+                base(type, subType, sourceString, line, position) => this.value = value;
 
             public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{value}'";
         }
@@ -62,7 +68,10 @@ namespace PascalCompiler
 
             public override string GetStringValue() => value.ToString();
 
-            public DoubleToken(TokenType type, TokenSubType subType, string sourceString, uint line, uint position, double value) : base(type, subType, sourceString, line, position) => this.value = value;
+            public DoubleToken(
+                TokenType type, TokenSubType subType, string sourceString,
+                uint line, uint position, double value) :
+                base(type, subType, sourceString, line, position) => this.value = value;
 
             public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{value}'";
 
@@ -151,18 +160,33 @@ namespace PascalCompiler
                         case State.Identifier:
                             if (TokenSubTypeDict.ContainsKey(lexeme.Substring(0, lexeme.Length - 1).ToLower()))
                             {
-                                yield return new Token(TokenType.ReservedWord, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1).ToLower()], lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                                yield return new Token(
+                                    TokenType.ReservedWord,
+                                    TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1).ToLower()],
+                                    lexeme.Substring(0, lexeme.Length - 1),
+                                    line, pos - (uint)lexeme.Length + 1,
+                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
                             }
                             else
                             {
-                                yield return new Token(TokenType.Identifier, TokenSubType.Identifier, lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                                yield return new Token(
+                                    TokenType.Identifier,
+                                    TokenSubType.Identifier,
+                                    lexeme.Substring(0, lexeme.Length - 1),
+                                    line, pos - (uint)lexeme.Length + 1,
+                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
                             }
                             lexeme = "";
                             PushBack(c);
                             --pos;
                             break;
                         case State.FloatDot:
-                            yield return new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 2), line, pos + 1 - (uint)lexeme.Length, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 2)));
+                            yield return new IntToken(
+                                TokenType.Constant,
+                                TokenSubType.IntegerConstant,
+                                lexeme.Substring(0, lexeme.Length - 2),
+                                line, pos + 1 - (uint)lexeme.Length,
+                                Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 2)));
                             pos -= 2;
                             PushBack(c);
                             PushBack(lexeme[lexeme.Length - 2]);
@@ -172,7 +196,12 @@ namespace PascalCompiler
                         case State.FloatExpValue:
                             NumberFormatInfo provider = new NumberFormatInfo();
                             provider.NumberDecimalSeparator = ".";
-                            yield return new DoubleToken(TokenType.Constant, TokenSubType.FloatConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, Convert.ToDouble(lexeme.Substring(0, lexeme.Length - 1), provider));
+                            yield return new DoubleToken(
+                                TokenType.Constant,
+                                TokenSubType.FloatConstant,
+                                lexeme.Substring(0, lexeme.Length - 1),
+                                line, pos - (uint)lexeme.Length + 1,
+                                Convert.ToDouble(lexeme.Substring(0, lexeme.Length - 1), provider));
                             PushBack(c);
                             lexeme = "";
                             --pos;
@@ -182,11 +211,17 @@ namespace PascalCompiler
                                 Token temp;
                                 try
                                 {
-                                    temp = new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                                    temp = new IntToken(
+                                        TokenType.Constant,
+                                        TokenSubType.IntegerConstant,
+                                        lexeme.Substring(0, lexeme.Length - 1),
+                                        line, pos - (uint)lexeme.Length + 1,
+                                        Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
                                 }
                                 catch (OverflowException e)
                                 {
-                                    throw new TokenizerException("Integer is too big", line, pos - (uint)lexeme.Length + 1);
+                                    throw new TokenizerException(
+                                        "Integer is too big", line, pos - (uint)lexeme.Length + 1);
                                 }
                                 yield return temp;
                             }
@@ -202,7 +237,12 @@ namespace PascalCompiler
                         case State.Less:
                         case State.More:
                         case State.Operator:
-                            yield return new Token(TokenType.Operator, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)], lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                            yield return new Token(
+                                TokenType.Operator,
+                                TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
+                                lexeme.Substring(0, lexeme.Length - 1),
+                                line, pos - (uint)lexeme.Length + 1,
+                                lexeme.Substring(0, lexeme.Length - 1).ToLower());
                             lexeme = "";
                             PushBack(c);
                             --pos;
@@ -210,7 +250,12 @@ namespace PascalCompiler
                         case State.Colon:
                         case State.Parenthesis:
                         case State.Separator:
-                            yield return new Token(TokenType.Separator, TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)], lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                            yield return new Token(
+                                TokenType.Separator,
+                                TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
+                                lexeme.Substring(0, lexeme.Length - 1),
+                                line, pos - (uint)lexeme.Length + 1,
+                                lexeme.Substring(0, lexeme.Length - 1).ToLower());
                             lexeme = "";
                             PushBack(c);
                             --pos;
@@ -224,15 +269,24 @@ namespace PascalCompiler
                                 Token temp;
                                 try
                                 {
-                                    temp = new Token(TokenType.Constant, TokenSubType.StringConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, DecodeChars(lexeme.Substring(0, lexeme.Length - 1)));
+                                    temp = new Token(
+                                        TokenType.Constant,
+                                        TokenSubType.StringConstant,
+                                        lexeme.Substring(0, lexeme.Length - 1),
+                                        line, pos - (uint)lexeme.Length + 1,
+                                        DecodeChars(lexeme.Substring(0, lexeme.Length - 1)));
                                 }
                                 catch (ConvertException e)
                                 {
-                                    throw new TokenizerException("Invalid char base (This means the FSM has failed)", line, pos - (uint)lexeme.Length + e.Position + 1);
+                                    throw new TokenizerException(
+                                        "Invalid char base (This means the FSM has failed)",
+                                        line, pos - (uint)lexeme.Length + e.Position + 1);
                                 }
                                 catch (ConvertOverflowException e)
                                 {
-                                    throw new TokenizerException("Char value is too big", line, pos - (uint)lexeme.Length + e.Position + 1);
+                                    throw new TokenizerException(
+                                        "Char value is too big",
+                                        line, pos - (uint)lexeme.Length + e.Position + 1);
                                 }
                                 yield return temp;
                             }
@@ -247,15 +301,24 @@ namespace PascalCompiler
                                 Token temp;
                                 try
                                 {
-                                    temp = new IntToken(TokenType.Constant, TokenSubType.IntegerConstant, lexeme.Substring(0, lexeme.Length - 1), line, pos - (uint)lexeme.Length + 1, DecodeNumber(lexeme.Substring(0, lexeme.Length - 1)));
+                                    temp = new IntToken(
+                                        TokenType.Constant,
+                                        TokenSubType.IntegerConstant,
+                                        lexeme.Substring(0, lexeme.Length - 1),
+                                        line, pos - (uint)lexeme.Length + 1,
+                                        DecodeNumber(lexeme.Substring(0, lexeme.Length - 1)));
                                 }
                                 catch (ConvertException e)
                                 {
-                                    throw new TokenizerException("Invalid integer base (This means the FSM has failed)", line, pos - (uint)lexeme.Length + e.Position);
+                                    throw new TokenizerException(
+                                        "Invalid integer base (This means the FSM has failed)",
+                                        line, pos - (uint)lexeme.Length + e.Position);
                                 }
                                 catch (OverflowException e)
                                 {
-                                    throw new TokenizerException("Integer is too big", line, pos - (uint)lexeme.Length);
+                                    throw new TokenizerException(
+                                        "Integer is too big",
+                                        line, pos - (uint)lexeme.Length);
                                 }
                                 yield return temp;
                             }
@@ -265,7 +328,11 @@ namespace PascalCompiler
                             break;
                     }
                 }
-                else if (state == State.MultilineCommentNewLine && (newState == State.MultilineComment || newState == State.MultilineCommentAsterisk || newState == State.MultilineCommentEnd))
+                else if (
+                    state == State.MultilineCommentNewLine &&
+                    (newState == State.MultilineComment ||
+                    newState == State.MultilineCommentAsterisk ||
+                    newState == State.MultilineCommentEnd))
                 {
                     ++line;
                     pos = 0;

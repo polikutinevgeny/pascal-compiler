@@ -1,5 +1,5 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|While                    |while                              |while                                             
-4    |1    |ReservedWord|If                       |if                                 |if                                                
+1    |1    |ReservedWord|While                    |while                              |1                                                 
+4    |1    |ReservedWord|If                       |if                                 |4                                                 
 Unexpected end of file at 8:13

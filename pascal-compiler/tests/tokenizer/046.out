@@ -1,15 +1,15 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |4    |Identifier  |Identifier               |bool                               |bool                                              
-1    |9    |Operator    |Assign                   |:=                                 |:=                                                
-1    |12   |Identifier  |Identifier               |false                              |false                                             
-1    |18   |ReservedWord|Or                       |or                                 |or                                                
-1    |21   |Identifier  |Identifier               |isGood                             |isgood                                            
-2    |4    |ReservedWord|If                       |if                                 |if                                                
-2    |7    |Identifier  |Identifier               |isGood                             |isgood                                            
-2    |14   |ReservedWord|And                      |and                                |and                                               
-2    |18   |Identifier  |Identifier               |isCool                             |iscool                                            
-2    |25   |ReservedWord|Then                     |then                               |then                                              
-3    |7    |Identifier  |Identifier               |CoolNumber                         |coolnumber                                        
-3    |18   |Operator    |Assign                   |:=                                 |:=                                                
-3    |21   |Constant    |IntegerConstant          |42                                 |42                                                
+1    |4    |Identifier  |Identifier               |bool                               |1                                                 
+1    |9    |Operator    |Assign                   |:=                                 |1                                                 
+1    |12   |Identifier  |Identifier               |false                              |1                                                 
+1    |18   |ReservedWord|Or                       |or                                 |1                                                 
+1    |21   |Identifier  |Identifier               |isgood                             |1                                                 
+2    |4    |ReservedWord|If                       |if                                 |2                                                 
+2    |7    |Identifier  |Identifier               |isgood                             |2                                                 
+2    |14   |ReservedWord|And                      |and                                |2                                                 
+2    |18   |Identifier  |Identifier               |iscool                             |2                                                 
+2    |25   |ReservedWord|Then                     |then                               |2                                                 
+3    |7    |Identifier  |Identifier               |coolnumber                         |3                                                 
+3    |18   |Operator    |Assign                   |:=                                 |3                                                 
+3    |21   |Constant    |IntegerConstant          |42                                 |3                                                 

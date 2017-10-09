@@ -1,45 +1,45 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|Type                     |type                               |type                                              
-2    |4    |Identifier  |Identifier               |TPoint                             |tpoint                                            
-2    |11   |Operator    |Equal                    |=                                  |=                                                 
-2    |13   |ReservedWord|Record                   |record                             |record                                            
-3    |7    |Identifier  |Identifier               |x                                  |x                                                 
-3    |8    |Separator   |Comma                    |,                                  |,                                                 
-3    |10   |Identifier  |Identifier               |y                                  |y                                                 
-3    |11   |Separator   |Colon                    |:                                  |:                                                 
-3    |13   |Identifier  |Identifier               |integer                            |integer                                           
-3    |20   |Separator   |Semicolon                |;                                  |;                                                 
-4    |4    |ReservedWord|End                      |end                                |end                                               
-4    |7    |Separator   |Semicolon                |;                                  |;                                                 
-5    |1    |ReservedWord|Const                    |const                              |const                                             
-6    |4    |Identifier  |Identifier               |THE_END                            |the_end                                           
-6    |12   |Operator    |Equal                    |=                                  |=                                                 
-6    |14   |Identifier  |Identifier               |false                              |false                                             
-6    |19   |Separator   |Semicolon                |;                                  |;                                                 
-10   |4    |ReservedWord|Procedure                |procedure                          |procedure                                         
-10   |14   |Identifier  |Identifier               |inc                                |inc                                               
-10   |17   |Separator   |LParenthesis             |(                                  |(                                                 
-10   |18   |Identifier  |Identifier               |a                                  |a                                                 
-10   |19   |Separator   |Colon                    |:                                  |:                                                 
-10   |21   |Identifier  |Identifier               |integer                            |integer                                           
-10   |28   |Separator   |RParenthesis             |)                                  |)                                                 
-10   |29   |Separator   |Semicolon                |;                                  |;                                                 
-11   |4    |ReservedWord|Begin                    |begin                              |begin                                             
-12   |7    |ReservedWord|For                      |for                                |for                                               
-12   |11   |Identifier  |Identifier               |i                                  |i                                                 
-12   |13   |Operator    |Assign                   |:=                                 |:=                                                
-12   |16   |Constant    |IntegerConstant          |0                                  |0                                                 
-12   |18   |ReservedWord|To                       |to                                 |to                                                
-12   |21   |Constant    |IntegerConstant          |10                                 |10                                                
-12   |24   |ReservedWord|Do                       |do                                 |do                                                
-13   |10   |Identifier  |Identifier               |a                                  |a                                                 
-13   |12   |Operator    |Assign                   |:=                                 |:=                                                
-13   |15   |Constant    |IntegerConstant          |20                                 |20                                                
-13   |18   |Operator    |Asterisk                 |*                                  |*                                                 
-13   |20   |Constant    |IntegerConstant          |432423                             |432423                                            
-13   |26   |Separator   |Semicolon                |;                                  |;                                                 
-13   |27   |Operator    |Asterisk                 |*                                  |*                                                 
-13   |28   |Separator   |RParenthesis             |)                                  |)                                                 
-14   |4    |ReservedWord|End                      |end                                |end                                               
-14   |7    |Separator   |Semicolon                |;                                  |;                                                 
+1    |1    |ReservedWord|Type                     |type                               |1                                                 
+2    |4    |Identifier  |Identifier               |tpoint                             |2                                                 
+2    |11   |Operator    |Equal                    |=                                  |2                                                 
+2    |13   |ReservedWord|Record                   |record                             |2                                                 
+3    |7    |Identifier  |Identifier               |x                                  |3                                                 
+3    |8    |Separator   |Comma                    |,                                  |3                                                 
+3    |10   |Identifier  |Identifier               |y                                  |3                                                 
+3    |11   |Separator   |Colon                    |:                                  |3                                                 
+3    |13   |Identifier  |Identifier               |integer                            |3                                                 
+3    |20   |Separator   |Semicolon                |;                                  |3                                                 
+4    |4    |ReservedWord|End                      |end                                |4                                                 
+4    |7    |Separator   |Semicolon                |;                                  |4                                                 
+5    |1    |ReservedWord|Const                    |const                              |5                                                 
+6    |4    |Identifier  |Identifier               |the_end                            |6                                                 
+6    |12   |Operator    |Equal                    |=                                  |6                                                 
+6    |14   |Identifier  |Identifier               |false                              |6                                                 
+6    |19   |Separator   |Semicolon                |;                                  |6                                                 
+10   |4    |ReservedWord|Procedure                |procedure                          |10                                                
+10   |14   |Identifier  |Identifier               |inc                                |10                                                
+10   |17   |Separator   |LParenthesis             |(                                  |10                                                
+10   |18   |Identifier  |Identifier               |a                                  |10                                                
+10   |19   |Separator   |Colon                    |:                                  |10                                                
+10   |21   |Identifier  |Identifier               |integer                            |10                                                
+10   |28   |Separator   |RParenthesis             |)                                  |10                                                
+10   |29   |Separator   |Semicolon                |;                                  |10                                                
+11   |4    |ReservedWord|Begin                    |begin                              |11                                                
+12   |7    |ReservedWord|For                      |for                                |12                                                
+12   |11   |Identifier  |Identifier               |i                                  |12                                                
+12   |13   |Operator    |Assign                   |:=                                 |12                                                
+12   |16   |Constant    |IntegerConstant          |0                                  |12                                                
+12   |18   |ReservedWord|To                       |to                                 |12                                                
+12   |21   |Constant    |IntegerConstant          |10                                 |12                                                
+12   |24   |ReservedWord|Do                       |do                                 |12                                                
+13   |10   |Identifier  |Identifier               |a                                  |13                                                
+13   |12   |Operator    |Assign                   |:=                                 |13                                                
+13   |15   |Constant    |IntegerConstant          |20                                 |13                                                
+13   |18   |Operator    |Asterisk                 |*                                  |13                                                
+13   |20   |Constant    |IntegerConstant          |432423                             |13                                                
+13   |26   |Separator   |Semicolon                |;                                  |13                                                
+13   |27   |Operator    |Asterisk                 |*                                  |13                                                
+13   |28   |Separator   |RParenthesis             |)                                  |13                                                
+14   |4    |ReservedWord|End                      |end                                |14                                                
+14   |7    |Separator   |Semicolon                |;                                  |14                                                

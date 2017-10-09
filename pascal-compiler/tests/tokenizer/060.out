@@ -1,14 +1,14 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |ReservedWord|Program                  |program                            |program                                           
-1    |9    |Identifier  |Identifier               |orgram                             |orgram                                            
-1    |15   |Separator   |Semicolon                |;                                  |;                                                 
-2    |1    |ReservedWord|Var                      |var                                |var                                               
-3    |4    |Identifier  |Identifier               |moolean                            |moolean                                           
-3    |11   |Separator   |Colon                    |:                                  |:                                                 
-3    |13   |Identifier  |Identifier               |boolean                            |boolean                                           
-3    |20   |Separator   |Semicolon                |;                                  |;                                                 
-4    |1    |ReservedWord|Begin                    |begin                              |begin                                             
-5    |4    |Identifier  |Identifier               |moolean                            |moolean                                           
-5    |11   |Operator    |Assign                   |:=                                 |:=                                                
+1    |1    |ReservedWord|Program                  |program                            |1                                                 
+1    |9    |Identifier  |Identifier               |orgram                             |1                                                 
+1    |15   |Separator   |Semicolon                |;                                  |1                                                 
+2    |1    |ReservedWord|Var                      |var                                |2                                                 
+3    |4    |Identifier  |Identifier               |moolean                            |3                                                 
+3    |11   |Separator   |Colon                    |:                                  |3                                                 
+3    |13   |Identifier  |Identifier               |boolean                            |3                                                 
+3    |20   |Separator   |Semicolon                |;                                  |3                                                 
+4    |1    |ReservedWord|Begin                    |begin                              |4                                                 
+5    |4    |Identifier  |Identifier               |moolean                            |5                                                 
+5    |11   |Operator    |Assign                   |:=                                 |5                                                 
 Unexpected character: '}'(#125) at 5:14

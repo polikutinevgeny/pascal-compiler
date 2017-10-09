@@ -1,6 +1,6 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
 1    |1    |Constant    |IntegerConstant          |1                                  |1                                                 
-1    |2    |Operator    |Range                    |..                                 |..                                                
-1    |4    |Constant    |IntegerConstant          |4                                  |4                                                 
-1    |5    |Identifier  |Identifier               |e20                                |e20                                               
+1    |2    |Operator    |Range                    |..                                 |1                                                 
+1    |4    |Constant    |IntegerConstant          |4                                  |1                                                 
+1    |5    |Identifier  |Identifier               |e20                                |1                                                 

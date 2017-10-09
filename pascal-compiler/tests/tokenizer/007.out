@@ -1,7 +1,7 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |IntegerConstant          |2343                               |2343                                              
-1    |6    |Constant    |IntegerConstant          |2343                               |2343                                              
-1    |11   |Identifier  |Identifier               |f                                  |f                                                 
-1    |13   |Constant    |IntegerConstant          |2343                               |2343                                              
-1    |17   |Identifier  |Identifier               |f                                  |f                                                 
+1    |1    |Constant    |IntegerConstant          |2343                               |1                                                 
+1    |6    |Constant    |IntegerConstant          |2343                               |1                                                 
+1    |11   |Identifier  |Identifier               |f                                  |1                                                 
+1    |13   |Constant    |IntegerConstant          |2343                               |1                                                 
+1    |17   |Identifier  |Identifier               |f                                  |1                                                 

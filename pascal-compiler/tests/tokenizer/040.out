@@ -1,8 +1,8 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Operator    |Less                     |<                                  |<                                                 
-2    |1    |Operator    |LEqual                   |<=                                 |<=                                                
-3    |1    |Operator    |GEqual                   |>=                                 |>=                                                
-4    |1    |Operator    |More                     |>                                  |>                                                 
-5    |1    |Operator    |Equal                    |=                                  |=                                                 
-6    |1    |Operator    |Assign                   |:=                                 |:=                                                
+1    |1    |Operator    |Less                     |<                                  |1                                                 
+2    |1    |Operator    |LEqual                   |<=                                 |2                                                 
+3    |1    |Operator    |GEqual                   |>=                                 |3                                                 
+4    |1    |Operator    |More                     |>                                  |4                                                 
+5    |1    |Operator    |Equal                    |=                                  |5                                                 
+6    |1    |Operator    |Assign                   |:=                                 |6                                                 

@@ -23,14 +23,22 @@ namespace PascalCompiler
                         using (var reader = new StreamReader(options.InputFile))
                         using (var writer = new StreamWriter(options.OutputFile))
                         {
-                            writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", "Line", "Pos", "Type", "Subtype", "Source", "Value");
+                            writer.WriteLine("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}", "Line", "Pos", "Type", "Subtype", "Value", "Source");
                             writer.WriteLine(new String('-', 142));
                             try
                             {
                                 foreach (var t in (new Tokenizer(reader)).Tokens())
                                 {
-                                    writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|", t.Line, t.Position, t.Type, t.SubType, t.SourceString);
-                                    writer.Write("{0, -50}", t.GetStringValue().Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+                                    writer.Write("{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{0, -50}", 
+                                        t.Line, 
+                                        t.Position, 
+                                        t.Type, 
+                                        t.SubType, 
+                                        t.GetStringValue().
+                                            Replace("\n", "\\n").
+                                            Replace("\r", "\\r").
+                                            Replace("\t", "\\t"), 
+                                        t.SourceString);
                                     writer.WriteLine();
                                 }
                             }

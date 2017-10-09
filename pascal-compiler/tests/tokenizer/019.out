@@ -1,8 +1,8 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Operator    |Minus                    |-                                  |-                                                 
-1    |2    |Constant    |FloatConstant            |0.432                              |0.432                                             
-2    |1    |Operator    |Minus                    |-                                  |-                                                 
-2    |2    |Constant    |FloatConstant            |0.432e3                            |432                                               
-3    |1    |Operator    |Minus                    |-                                  |-                                                 
-3    |2    |Constant    |FloatConstant            |432.05e-4                          |0.043205                                          
+1    |1    |Operator    |Minus                    |-                                  |1                                                 
+1    |2    |Constant    |FloatConstant            |0.432                              |1                                                 
+2    |1    |Operator    |Minus                    |-                                  |2                                                 
+2    |2    |Constant    |FloatConstant            |432                                |2                                                 
+3    |1    |Operator    |Minus                    |-                                  |3                                                 
+3    |2    |Constant    |FloatConstant            |0.043205                           |3                                                 

@@ -1,4 +1,4 @@
-Line |Pos  |Type        |Subtype                  |Source                             |Value                                             
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
 ----------------------------------------------------------------------------------------------------------------------------------------------
-1    |1    |Constant    |IntegerConstant          |$123ABCDEF                         |4893429231                                        
-1    |11   |Identifier  |Identifier               |O                                  |o                                                 
+1    |1    |Constant    |IntegerConstant          |4893429231                         |1                                                 
+1    |11   |Identifier  |Identifier               |o                                  |1                                                 
