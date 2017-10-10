@@ -2,6 +2,7 @@ import os
 import re
 import subprocess
 import sys
+import argparse
 
 r = re.compile('(?P<name>.+)\.in')
 total = 0
@@ -16,8 +17,8 @@ for d in os.listdir(r'tests/'):
             total += 1
             c += 1
             # subprocess.call([r'bin/Debug/PascalCompiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', r'tests/tokenizer/{}.out'.format(name.group('name'))])
-            subprocess.call([r'bin/Debug/PascalCompiler.exe', '-m', 'tokenize', '-i', r'tests/tokenizer/{}'.format(i), '-o', 'temp.txt'])
-            f1, f2 = open(r'tests/tokenizer/{}.out'.format(name.group('name')), encoding='cp1251'), open('temp.txt', encoding='cp1251')
+            subprocess.call([r'bin/Debug/PascalCompiler.exe', '-m', d, '-i', r'tests/{}/{}'.format(d, i), '-o', 'temp.txt'])
+            f1, f2 = open(r'tests/{}/{}.out'.format(d, name.group('name')), encoding='cp1251'), open('temp.txt', encoding='cp1251')
             if f1.read() != f2.read():
                 print('Test "{}" failed'.format(i))
             else:
