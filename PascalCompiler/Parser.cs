@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PascalCompiler
 {
-    public static class Parser
+    public class Parser : IDisposable
     {
         public class ParserException : Exception
         {
@@ -20,52 +20,65 @@ namespace PascalCompiler
             }
         }
 
-        public static Node Parse(IEnumerator<Tokenizer.Token> tokens)
+        private readonly IEnumerator<Tokenizer.Token> _tokenizer;
+        private bool _eof;
+
+        private Tokenizer.Token Next()
         {
-            tokens.MoveNext();
-            var e = ParseExpr(tokens);
-            if (tokens.MoveNext())
+            _eof = !_tokenizer.MoveNext();
+            return Current;
+        }
+
+        private Tokenizer.Token Current => !_eof ? _tokenizer.Current : null;
+        private Tokenizer.Token CurrentNotNull => _tokenizer.Current;
+
+        public Parser(IEnumerator<Tokenizer.Token> tokenizer) => this._tokenizer = tokenizer;
+
+        public Node Parse()
+        {
+            Next();
+            var e = ParseExpr();
+            if (!_eof)
             {
-                throw new ParserException("Parsing finished, tokens still left", tokens.Current.Line,
-                    tokens.Current.Position);
+                throw new ParserException("Parsing finished, tokens still left", Current.Line, Current.Position);
             }
             return e;
         }
 
-        private static ExprNode ParseExpr(IEnumerator<Tokenizer.Token> tokens)
+        private ExprNode ParseExpr()
         {
-            var e = ParseTerm(tokens);
-            var t = tokens.Current;
-            while (t.SubType == Tokenizer.TokenSubType.Plus || t.SubType == Tokenizer.TokenSubType.Minus)
+            var e = ParseTerm();
+            var t = Current;
+            while (!_eof && (t.SubType == Tokenizer.TokenSubType.Plus || t.SubType == Tokenizer.TokenSubType.Minus))
             {
-                tokens.MoveNext();
-                e = new BinOpNode(new List<Node>() { e, ParseTerm(tokens) }, t);
-                t = tokens.Current;
+                Next();
+                e = new BinOpNode(new List<Node>() { e, ParseTerm() }, t);
+                t = Current;
             }
             return e;
         }
 
-        private static ExprNode ParseTerm(IEnumerator<Tokenizer.Token> tokens)
+        private ExprNode ParseTerm()
         {
-            var e = ParseFactor(tokens);
-            var t = tokens.Current;
-            while (t.SubType == Tokenizer.TokenSubType.Asterisk || t.SubType == Tokenizer.TokenSubType.Slash)
+            var e = ParseFactor();
+            var t = Current;
+            while (!_eof && (t.SubType == Tokenizer.TokenSubType.Asterisk || t.SubType == Tokenizer.TokenSubType.Slash))
             {
-                tokens.MoveNext();
-                e = new BinOpNode(new List<Node>() {e, ParseFactor(tokens)}, t);
-                t = tokens.Current;
+                Next();
+                e = new BinOpNode(new List<Node>() {e, ParseFactor()}, t);
+                t = Current;
             }
             return e;
         }
 
-        private static ExprNode ParseFactor(IEnumerator<Tokenizer.Token> tokens)
+        private ExprNode ParseFactor()
         {
-            var t = tokens.Current;
-            if (!tokens.MoveNext())
+            var t = Current;
+            if (Current == null)
             {
-                throw new ParserException("Unexpected EOF", t.Line,
-                    t.Position);
+                throw new ParserException("Unexpected EOF", CurrentNotNull.Line, CurrentNotNull.Position + (uint)CurrentNotNull.SourceString.Length);
             }
+            Next();
             switch (t.SubType)
             {
                 case Tokenizer.TokenSubType.Identifier:
@@ -74,22 +87,28 @@ namespace PascalCompiler
                 case Tokenizer.TokenSubType.FloatConstant:
                     return new ConstNode(null, t);
                 case Tokenizer.TokenSubType.LParenthesis:
-                    var e = ParseExpr(tokens);
-                    Require(tokens, Tokenizer.TokenSubType.RParenthesis);
-                    tokens.MoveNext();
+                    var e = ParseExpr();
+                    Require(Tokenizer.TokenSubType.RParenthesis);
                     return e;
             }
             throw new ParserException($"Expected identifier, constant or expression, got {t.SubType}", t.Line,
                 t.Position);
         }
 
-        private static void Require(IEnumerator<Tokenizer.Token> tokens, Tokenizer.TokenSubType type)
+        private void Require(Tokenizer.TokenSubType type)
         {
-            if (tokens.Current.SubType != type)
-                throw new ParserException($"Expected {type}, got {tokens.Current.SubType}", tokens.Current.Line,
-                    tokens.Current.Position);
-            tokens.MoveNext();
-            return;
+            if (Current == null)
+            {
+                throw new ParserException("Unexpected EOF", CurrentNotNull.Line, CurrentNotNull.Position + (uint)CurrentNotNull.SourceString.Length);
+            }
+            if (Current.SubType != type)
+                throw new ParserException($"Expected {type}, got {Current.SubType}", Current.Line,
+                    Current.Position);
+            Next();
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

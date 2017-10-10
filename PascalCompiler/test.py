@@ -28,6 +28,6 @@ for d in os.listdir(r'tests/'):
                 p += 1
             f1.close()
             f2.close()
-    print("\nEnded {} tests, launched {}, passed, {}, failed {}.".format(d, c, p, c - passed))
+    print("\nEnded {} tests, launched {}, passed, {}, failed {}.".format(d, c, p, c - p))
 print('Total {} tests launched, {} passed, {} failed.'.format(total, passed, total - passed))
 os.remove('temp.txt')
