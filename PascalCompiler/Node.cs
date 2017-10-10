@@ -25,13 +25,32 @@ namespace PascalCompiler
 
     public static class TreePrinter
     {
-        public static void PrintTree(StreamWriter writer, Node node, int level)
+//        public static void PrintTree(StreamWriter writer, Node node, int level)
+//        {
+//            writer.Write(new String('\t', level));
+//            writer.WriteLine(node);
+//            foreach (var n in node.Childs ?? Enumerable.Empty<Node>())
+//            {
+//                PrintTree(writer, n, level + 1);
+//            }
+//        }
+        public static void PrintTree(StreamWriter writer, Node node, string indent, bool last)
         {
-            writer.Write(new String('\t', level));
-            writer.WriteLine(node);
-            foreach (var n in node.Childs ?? Enumerable.Empty<Node>())
+            writer.Write(indent);
+            if (last)
             {
-                PrintTree(writer, n, level + 1);
+                writer.Write("└─");
+                indent += "  ";
+            }
+            else
+            {
+                writer.Write("├─");
+                indent += "| ";
+            }
+            writer.WriteLine(node);
+            for (var i = 0; i < node.Childs?.Count; ++i)
+            {
+                PrintTree(writer, node.Childs[i], indent, i == node.Childs.Count - 1);
             }
         }
     }

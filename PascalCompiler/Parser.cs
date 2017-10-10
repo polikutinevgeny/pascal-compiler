@@ -61,7 +61,11 @@ namespace PascalCompiler
         private static ExprNode ParseFactor(IEnumerator<Tokenizer.Token> tokens)
         {
             var t = tokens.Current;
-            tokens.MoveNext();
+            if (!tokens.MoveNext())
+            {
+                throw new ParserException("Unexpected EOF", t.Line,
+                    t.Position);
+            }
             switch (t.SubType)
             {
                 case Tokenizer.TokenSubType.Identifier:

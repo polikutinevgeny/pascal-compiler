@@ -51,16 +51,16 @@ namespace PascalCompiler
                                 using (var tokenStream = tokenizer.GetEnumerator())
                                 {
                                     var n = Parser.Parse(tokenStream);
-                                    TreePrinter.PrintTree(writer, n, 0);
+                                    TreePrinter.PrintTree(writer, n, "", true);
                                 }
                             }
                             catch (Tokenizer.TokenizerException e)
                             {
-                                Console.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
+                                writer.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
                             }
                             catch (Parser.ParserException e)
                             {
-                                Console.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
+                                writer.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
                             }
                             break;
                         default:
