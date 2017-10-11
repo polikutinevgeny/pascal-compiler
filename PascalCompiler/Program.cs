@@ -8,6 +8,7 @@ namespace PascalCompiler
         // TODO: Remove python code, consolidate switch statement, add more error types, add error tests.
         // TODO: Remove doubling code in convert fucntions
         // TODO: Not ASCII symbols?
+        // TODO: Token value boxing.
         private static void Main(string[] args)
         {
             var options = new Options();

@@ -6,7 +6,7 @@ namespace PascalCompiler
     internal class Options
     {
         [Option('m', "mode", Required = true,
-          HelpText = "Compiler mode (tokenize)")]
+          HelpText = "Compiler mode {tokenize | parse}")]
         public string Mode { get; set; }
 
         [Option('i', "input", Required = true,
