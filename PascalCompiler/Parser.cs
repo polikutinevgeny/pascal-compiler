@@ -21,16 +21,10 @@ namespace PascalCompiler
         }
 
         private readonly IEnumerator<Tokenizer.Token> _tokenizer;
-        private bool _eof;
 
-        private Tokenizer.Token Next()
-        {
-            _eof = !_tokenizer.MoveNext();
-            return Current;
-        }
+        private void Next() => _tokenizer.MoveNext();
 
-        private Tokenizer.Token Current => !_eof ? _tokenizer.Current : null;
-        private Tokenizer.Token CurrentNotNull => _tokenizer.Current;
+        private Tokenizer.Token Current => _tokenizer.Current;
 
         public Parser(IEnumerator<Tokenizer.Token> tokenizer) => this._tokenizer = tokenizer;
 
@@ -38,7 +32,7 @@ namespace PascalCompiler
         {
             Next();
             var e = ParseExpr();
-            if (!_eof)
+            if (Current.SubType != Tokenizer.TokenSubType.EndOfFile)
             {
                 throw new ParserException("Parsing finished, tokens still left", Current.Line, Current.Position);
             }
@@ -49,10 +43,10 @@ namespace PascalCompiler
         {
             var e = ParseTerm();
             var t = Current;
-            while (!_eof && (t.SubType == Tokenizer.TokenSubType.Plus || t.SubType == Tokenizer.TokenSubType.Minus))
+            while (t.SubType == Tokenizer.TokenSubType.Plus || t.SubType == Tokenizer.TokenSubType.Minus)
             {
                 Next();
-                e = new BinOpNode(new List<Node>() { e, ParseTerm() }, t);
+                e = new BinOpNode(new List<Node>() {e, ParseTerm()}, t);
                 t = Current;
             }
             return e;
@@ -62,7 +56,7 @@ namespace PascalCompiler
         {
             var e = ParseFactor();
             var t = Current;
-            while (!_eof && (t.SubType == Tokenizer.TokenSubType.Asterisk || t.SubType == Tokenizer.TokenSubType.Slash))
+            while (t.SubType == Tokenizer.TokenSubType.Asterisk || t.SubType == Tokenizer.TokenSubType.Slash)
             {
                 Next();
                 e = new BinOpNode(new List<Node>() {e, ParseFactor()}, t);
@@ -74,10 +68,6 @@ namespace PascalCompiler
         private ExprNode ParseFactor()
         {
             var t = Current;
-            if (Current == null)
-            {
-                throw new ParserException("Unexpected EOF", CurrentNotNull.Line, CurrentNotNull.Position + (uint)CurrentNotNull.SourceString.Length);
-            }
             Next();
             switch (t.SubType)
             {
@@ -90,17 +80,14 @@ namespace PascalCompiler
                     var e = ParseExpr();
                     Require(Tokenizer.TokenSubType.RParenthesis);
                     return e;
+                default:
+                    throw new ParserException($"Expected identifier, constant or expression, got {t.SubType}", t.Line,
+                        t.Position);
             }
-            throw new ParserException($"Expected identifier, constant or expression, got {t.SubType}", t.Line,
-                t.Position);
         }
 
         private void Require(Tokenizer.TokenSubType type)
         {
-            if (Current == null)
-            {
-                throw new ParserException("Unexpected EOF", CurrentNotNull.Line, CurrentNotNull.Position + (uint)CurrentNotNull.SourceString.Length);
-            }
             if (Current.SubType != type)
                 throw new ParserException($"Expected {type}, got {Current.SubType}", Current.Line,
                     Current.Position);

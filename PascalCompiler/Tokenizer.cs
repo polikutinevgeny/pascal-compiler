@@ -335,6 +335,7 @@ namespace PascalCompiler
             state = newState;
             if (c == '\0')
             {
+                yield return new Token(TokenType.EndOfFile, TokenSubType.EndOfFile, "", line, pos, "");
                 yield break;
             }
         }

@@ -10,7 +10,8 @@ namespace PascalCompiler
             Identifier,
             Operator,
             Separator,
-            Constant
+            Constant,
+            EndOfFile,
         }
 
         public enum TokenSubType
@@ -128,7 +129,9 @@ namespace PascalCompiler
             Deprecated,
             Experimental,
             Platform,
-            Unimplemented
+            Unimplemented,
+            // EOF
+            EndOfFile,
         }
 
         public readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>

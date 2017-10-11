@@ -27,6 +27,10 @@ namespace PascalCompiler
                             {
                                 foreach (Tokenizer.Token t in new Tokenizer(reader))
                                 {
+                                    if (t.Type == Tokenizer.TokenType.EndOfFile)
+                                    {
+                                        break;
+                                    }
                                     writer.Write(
                                         "{0, -5}|{1, -5}|{2, -12}|{3, -25}|{4, -35}|{5, -50}",
                                         t.Line,

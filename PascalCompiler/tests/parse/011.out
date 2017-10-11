@@ -1,1 +1,1 @@
-Unexpected EOF at 1:5
+Expected identifier, constant or expression, got EndOfFile at 1:4
