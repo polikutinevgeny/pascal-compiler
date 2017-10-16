@@ -11,7 +11,7 @@ namespace PascalCompiler
             Operator,
             Separator,
             Constant,
-            EndOfFile,
+            EndOfFile
         }
 
         public enum TokenSubType
@@ -34,8 +34,6 @@ namespace PascalCompiler
             Colon,
             Semicolon,
             AddressOf,
-            LShift,
-            RShift,
             Power,
             NEqual,
             SymDiff,
@@ -131,10 +129,10 @@ namespace PascalCompiler
             Platform,
             Unimplemented,
             // EOF
-            EndOfFile,
+            EndOfFile
         }
 
-        public readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
+        private readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
         {
             {"+", TokenSubType.Plus },
             {"-", TokenSubType.Minus },

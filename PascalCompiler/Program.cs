@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PascalCompiler
@@ -11,12 +12,12 @@ namespace PascalCompiler
         // TODO: Token value boxing.
         private static void Main(string[] args)
         {
-            var options = new Options();
+            Options options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
             try
             {
-                using (var reader = new StreamReader(options.InputFile))
-                using (var writer = new StreamWriter(options.OutputFile))
+                using (StreamReader reader = new StreamReader(options.InputFile))
+                using (StreamWriter writer = new StreamWriter(options.OutputFile))
                 {
                     switch (options.Mode)
                     {
@@ -52,11 +53,11 @@ namespace PascalCompiler
                         case "parse":
                             try
                             {
-                                using (var tokenizer = (new Tokenizer(reader)))
+                                using (Tokenizer tokenizer = new Tokenizer(reader))
                                 using (var tokenStream = tokenizer.GetEnumerator())
-                                using (var parser = new Parser(tokenStream))
+                                using (Parser parser = new Parser(tokenStream))
                                 {
-                                    var n = parser.Parse();
+                                    Node n = parser.Parse();
                                     TreePrinter.PrintTree(writer, n, "", true);
                                 }
                             }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using PascalCompiler;
 
 namespace PascalCompiler
 {
@@ -10,8 +7,8 @@ namespace PascalCompiler
     {
         protected Node(List<Node> childs, Tokenizer.Token token)
         {
-            this.Childs = childs;
-            this.Token = token;
+            Childs = childs;
+            Token = token;
         }
 
         public List<Node> Childs { get; set; }
@@ -25,15 +22,6 @@ namespace PascalCompiler
 
     public static class TreePrinter
     {
-//        public static void PrintTree(StreamWriter writer, Node node, int level)
-//        {
-//            writer.Write(new String('\t', level));
-//            writer.WriteLine(node);
-//            foreach (var n in node.Childs ?? Enumerable.Empty<Node>())
-//            {
-//                PrintTree(writer, n, level + 1);
-//            }
-//        }
         public static void PrintTree(StreamWriter writer, Node node, string indent, bool last)
         {
             writer.Write(indent);
@@ -45,7 +33,7 @@ namespace PascalCompiler
             else
             {
                 writer.Write("├─");
-                indent += "| ";
+                indent += "│ ";
             }
             writer.WriteLine(node);
             for (var i = 0; i < node.Childs?.Count; ++i)

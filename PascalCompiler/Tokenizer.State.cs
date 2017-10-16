@@ -2,7 +2,7 @@
 {
     public partial class Tokenizer
     {
-        public enum State
+        private enum State
         {
             Start,
             Identifier,

@@ -108,11 +108,11 @@ namespace PascalCompiler
     {
         uint line = 1;
         uint pos = 0;
-        var state = State.Start;
-        var lexeme = "";
+        State state = State.Start;
+        string lexeme = "";
         while (true)
         {
-            var c = Read();
+            char c = Read();
             c = c != 65535 ? c : '\0';
             ++pos;
             State newState;
@@ -189,7 +189,7 @@ namespace PascalCompiler
                         break;
                     case State.FloatFrac:
                     case State.FloatExpValue:
-                        var provider = new NumberFormatInfo();
+                        NumberFormatInfo provider = new NumberFormatInfo();
                         provider.NumberDecimalSeparator = ".";
                         yield return new DoubleToken(
                             TokenType.Constant,
@@ -333,11 +333,9 @@ namespace PascalCompiler
                 pos = 0;
             }
             state = newState;
-            if (c == '\0')
-            {
-                yield return new Token(TokenType.EndOfFile, TokenSubType.EndOfFile, "", line, pos, "");
-                yield break;
-            }
+            if (c != '\0') continue;
+            yield return new Token(TokenType.EndOfFile, TokenSubType.EndOfFile, "", line, pos, "");
+            yield break;
         }
     }
 
@@ -367,9 +365,9 @@ namespace PascalCompiler
 
     private static string DecodeChars(string input)
     {
-        var output = "";
-        var quoted = false;
-        for (var i = 0; i < input.Length; ++i)
+        string output = "";
+        bool quoted = false;
+        for (int i = 0; i < input.Length; ++i)
         {
             if (input[i] == '\'')
             {
@@ -392,9 +390,9 @@ namespace PascalCompiler
             }
             else if (input[i] == '#' && !quoted)
             {
-                var type = input[++i];
-                var pos = i++;
-                var temp = char.IsDigit(type) ? type.ToString() : "";
+                char type = input[++i];
+                int pos = i++;
+                string temp = char.IsDigit(type) ? type.ToString() : "";
                 for (; i < input.Length && input[i] != '\'' && input[i] != '#'; ++i)
                 {
                     temp += input[i];
