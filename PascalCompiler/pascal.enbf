@@ -1,4 +1,4 @@
-<Program>                  ::= [ 'PROGRAM' <Ident> [ '(' <IdentList> ')' ] ';' ]
+<Program>                  ::= [ 'PROGRAM' <Ident> ';' ]
                                <Block> '.';
 
 <Block>                    ::= [ <DeclSection> ]
@@ -15,7 +15,7 @@
 
 <TypeSection>              ::= 'TYPE' ( <TypeDecl> ';' )*;
 
-<TypeDecl>                 ::= <Ident> '=' <Type> ;
+<TypeDecl>                 ::= <Ident> '=' <Type>;
 
 <TypedConstant>            ::= ( <ConstExpr> | <ArrayConstant> | <RecordConstant> );
 
