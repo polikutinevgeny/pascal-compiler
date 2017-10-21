@@ -1,0 +1,152 @@
+<Program>                  ::= [ 'PROGRAM' <Ident> [ '(' <IdentList> ')' ] ';' ]
+                               <Block> '.';
+
+<Block>                    ::= [ <DeclSection> ]
+                               <CompoundStmt>;
+
+<DeclSection>              ::= ( <ConstSection>     |
+                                 <TypeSection>      |
+                                 <VarSection>       |
+                                 <ProcedureDeclSection> )*;
+
+<ConstSection>             ::= 'CONST' ( <ConstantDecl> ';' )*;
+
+<ConstantDecl>             ::= <Ident> ( '=' <ConstExpr> | ':' <TypeID> '=' <TypedConstant> );
+
+<TypeSection>              ::= 'TYPE' ( <TypeDecl> ';' )*;
+
+<TypeDecl>                 ::= <Ident> '=' <Type> ;
+
+<TypedConstant>            ::= ( <ConstExpr> | <ArrayConstant> | <RecordConstant> );
+
+<ArrayConstant>            ::= '(' ( <TypedConstant> [ ',' <TypedConstant> ]* ) ')';
+
+<RecordConstant>           ::= '(' ( <RecordFieldConstant> [ ';' <RecordFieldConstant> ]* ) ')';
+
+<RecordFieldConstant>      ::= <Ident> ':' <TypedConstant>;
+
+<Type>                     ::= <TypeID>        |
+                               <SimpleType>    |
+                               <StrucType>;
+
+<SimpleType>               ::= ( <OrdinalType> | <RealType> );
+
+<RealType>                 ::= 'REAL';
+
+<OrdinalType>              ::= 'INTEGER' | 'CHAR';
+
+<Subrange>                 ::= <ConstExpr> '..' <ConstExpr>;
+
+<StrucType>                ::= ( <ArrayType> | <RecType> );
+
+<ArrayType>                ::= 'ARRAY' [ '[' <Subrange> [ ',' <Subrange> ]* ']'] 'OF' <Type>;
+
+<RecType>                  ::= 'RECORD'
+                               (<RecordFieldList>)*
+                               'END';
+
+<RecordFieldList>          ::= ( <FieldDecl> [ ';' <FieldDecl> ]* ) [';'];
+
+<FieldDecl>                ::= <IdentList> ':' <Type>;
+
+<VarSection>               ::= 'VAR' ( <VarDecl> ';' )*;
+
+<VarDecl>                  ::= <IdentList> ':' <Type> [ '=' <ConstExpr> ];
+
+<Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
+
+<SimpleExpression>         ::= [ '+' | '-' ] <Term> [ <AddOp> <Term> ]*;
+
+<Term>                     ::= <Factor> [ <MulOp> <Factor> ]*;
+
+<Factor>                   ::= <Designator> [ '(' <ExprList> ')' ] |
+                               <Number>                            |
+                               '(' <Expression> ')'                |
+                               'NOT' <Factor>;
+
+<RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | 'IN' | 'IS' |
+                               'AS' | '=';
+
+<AddOp>                    ::= '+' | '-' | 'OR' | 'XOR';
+
+<MulOp>                    ::= '*' | '/' | 'DIV' | 'MOD' | 'AND' | 'SHL' | 'SHR';
+
+<Designator>               ::= <Ident> [ '.' <Ident> ]*;
+
+<ExprList>                 ::= <Expression> ( ',' <Expression> )*;
+
+<Statement>                ::= [ <SimpleStatement> | <StructStmt> ];
+
+<StmtList>                 ::= <Statement> ( ';' <Statement> )*;
+
+<SimpleStatement>          ::= <Designator> [ '(' <ExprList> ')' ] |
+                               <Designator> ':=' <Expression>';
+
+<StructStmt>               ::= <CompoundStmt>    |
+                               <ConditionalStmt> |
+                               <LoopStmt>;
+
+<CompoundStmt>             ::= 'BEGIN' <StmtList> 'END';
+
+<ConditionalStmt>          ::= <IfStmt>;
+
+<IfStmt>                   ::= 'IF' <Expression> 'THEN' <Statement> [ 'ELSE' <Statement> ];
+
+<LoopStmt>                 ::= <RepeatStmt> | <WhileStmt> | <ForStmt>;
+
+<RepeatStmt>               ::= 'REPEAT' <Statement> 'UNTIL' <Expression>;
+
+<WhileStmt>                ::= 'WHILE' <Expression> 'DO' <Statement>;
+
+<ForStmt>                  ::= 'FOR' <Ident> ':=' <Expression> ( 'TO' | 'DOWNTO' ) <Expression> 'DO' <Statement>;
+
+<WithStmt>                 ::= 'WITH' <IdentList> 'DO' <Statement>;
+
+<ProcedureDeclSection>     ::= <ProcedureDecl>   |
+                               <FunctionDecl>;
+
+<ProcedureDecl>            ::= <ProcedureHeading> ';' <Block> ';';
+
+<FunctionDecl>             ::= <FunctionHeading> ';' <Block> ';';
+
+<FunctionHeading>          ::= 'FUNCTION' <Ident> [ <FormalParameters> ] ':' <Type>;
+
+<ProcedureHeading>         ::= 'PROCEDURE' <Ident> [ <FormalParameters> ];
+
+<FormalParameters>         ::= '(' [ <FormalParam> (';' <FormalParam> )* ] ')';
+
+<FormalParam>              ::= [ 'VAR' | 'CONST' ] <Parameter>;
+
+<Parameter>                ::= <IdentList> [ ':' ( [ 'ARRAY' 'OF' ] <Type> ) ] |
+                               <Ident> ':' <Type> '=' <ConstExpr>;
+
+<IdentList>                ::= <Ident> ( ',' <Ident> )*;
+
+<TypeID>                   ::= <Ident>;
+
+<Ident>                    ::= ['&'] <AlphaChar> ( <AlphaChar> | <NumericChar> )*;
+
+<ConstExpr>                ::= ? An <Expression> which evaluates to a constant at compilation time ?;
+
+<Number>                   ::= <IntNumber> | <RealNumber>;
+
+<RealNumber>               ::= <NumericChar>+ [ "." <NumericChar>+ ] [ "E" [ '+' | '-' ] <NumericChar>+ ];
+
+<IntNumber>                ::= (<NumericChar>+) |
+                               ( '$' <HexNumChar>+ ) |
+                               ( '&' <OctalNumChar>+ ) |
+                               ( '%' <BinNumChar>+ )
+
+<CharConst>                ::= ( "'" <Character> "'" ) | ( '#' 'IntNumber');
+
+<Character>                ::= #32..#127;
+
+<AlphaChar>                ::= 'A'..'Z';
+
+<NumericChar>              ::= '0'..'9';
+
+<HexNumChar>               ::= <NumericChar> | ('A'..'F');
+
+<OctalNumChar>             ::= '0'..'7';
+
+<BinNumChar>               ::= '0' | '1';
