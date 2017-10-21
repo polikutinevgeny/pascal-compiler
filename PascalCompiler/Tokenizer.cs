@@ -19,10 +19,7 @@ namespace PascalCompiler
         public string SourceString { get; set; }
         public uint Line { get; set; }
         public uint Position { get; set; }
-        private readonly string _value;
-
-        public virtual string GetStringValue() => _value;
-
+        public object Value { get; set; }
 
         public Token(TokenType type, TokenSubType subType, string sourceString, uint line, uint position)
         {
@@ -35,44 +32,15 @@ namespace PascalCompiler
 
         public Token(
             TokenType type, TokenSubType subType, string sourceString,
-            uint line, uint position, string value) :
-            this(type, subType, sourceString, line, position) => _value = value;
+            uint line, uint position, object value) :
+            this(type, subType, sourceString, line, position) => Value = value;
 
-        public override string ToString() => $"{Type}({SubType}) at {Line}:{Position}";
+        public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == {Value}";
 
         public void Dispose()
         {
 
         }
-    }
-
-    public class IntToken : Token
-    {
-        private readonly ulong _value;
-
-        public override string GetStringValue() => _value.ToString();
-
-        public IntToken(
-            TokenType type, TokenSubType subType, string sourceString,
-            uint line, uint position, ulong value) :
-            base(type, subType, sourceString, line, position) => _value = value;
-
-        public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{_value}'";
-    }
-
-    public class DoubleToken : Token
-    {
-        private readonly double _value;
-
-        public override string GetStringValue() => _value.ToString(CultureInfo.InvariantCulture);
-
-        public DoubleToken(
-            TokenType type, TokenSubType subType, string sourceString,
-            uint line, uint position, double value) :
-            base(type, subType, sourceString, line, position) => _value = value;
-
-        public override string ToString() => $"{Type}({SubType}) at {Line}:{Position} == '{_value}'";
-
     }
 
     public class TokenizerException : Exception
@@ -176,7 +144,7 @@ namespace PascalCompiler
                         --pos;
                         break;
                     case State.FloatDot:
-                        yield return new IntToken(
+                        yield return new Token(
                             TokenType.Constant,
                             TokenSubType.IntegerConstant,
                             lexeme.Substring(0, lexeme.Length - 2),
@@ -191,7 +159,7 @@ namespace PascalCompiler
                     case State.FloatExpValue:
                         NumberFormatInfo provider = new NumberFormatInfo();
                         provider.NumberDecimalSeparator = ".";
-                        yield return new DoubleToken(
+                        yield return new Token(
                             TokenType.Constant,
                             TokenSubType.FloatConstant,
                             lexeme.Substring(0, lexeme.Length - 1),
@@ -206,7 +174,7 @@ namespace PascalCompiler
                         Token temp;
                         try
                         {
-                            temp = new IntToken(
+                            temp = new Token(
                                 TokenType.Constant,
                                 TokenSubType.IntegerConstant,
                                 lexeme.Substring(0, lexeme.Length - 1),
@@ -296,7 +264,7 @@ namespace PascalCompiler
                         Token temp;
                         try
                         {
-                            temp = new IntToken(
+                            temp = new Token(
                                 TokenType.Constant,
                                 TokenSubType.IntegerConstant,
                                 lexeme.Substring(0, lexeme.Length - 1),

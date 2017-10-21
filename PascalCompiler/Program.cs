@@ -39,7 +39,7 @@ namespace PascalCompiler
                                         t.Position,
                                         t.Type,
                                         t.SubType,
-                                        t.GetStringValue().Replace("\n", "\\n").Replace("\r", "\\r")
+                                        t.Value.ToString().Replace("\n", "\\n").Replace("\r", "\\r")
                                             .Replace("\t", "\\t"),
                                         t.SourceString);
                                     writer.WriteLine();
