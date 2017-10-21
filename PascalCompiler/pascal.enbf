@@ -81,7 +81,15 @@
 <StmtList>                 ::= <Statement> ( ';' <Statement> )*;
 
 <SimpleStatement>          ::= <Designator> [ '(' <ExprList> ')' ] |
-                               <Designator> ':=' <Expression>';
+                               <Designator> ':=' <Expression>'     |
+                               <ReadStatement>                     |
+                               <WriteStatement>;
+
+<ReadStatement>            ::= 'READ' [ '(' <IdentList> ')' ];
+
+<IdentList>                 ::= <Ident> ( ',' <Ident> )*;
+
+<WriteStatement>            ::= 'WRITE' [ '(' <ExprList> ')' ];
 
 <StructStmt>               ::= <CompoundStmt>    |
                                <ConditionalStmt> |
