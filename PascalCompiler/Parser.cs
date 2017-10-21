@@ -33,6 +33,93 @@ namespace PascalCompiler
             return e;
         }
 
+        private ProgramNode ParseProgram()
+        {
+            Tokenizer.Token t = Current;
+            if (t.SubType == Tokenizer.TokenSubType.Program)
+            {
+                Next();
+                Tokenizer.Token n = Current;
+                if (n.SubType == Tokenizer.TokenSubType.Identifier)
+                {
+                    Require(Tokenizer.TokenSubType.Semicolon);
+                    var b = ParseBlock();
+                    Require(Tokenizer.TokenSubType.Dot);
+                    return new ProgramNode(new List<Node> {b}, t, n);
+                }
+                throw new ParserException($"Expected identifier, got {n.SubType}", n.Line, n.Position);
+            }
+            throw new ParserException($"Expected program, got {t.SubType}", t.Line, t.Position);
+        }
+
+        private BlockNode ParseBlock()
+        {
+            var decl = ParseDeclarationPart();
+            var stat = ParseStatementPart();
+            return new BlockNode(new List<Node>{decl, stat}, null);
+        }
+
+        private DeclarationPartNode ParseDeclarationPart()
+        {
+            var t = Current;
+            List<Node> declList = new List<Node>();
+            while (true)
+            {
+                switch (t.SubType)
+                {
+                    case Tokenizer.TokenSubType.Const:
+                        declList.Add(ParseConstDecl());
+                        break;
+                    case Tokenizer.TokenSubType.Var:
+                        declList.Add(ParseVarDecl());
+                        break;
+                    case Tokenizer.TokenSubType.Type:
+                        declList.Add(ParseTypeDecl());
+                        break;
+                    case Tokenizer.TokenSubType.Procedure:
+                        declList.Add(ParseProcDecl());
+                        break;
+                    case Tokenizer.TokenSubType.Function:
+                        declList.Add(ParseFuncDecl());
+                        break;
+                    default:
+                        return new DeclarationPartNode(declList.Count > 0 ? declList : null, null);
+                }
+            }
+        }
+
+        private ConstDeclNode ParseConstDecl()
+        {
+            var t = Current;
+
+            return null;
+        }
+
+        private VarDeclNode ParseVarDecl()
+        {
+            return null;
+        }
+
+        private TypeDeclNode ParseTypeDecl()
+        {
+            return null;
+        }
+
+        private ProcDeclNode ParseProcDecl()
+        {
+            return null;
+        }
+
+        private FuncDeclNode ParseFuncDecl()
+        {
+            return null;
+        }
+
+        private StatementPartNode ParseStatementPart()
+        {
+            return null;
+        }
+
         private ExprNode ParseExpr()
         {
             ExprNode e = ParseTerm();

@@ -16,7 +16,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return Token.GetStringValue();
+            return Token?.GetStringValue() ?? "";
         }
     }
 
@@ -40,6 +40,71 @@ namespace PascalCompiler
             {
                 PrintTree(writer, node.Childs[i], indent, i == node.Childs.Count - 1);
             }
+        }
+    }
+
+    public class ProgramNode : Node
+    {
+        public Tokenizer.Token Name { get; set; }
+        public ProgramNode(List<Node> childs, Tokenizer.Token token, Tokenizer.Token name) : base(childs, token) => Name = name;
+        public override string ToString()
+        {
+            return $"program {Name}";
+        }
+    }
+
+    public class BlockNode : Node
+    {
+        public BlockNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class DeclarationPartNode : Node
+    {
+        public DeclarationPartNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class StatementPartNode : Node {
+        public StatementPartNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class ConstDeclNode : Node
+    {
+        public ConstDeclNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class VarDeclNode : Node
+    {
+        public VarDeclNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class TypeDeclNode : Node
+    {
+        public TypeDeclNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class ProcDeclNode : Node
+    {
+        public ProcDeclNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class FuncDeclNode : Node
+    {
+        public FuncDeclNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
         }
     }
 
