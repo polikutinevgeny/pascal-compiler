@@ -55,14 +55,15 @@
 
 <Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
 
-<SimpleExpression>         ::= [ '+' | '-' ] <Term> [ <AddOp> <Term> ]*;
+<SimpleExpression>         ::= <Term> [ <AddOp> <Term> ]*;
 
 <Term>                     ::= <Factor> [ <MulOp> <Factor> ]*;
 
 <Factor>                   ::= <Designator> [ '(' <ExprList> ')' ] |
                                <Number>                            |
                                '(' <Expression> ')'                |
-                               'NOT' <Factor>;
+                               'NOT' <Factor>                      |
+                               [ '+' | '-' ] <Factor>;
 
 <RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | 'IN' | 'IS' |
                                'AS' | '=';
