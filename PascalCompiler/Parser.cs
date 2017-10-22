@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace PascalCompiler
 {
@@ -17,154 +19,325 @@ namespace PascalCompiler
             }
         }
 
+        private enum Type
+        {
+            Simple,
+            Record,
+            Array,
+        }
+
+        private Dictionary<string, Type> TypeTable { get; set; }
+
         private readonly IEnumerator<Tokenizer.Token> _tokenizer;
 
         private void Next() => _tokenizer.MoveNext();
 
         private Tokenizer.Token Current => _tokenizer.Current;
 
-        public Parser(IEnumerator<Tokenizer.Token> tokenizer) => _tokenizer = tokenizer;
+        public Parser(IEnumerator<Tokenizer.Token> tokenizer)
+        {
+            _tokenizer = tokenizer;
+            TypeTable = new Dictionary<string, Type>
+            {
+                {"integer", Type.Simple},
+                {"float", Type.Simple},
+                {"char", Type.Simple},
+            };
+        }
 
         public Node Parse()
         {
             Next();
-            ExprNode e = ParseExpr();
+            ProgramNode p = ParseProgram();
             Require(Tokenizer.TokenSubType.EndOfFile);
-            return e;
+            return p;
         }
 
         private ProgramNode ParseProgram()
         {
-            Tokenizer.Token t = Current;
-            if (t.SubType == Tokenizer.TokenSubType.Program)
+            var c = Current;
+            string name = "";
+            if (c.SubType == Tokenizer.TokenSubType.Program)
             {
                 Next();
-                Tokenizer.Token n = Current;
-                if (n.SubType == Tokenizer.TokenSubType.Identifier)
-                {
-                    Require(Tokenizer.TokenSubType.Semicolon);
-                    var b = ParseBlock();
-                    Require(Tokenizer.TokenSubType.Dot);
-                    return new ProgramNode(new List<Node> {b}, t, n);
-                }
-                throw new ParserException($"Expected identifier, got {n.SubType}", n.Line, n.Position);
+                var n = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                name = n.Value.ToString();
+                Require(Tokenizer.TokenSubType.Semicolon);
             }
-            throw new ParserException($"Expected program, got {t.SubType}", t.Line, t.Position);
+            var b = ParseBlock();
+            Require(Tokenizer.TokenSubType.Dot);
+            return new ProgramNode(new List<Node> {b}, $"Program '{name}'", c.Line, c.Position);
         }
 
         private BlockNode ParseBlock()
         {
-            var decl = ParseDeclarationPart();
-            var stat = ParseStatementPart();
-            return new BlockNode(new List<Node>{decl, stat}, null);
+            if (Current.SubType != Tokenizer.TokenSubType.Begin)
+            {
+                var d = ParseDeclSection();
+                var c = ParseCompoundStatement();
+                return new BlockNode(new List<Node> {d, c}, "Block", d.Line, d.Position);
+            }
+            else
+            {
+                var c = ParseCompoundStatement();
+                return new BlockNode(new List<Node> {c}, "Block", c.Line, c.Position);
+            }
         }
 
-        private DeclarationPartNode ParseDeclarationPart()
+        private DeclSectionNode ParseDeclSection()
         {
-            var t = Current;
             List<Node> declList = new List<Node>();
+            var c = Current;
             while (true)
             {
-                switch (t.SubType)
+                switch (Current.SubType)
                 {
                     case Tokenizer.TokenSubType.Const:
-                        declList.Add(ParseConstDecl());
+                        declList.Add(ParseConstSection());
                         break;
                     case Tokenizer.TokenSubType.Var:
-                        declList.Add(ParseVarDecl());
+                        declList.Add(ParseVarSection());
                         break;
                     case Tokenizer.TokenSubType.Type:
-                        declList.Add(ParseTypeDecl());
+                        declList.Add(ParseTypeSection());
                         break;
                     case Tokenizer.TokenSubType.Procedure:
-                        declList.Add(ParseProcDecl());
+                        declList.Add(ParseProcedureDecl());
                         break;
                     case Tokenizer.TokenSubType.Function:
-                        declList.Add(ParseFuncDecl());
+                        declList.Add(ParseFunctionDecl());
                         break;
                     default:
-                        return new DeclarationPartNode(declList.Count > 0 ? declList : null, null);
+                        return new DeclSectionNode(declList, "Declarations", c.Line, c.Position);
                 }
             }
         }
 
-        private ConstDeclNode ParseConstDecl()
+        private ConstSectionNode ParseConstSection()
         {
-            var t = Current;
+            Require(Tokenizer.TokenSubType.Const);
+            var c = Current;
+            List<Node> declList = new List<Node>();
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                declList.Add(ParseConstantDecl());
+                Require(Tokenizer.TokenSubType.Semicolon);
+            }
+            if (declList.Count == 0)
+            {
+                throw new ParserException("Empty constant section", c.Line, c.Position);
+            }
+            return new ConstSectionNode(declList, "Constant section", c.Line, c.Position);
+        }
 
-            return null;
+        private ConstantDeclNode ParseConstantDecl()
+        {
+            var c = Current;
+            Next();
+            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                Next();
+                var ce = ParseConstExpr();
+                return new ConstantDeclNode(new List<Node> {ce}, c.Value, c.Line, c.Position);
+            }
+            if (Current.SubType == Tokenizer.TokenSubType.Colon)
+            {
+                Next();
+                var t = ParseType();
+                Require(Tokenizer.TokenSubType.Equal);
+                var tc = ParseTypedConstant(t.Value.ToString());
+                return new ConstantDeclNode(new List<Node> {t, tc}, c.Value, c.Line, c.Position);
+            }
+            throw new ParserException($"Expected '=' or ':', got {Current.SubType}.", Current.Line, Current.Position);
+        }
+
+        private TypedConstantNode ParseTypedConstant(string type)
+        {
+            var c = Current;
+            switch (TypeTable[type])
+            {
+                case Type.Simple:
+                {
+                    var t = ParseConstExpr();
+                    return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                }
+                case Type.Array:
+                {
+                    var t = ParseArrayConstant();
+                    return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                }
+                case Type.Record:
+                {
+                    var t = ParseRecordConstant();
+                    return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                }
+            }
+            throw new InvalidOperationException($"No typed constant found at {c.Line}:{c.Position}");
+        }
+
+        // TODO: Evaluate expression at compile time
+        private ConstExprNode ParseConstExpr()
+        {
+            var e = ParseExpression();
+            return new ConstExprNode(new List<Node> {e}, e.Value, e.Line, e.Position);
+        }
+
+        private ArrayConstantNode ParseArrayConstant()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.LParenthesis);
+            List<Node> arrayElem = new List<Node> {ParseConstExpr()};
+            while (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+            {
+                Require(Tokenizer.TokenSubType.Comma);
+                arrayElem.Add(ParseConstExpr());
+            }
+            Require(Tokenizer.TokenSubType.RParenthesis);
+            return new ArrayConstantNode(arrayElem, "Array constant", c.Line, c.Position);
+        }
+
+        private RecordConstantNode ParseRecordConstant()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.LParenthesis);
+            List<Node> recordElem = new List<Node> {ParseRecordFieldConstant()};
+            while (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+            {
+                Require(Tokenizer.TokenSubType.Semicolon);
+                recordElem.Add(ParseRecordFieldConstant());
+            }
+            return new RecordConstantNode(recordElem, "Record constant", c.Line, c.Position);
+        }
+
+        private RecordFieldConstantNode ParseRecordFieldConstant()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Tokenizer.TokenSubType.Colon);
+            var v = ParseConstExpr();
+            return new RecordFieldConstantNode(new List<Node> {v}, c.Value, c.Line, c.Position);
+        }
+
+        private VarSectionNode ParseVarSection()
+        {
+            Require(Tokenizer.TokenSubType.Var);
+            var c = Current;
+            List<Node> declList = new List<Node>();
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                declList.Add(ParseVarDecl());
+                Require(Tokenizer.TokenSubType.Semicolon);
+            }
+            if (declList.Count == 0)
+            {
+                throw new ParserException("Empty var section", c.Line, c.Position);
+            }
+            return new VarSectionNode(declList, "Var section", c.Line, c.Position);
         }
 
         private VarDeclNode ParseVarDecl()
         {
-            return null;
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Tokenizer.TokenSubType.Colon);
+            var t = ParseType();
+            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                var tc = ParseTypedConstant(t.Value.ToString());
+                return new VarDeclNode(new List<Node> {t, tc}, c.Value, c.Line, c.Position);
+            }
+            return new VarDeclNode(new List<Node> {t}, c.Value, c.Line, c.Position);
+        }
+
+        private TypeSectionNode ParseTypeSection()
+        {
+            Require(Tokenizer.TokenSubType.Type);
+            var c = Current;
+            List<Node> declList = new List<Node>();
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                declList.Add(ParseTypeDecl());
+                Require(Tokenizer.TokenSubType.Semicolon);
+            }
+            if (declList.Count == 0)
+            {
+                throw new ParserException("Empty type section", c.Line, c.Position);
+            }
+            return new TypeSectionNode(declList, "Type section", c.Line, c.Position);
         }
 
         private TypeDeclNode ParseTypeDecl()
         {
-            return null;
-        }
-
-        private ProcDeclNode ParseProcDecl()
-        {
-            return null;
-        }
-
-        private FuncDeclNode ParseFuncDecl()
-        {
-            return null;
-        }
-
-        private StatementPartNode ParseStatementPart()
-        {
-            return null;
-        }
-
-        private ExprNode ParseExpr()
-        {
-            ExprNode e = ParseTerm();
-            Tokenizer.Token t = Current;
-            while (t.SubType == Tokenizer.TokenSubType.Plus || t.SubType == Tokenizer.TokenSubType.Minus)
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Tokenizer.TokenSubType.Equal);
+            var v = ParseType();
+            switch (v)
             {
-                Next();
-                e = new BinOpNode(new List<Node> {e, ParseTerm()}, t);
-                t = Current;
-            }
-            return e;
-        }
-
-        private ExprNode ParseTerm()
-        {
-            ExprNode e = ParseFactor();
-            Tokenizer.Token t = Current;
-            while (t.SubType == Tokenizer.TokenSubType.Asterisk || t.SubType == Tokenizer.TokenSubType.Slash)
-            {
-                Next();
-                e = new BinOpNode(new List<Node> {e, ParseFactor()}, t);
-                t = Current;
-            }
-            return e;
-        }
-
-        private ExprNode ParseFactor()
-        {
-            Tokenizer.Token t = Current;
-            Next();
-            switch (t.SubType)
-            {
-                case Tokenizer.TokenSubType.Identifier:
-                    return new VarNode(null, t);
-                case Tokenizer.TokenSubType.IntegerConstant:
-                case Tokenizer.TokenSubType.FloatConstant:
-                    return new ConstNode(null, t);
-                case Tokenizer.TokenSubType.LParenthesis:
-                    ExprNode e = ParseExpr();
-                    Require(Tokenizer.TokenSubType.RParenthesis);
-                    return e;
+                case ArrayTypeNode _:
+                    TypeTable.Add(v.Value.ToString(), Type.Array);
+                    break;
+                case RecordTypeNode _:
+                    TypeTable.Add(v.Value.ToString(), Type.Record);
+                    break;
                 default:
-                    throw new ParserException($"Expected identifier, constant or expression, got {t.SubType}", t.Line,
-                        t.Position);
+                    TypeTable.Add(v.Value.ToString(), Type.Simple);
+                    break;
             }
+            return new TypeDeclNode(new List<Node> { v }, c.Value, c.Line, c.Position);
+        }
+
+        private TypeNode ParseType()
+        {
+            var c = Current;
+            if (c.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                if (TypeTable.ContainsKey(c.Value.ToString()))
+                {
+                    return new TypeNode(null, c.Value, c.Line, c.Position);
+                }
+                throw new ParserException($"Identifier not found '{c.Value}'", c.Line, c.Position);
+            }
+            if (c.SubType == Tokenizer.TokenSubType.Array)
+            {
+                return ParseArrayType();
+            }
+            if (c.SubType == Tokenizer.TokenSubType.Record)
+            {
+                return ParseRecordType();
+            }
+            throw new ParserException($"Expected type, found '{c.SubType}'", c.Line, c.Position);
+        }
+
+        private ArrayTypeNode ParseArrayType()
+        {
+            return null;
+        }
+
+        private RecordTypeNode ParseRecordType()
+        {
+            return null;
+        }
+
+        private ProcedureDeclNode ParseProcedureDecl()
+        {
+            return null;
+        }
+
+        private FunctionDeclNode ParseFunctionDecl()
+        {
+            return null;
+        }
+
+        private CompoundStatementNode ParseCompoundStatement()
+        {
+            return null;
+        }
+
+        private ExpressionNode ParseExpression()
+        {
+            return null;
         }
 
         private void Require(Tokenizer.TokenSubType type)

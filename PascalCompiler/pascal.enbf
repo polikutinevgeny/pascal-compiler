@@ -7,23 +7,26 @@
 <DeclSection>              ::= ( <ConstSection>     |
                                  <TypeSection>      |
                                  <VarSection>       |
-                                 <ProcedureDeclSection> )*;
+                                 <ProcedureDecl>    |
+                                 <FunctionDecl>     )*;
 
-<ConstSection>             ::= 'CONST' ( <ConstantDecl> ';' )*;
+<ConstSection>             ::= 'CONST' ( <ConstantDecl> ';' )+;
 
-<ConstantDecl>             ::= <Ident> ( '=' <ConstExpr> | ':' <TypeID> '=' <TypedConstant> );
+<ConstantDecl>             ::= <Ident> ( '=' <ConstExpr> | ':' <Type> '=' <TypedConstant> );
 
-<TypeSection>              ::= 'TYPE' ( <TypeDecl> ';' )*;
+<TypeSection>              ::= 'TYPE' ( <TypeDecl> ';' )+;
 
 <TypeDecl>                 ::= <Ident> '=' <Type>;
 
 <TypedConstant>            ::= ( <ConstExpr> | <ArrayConstant> | <RecordConstant> );
 
-<ArrayConstant>            ::= '(' ( <TypedConstant> [ ',' <TypedConstant> ]* ) ')';
+<ArrayConstant>            ::= '(' 
+                               ( <ConstExpr> [ ',' <ConstExpr> ]* )
+                               ')';
 
 <RecordConstant>           ::= '(' ( <RecordFieldConstant> [ ';' <RecordFieldConstant> ]* ) ')';
 
-<RecordFieldConstant>      ::= <Ident> ':' <TypedConstant>;
+<RecordFieldConstant>      ::= <Ident> ':' <ConstExpr>;
 
 <Type>                     ::= <TypeID>        |
                                <SimpleType>    |
@@ -49,9 +52,9 @@
 
 <FieldDecl>                ::= <IdentList> ':' <Type>;
 
-<VarSection>               ::= 'VAR' ( <VarDecl> ';' )*;
+<VarSection>               ::= 'VAR' ( <VarDecl> ';' )+;
 
-<VarDecl>                  ::= <IdentList> ':' <Type> [ '=' <ConstExpr> ];
+<VarDecl>                  ::= <IdentList> ':' <Type> [ '=' <TypedConst> ];
 
 <Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
 
@@ -72,7 +75,9 @@
 
 <MulOp>                    ::= '*' | '/' | 'DIV' | 'MOD' | 'AND' | 'SHL' | 'SHR';
 
-<Designator>               ::= <Ident> [ '.' <Ident> ]*;
+<Designator>               ::= <Ident> [ '.' <Ident> ]* [ <DesignatorSubElement> ]*;
+
+<DesignatorSubElement>     ::= '[' <ExprList> ']';
 
 <ExprList>                 ::= <Expression> ( ',' <Expression> )*;
 
@@ -81,15 +86,15 @@
 <StmtList>                 ::= <Statement> ( ';' <Statement> )*;
 
 <SimpleStatement>          ::= <Designator> [ '(' <ExprList> ')' ] |
-                               <Designator> ':=' <Expression>'     |
+                               <Designator> (':=' | '+=' | '-=' | '*=' | '/=') <Expression>'     |
                                <ReadStatement>                     |
                                <WriteStatement>;
 
-<ReadStatement>            ::= 'READ' [ '(' <IdentList> ')' ];
+<ReadStatement>            ::= 'READ' [ '(' <IdentList> | <String> ')' ];
 
 <IdentList>                 ::= <Ident> ( ',' <Ident> )*;
 
-<WriteStatement>            ::= 'WRITE' [ '(' <ExprList> ')' ];
+<WriteStatement>            ::= 'WRITE' [ '(' <ExprList> | <String> ')' ];
 
 <StructStmt>               ::= <CompoundStmt>    |
                                <ConditionalStmt> |
@@ -110,9 +115,6 @@
 <ForStmt>                  ::= 'FOR' <Ident> ':=' <Expression> ( 'TO' | 'DOWNTO' ) <Expression> 'DO' <Statement>;
 
 <WithStmt>                 ::= 'WITH' <IdentList> 'DO' <Statement>;
-
-<ProcedureDeclSection>     ::= <ProcedureDecl>   |
-                               <FunctionDecl>;
 
 <ProcedureDecl>            ::= <ProcedureHeading> ';' <Block> ';';
 
@@ -146,7 +148,9 @@
                                ( '&' <OctalNumChar>+ ) |
                                ( '%' <BinNumChar>+ )
 
-<CharConst>                ::= ( "'" <Character> "'" ) | ( '#' 'IntNumber');
+<CharConst>                ::= ( "'" <Character> "'" ) | ( '#' <IntNumber>);
+
+<String>                   ::= (( "'" <Character>+ "'" ) | ( '#' <IntNumber>))+;
 
 <Character>                ::= #32..#127;
 

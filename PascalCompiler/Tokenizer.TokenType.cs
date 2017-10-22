@@ -129,7 +129,10 @@ namespace PascalCompiler
             Platform,
             Unimplemented,
             // EOF
-            EndOfFile
+            EndOfFile,
+            // Read/write
+            Read,
+            Write,
         }
 
         private readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
@@ -239,7 +242,9 @@ namespace PascalCompiler
             {"deprecated", TokenSubType.Deprecated },
             {"experimental", TokenSubType.Experimental },
             {"platform", TokenSubType.Platform },
-            {"unimplemented", TokenSubType.Unimplemented }
+            {"unimplemented", TokenSubType.Unimplemented },
+            {"read", TokenSubType.Read },
+            {"write", TokenSubType.Write },
         };
     }
 }
