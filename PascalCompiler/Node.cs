@@ -72,7 +72,7 @@ namespace PascalCompiler
         }
     }
 
-    public class ConstExprNode : Node
+    public class ConstExprNode : ExpressionNode
     {
         public ConstExprNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
@@ -397,6 +397,13 @@ namespace PascalCompiler
     public class ConstNode : Node
     {
         public ConstNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class CallNode : Node
+    {
+        public CallNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }

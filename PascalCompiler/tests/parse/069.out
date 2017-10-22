@@ -1,0 +1,27 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Function
+    │   ├─Function heading: foo
+    │   │ ├─Formal parameters
+    │   │ └─integer
+    │   └─Block
+    │     ├─Declarations
+    │     │ └─Procedure
+    │     │   ├─Procedure heading: bar
+    │     │   │ └─Formal parameters
+    │     │   └─Block
+    │     │     └─Compound statement
+    │     │       └─Statement list
+    │     │         └─Assignment statement
+    │     │           ├─Designator
+    │     │           │ └─result
+    │     │           └─30
+    │     └─Compound statement
+    │       └─Statement list
+    │         └─Assignment statement
+    │           ├─Designator
+    │           │ └─result
+    │           └─4
+    └─Compound statement
+      └─Statement list

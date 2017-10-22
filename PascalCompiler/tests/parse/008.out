@@ -1,1 +1,28 @@
-Expected identifier, constant or expression, got EndOfFile at 1:2
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   └─a
+    │ └─Constant section
+    │   └─b
+    │     └─30
+    └─Compound statement
+      └─Statement list
+        ├─Assignment statement
+        │ ├─Designator
+        │ │ └─a
+        │ └─3
+        └─Assignment statement
+          ├─Designator
+          │ └─a
+          └─mod
+            ├─div
+            │ ├─*
+            │ │ ├─Designator
+            │ │ │ └─a
+            │ │ └─Designator
+            │ │   └─b
+            │ └─20
+            └─20

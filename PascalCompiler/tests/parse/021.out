@@ -1,0 +1,78 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Type section
+    │ │ └─tpoint
+    │ │   └─Record
+    │ │     └─Field list
+    │ │       └─Field declaration
+    │ │         ├─integer
+    │ │         ├─x
+    │ │         └─y
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─tpoint
+    │ │   ├─a
+    │ │   └─n
+    │ └─Function
+    │   ├─Function heading: foo
+    │   │ ├─Formal parameters
+    │   │ └─integer
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    └─Compound statement
+      └─Statement list
+        ├─Assignment statement
+        │ ├─Designator
+        │ │ ├─a
+        │ │ └─x
+        │ └─20
+        └─If
+          ├─and
+          │ ├─<=
+          │ │ ├─Designator
+          │ │ │ └─n
+          │ │ └─30
+          │ └─<>
+          │   ├─Designator
+          │   │ └─n
+          │   └─0
+          ├─If
+          │ ├─=
+          │ │ ├─Designator
+          │ │ │ └─a
+          │ │ └─-
+          │ │   └─1
+          │ ├─Compound statement
+          │ │ └─Statement list
+          │ │   ├─Assignment statement
+          │ │   │ ├─Designator
+          │ │   │ │ └─n
+          │ │   │ └─Designator
+          │ │   │   └─a
+          │ │   └─Assignment statement
+          │ │     ├─Designator
+          │ │     │ ├─a
+          │ │     │ └─x
+          │ │     └─+
+          │ │       ├─Designator
+          │ │       │ ├─n
+          │ │       │ └─y
+          │ │       └─Call in expression
+          │ │         └─Designator
+          │ │           └─foo
+          │ └─Assignment statement
+          │   ├─Designator
+          │   │ ├─a
+          │   │ └─y
+          │   └─50
+          └─Assignment statement
+            ├─Designator
+            │ ├─a
+            │ └─y
+            └─*
+              ├─Designator
+              │ ├─a
+              │ └─x
+              └─13

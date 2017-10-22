@@ -1,1 +1,5 @@
-25+5*10*20+30
+var
+   a: integer;
+begin
+   a := 3;
+end.

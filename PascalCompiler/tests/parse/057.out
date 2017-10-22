@@ -1,0 +1,9 @@
+└─Program ''
+  └─Block
+    └─Compound statement
+      └─Statement list
+        └─While
+          ├─1
+          └─Call in statement
+            └─Designator
+              └─continue

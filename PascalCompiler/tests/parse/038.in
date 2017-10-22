@@ -1,0 +1,18 @@
+const
+   aaa = 30;
+   bbb = -40;
+var
+   n: integer;
+   i,j: integer;
+   a: array[0..100] of integer;
+begin
+   for i := 0 to n do
+   begin
+      a[i] := 0;
+      for j := bbb - 40 to aaa + 20 do
+         if j mod 2 = 0 then
+            a[j] := a[j] + 1
+         else
+            a[j] := a[j] + 2;
+   end;
+end.

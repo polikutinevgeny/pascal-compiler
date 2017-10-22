@@ -1,0 +1,8 @@
+const
+   a = 50 * 50;
+var
+   i,n: integer;
+begin
+   for i := 0 to n do
+      n := a + 1;
+end.

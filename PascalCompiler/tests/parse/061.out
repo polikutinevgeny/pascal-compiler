@@ -1,0 +1,21 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Var section
+    │   └─Variable declaration
+    │     ├─integer
+    │     └─i
+    └─Compound statement
+      └─Statement list
+        └─For
+          ├─i
+          ├─0
+          ├─10
+          └─Compound statement
+            └─Statement list
+              ├─Call in statement
+              │ └─Designator
+              │   └─break
+              └─Call in statement
+                └─Designator
+                  └─continue

@@ -1,0 +1,78 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Type section
+    │ │ └─arry
+    │ │   └─Array
+    │ │     ├─integer
+    │ │     └─Range
+    │ │       ├─0
+    │ │       └─200
+    │ └─Var section
+    │   ├─Variable declaration
+    │   │ ├─integer
+    │   │ ├─a
+    │   │ ├─b
+    │   │ ├─i
+    │   │ └─n
+    │   └─Variable declaration
+    │     ├─arry
+    │     └─arr
+    └─Compound statement
+      └─Statement list
+        └─Repeat
+          ├─Statement list
+          │ ├─Assignment statement
+          │ │ ├─Designator
+          │ │ │ └─n
+          │ │ └─-
+          │ │   ├─Designator
+          │ │   │ └─n
+          │ │   └─1
+          │ ├─While
+          │ │ ├─<>
+          │ │ │ ├─Designator
+          │ │ │ │ └─n
+          │ │ │ └─1
+          │ │ └─Assignment statement
+          │ │   ├─Designator
+          │ │   │ └─b
+          │ │   └─shl
+          │ │     ├─Designator
+          │ │     │ └─n
+          │ │     └─1
+          │ └─For
+          │   ├─i
+          │   ├─0
+          │   ├─Designator
+          │   │ └─n
+          │   └─Compound statement
+          │     └─Statement list
+          │       ├─Assignment statement
+          │       │ ├─Designator
+          │       │ │ ├─arry
+          │       │ │ └─Expression list
+          │       │ │   └─Designator
+          │       │ │     └─i
+          │       │ └─*
+          │       │   ├─Designator
+          │       │   │ ├─arry
+          │       │   │ └─Expression list
+          │       │   │   └─Designator
+          │       │   │     └─i
+          │       │   └─Designator
+          │       │     └─b
+          │       └─Assignment statement
+          │         ├─Designator
+          │         │ ├─arry
+          │         │ └─Expression list
+          │         │   └─-
+          │         │     ├─Designator
+          │         │     │ └─n
+          │         │     └─Designator
+          │         │       └─i
+          │         └─0
+          └─>
+            ├─Designator
+            │ └─a
+            └─0

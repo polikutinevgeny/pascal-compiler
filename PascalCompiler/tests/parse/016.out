@@ -1,1 +1,32 @@
-Expected identifier, constant or expression, got Minus at 1:1
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Function
+    │ │ ├─Function heading: foo
+    │ │ │ ├─Formal parameters
+    │ │ │ └─integer
+    │ │ └─Block
+    │ │   ├─Declarations
+    │ │   │ └─Var section
+    │ │   │   └─Variable declaration
+    │ │   │     ├─integer
+    │ │   │     └─a
+    │ │   └─Compound statement
+    │ │     └─Statement list
+    │ │       └─Call in statement
+    │ │         └─Designator
+    │ │           └─foo
+    │ └─Var section
+    │   └─Variable declaration
+    │     ├─integer
+    │     └─a
+    └─Compound statement
+      └─Statement list
+        └─If
+          ├─Call in expression
+          │ └─Designator
+          │   └─foo
+          └─Assignment statement
+            ├─Designator
+            │ └─a
+            └─30

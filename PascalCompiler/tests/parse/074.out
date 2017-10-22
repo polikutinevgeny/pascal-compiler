@@ -1,0 +1,22 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   └─a
+    │ └─Procedure
+    │   ├─Procedure heading: foo
+    │   │ └─Formal parameters
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    └─Compound statement
+      └─Statement list
+        └─Write
+          └─Expression list
+            ├─Designator
+            │ └─a
+            └─Call in expression
+              └─Designator
+                └─foo

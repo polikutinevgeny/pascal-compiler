@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 
 namespace PascalCompiler
 {
@@ -12,6 +14,7 @@ namespace PascalCompiler
         // TODO: Token value boxing.
         private static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
             Options options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
             try

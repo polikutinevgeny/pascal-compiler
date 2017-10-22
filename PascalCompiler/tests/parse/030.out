@@ -1,0 +1,47 @@
+└─Program 'read_'
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   ├─n
+    │ │   └─a
+    │ └─Procedure
+    │   ├─Procedure heading: readln
+    │   │ └─Formal parameters
+    │   │   └─Var Parameter
+    │   │     ├─integer
+    │   │     └─n
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    └─Compound statement
+      └─Statement list
+        └─While
+          ├─<
+          │ ├─Designator
+          │ │ └─n
+          │ └─0
+          └─While
+            ├─<>
+            │ ├─Designator
+            │ │ └─a
+            │ └─0
+            └─Compound statement
+              └─Statement list
+                ├─Call in statement
+                │ ├─Designator
+                │ │ └─readln
+                │ └─Expression list
+                │   └─Designator
+                │     └─n
+                └─Assignment statement
+                  ├─Designator
+                  │ └─a
+                  └─+
+                    ├─+
+                    │ ├─Designator
+                    │ │ └─a
+                    │ └─Designator
+                    │   └─n
+                    └─1

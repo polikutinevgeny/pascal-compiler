@@ -10,4 +10,4 @@ Line |Pos  |Type        |Subtype                  |Value                        
 2    |5    |Operator    |Equal                    |=                                  |=                                                 
 3    |1    |Operator    |LEqual                   |<=                                 |<=                                                
 3    |3    |Operator    |Equal                    |=                                  |=                                                 
-3    |4    |Operator    |More                     |>                                  |>                                                 
+3    |4    |Operator    |Greater                  |>                                  |>                                                 

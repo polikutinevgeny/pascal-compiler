@@ -1,25 +1,26 @@
-└─+
-  ├─+
-  │ ├─+
-  │ │ ├─25
-  │ │ └─*
-  │ │   ├─*
-  │ │   │ ├─5
-  │ │   │ └─10
-  │ │   └─20
-  │ └─/
-  │   ├─*
-  │   │ ├─30
-  │   │ └─40
-  │   └─50
-  └─+
-    ├─-
-    │ ├─*
-    │ │ ├─a
-    │ │ └─b
-    │ └─*
-    │   ├─/
-    │   │ ├─c
-    │   │ └─d
-    │   └─e
-    └─k
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   └─a
+    │ └─Constant section
+    │   └─b
+    │     └─30
+    └─Compound statement
+      └─Statement list
+        ├─Assignment statement
+        │ ├─Designator
+        │ │ └─a
+        │ └─3
+        └─Assignment statement
+          ├─Designator
+          │ └─a
+          └─div
+            ├─*
+            │ ├─Designator
+            │ │ └─a
+            │ └─Designator
+            │   └─b
+            └─20

@@ -1,1 +1,14 @@
-Expected identifier, constant or expression, got EndOfFile at 1:4
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Procedure
+    │   ├─Procedure heading: foo
+    │   │ └─Formal parameters
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    └─Compound statement
+      └─Statement list
+        └─Call in statement
+          └─Designator
+            └─foo

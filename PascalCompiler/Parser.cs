@@ -39,7 +39,7 @@ namespace PascalCompiler
             TypeTable = new Dictionary<string, Type>
             {
                 {"integer", Type.Simple},
-                {"float", Type.Simple},
+                {"real", Type.Simple},
                 {"char", Type.Simple},
             };
         }
@@ -176,7 +176,7 @@ namespace PascalCompiler
         private ConstExprNode ParseConstExpr()
         {
             var e = ParseExpression();
-            return new ConstExprNode(new List<Node> {e}, e.Value, e.Line, e.Position);
+            return new ConstExprNode(e.Childs, e.Value, e.Line, e.Position);
         }
 
         private ArrayConstantNode ParseArrayConstant()
@@ -236,20 +236,24 @@ namespace PascalCompiler
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
+            var tmp = Current;
             List<Node> childs = new List<Node> {new VarNode(null, c)};
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            while (tmp.SubType == Tokenizer.TokenSubType.Comma)
             {
-                Require(Tokenizer.TokenSubType.Comma);
-                childs.Add(new VarNode(null, Current));
+                Next();
+                tmp = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                childs.Add(new VarNode(null, tmp));
+                tmp = Current;
             }
             Require(Tokenizer.TokenSubType.Colon);
-            var t = ParseType();
+            childs.Insert(0, ParseType());
             if (childs.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
             {
-                var tc = ParseTypedConstant(t.Value.ToString());
-                return new VarDeclNode(new List<Node> {t, tc}, c.Value, c.Line, c.Position);
+                childs.Add(ParseTypedConstant(childs[0].Value.ToString()));
+                return new VarDeclNode(childs, c.Value, c.Line, c.Position);
             }
-            return new VarDeclNode(new List<Node> {t}, c.Value, c.Line, c.Position);
+            return new VarDeclNode(childs, "Variable declaration", c.Line, c.Position);
         }
 
         private TypeSectionNode ParseTypeSection()
@@ -278,13 +282,13 @@ namespace PascalCompiler
             switch (v)
             {
                 case ArrayTypeNode _:
-                    TypeTable.Add(v.Value.ToString(), Type.Array);
+                    TypeTable.Add(c.Value.ToString(), Type.Array);
                     break;
                 case RecordTypeNode _:
-                    TypeTable.Add(v.Value.ToString(), Type.Record);
+                    TypeTable.Add(c.Value.ToString(), Type.Record);
                     break;
                 default:
-                    TypeTable.Add(v.Value.ToString(), Type.Simple);
+                    TypeTable.Add(c.Value.ToString(), Type.Simple);
                     break;
             }
             return new TypeDeclNode(new List<Node> {v}, c.Value, c.Line, c.Position);
@@ -369,10 +373,13 @@ namespace PascalCompiler
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
             List<Node> childs = new List<Node> {new FieldNode(null, c)};
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            var t = Current;
+            while (t.SubType == Tokenizer.TokenSubType.Comma)
             {
-                Require(Tokenizer.TokenSubType.Comma);
-                childs.Add(new FieldNode(null, Current));
+                Next();
+                t = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                childs.Add(new FieldNode(null, t));
             }
             Require(Tokenizer.TokenSubType.Colon);
             childs.Insert(0, ParseType());
@@ -400,7 +407,6 @@ namespace PascalCompiler
             {
                 childs.Add(ParseFormalParameters());
             }
-            Require(Tokenizer.TokenSubType.Semicolon);
             return new ProcedureHeadingNode(childs.Count > 0 ? childs : null, $"Procedure heading: {i.Value}", c.Line,
                 c.Position);
         }
@@ -424,6 +430,7 @@ namespace PascalCompiler
                 Require(Tokenizer.TokenSubType.Semicolon);
                 parameters.Add(ParseFormalParam());
             }
+            Require(Tokenizer.TokenSubType.RParenthesis);
             return new FormalParametersNode(parameters.Count > 0 ? parameters : null, "Formal parameters", c.Line,
                 c.Position);
         }
@@ -481,12 +488,17 @@ namespace PascalCompiler
         private VarParameterNode ParseVarParameter()
         {
             var c = Current;
+            Require(Tokenizer.TokenSubType.Var);
+            var tmp = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> {new ParamNode(null, c)};
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            List<Node> childs = new List<Node> {new ParamNode(null, tmp)};
+            while (Current.SubType == Tokenizer.TokenSubType.Comma)
             {
-                Require(Tokenizer.TokenSubType.Comma);
-                childs.Add(new ParamNode(null, Current));
+                Next();
+                tmp = Current;
+                Next();
+                childs.Add(new ParamNode(null, tmp));
+                tmp = Current;
             }
             Require(Tokenizer.TokenSubType.Colon);
             if (Current.SubType == Tokenizer.TokenSubType.Array)
@@ -517,7 +529,7 @@ namespace PascalCompiler
         private FunctionDeclNode ParseFunctionDecl()
         {
             var c = Current;
-            var h = ParseProcedureHeading();
+            var h = ParseFunctionHeading();
             Require(Tokenizer.TokenSubType.Semicolon);
             var b = ParseBlock();
             Require(Tokenizer.TokenSubType.Semicolon);
@@ -539,7 +551,6 @@ namespace PascalCompiler
             var t = Current;
             Require(Tokenizer.TokenSubType.Identifier);
             childs.Add(new TypeNode(null, t.Value, t.Line, t.Position));
-            Require(Tokenizer.TokenSubType.Semicolon);
             return new FunctionHeadingNode(childs, $"Function heading: {i.Value}", c.Line,
                 c.Position);
         }
@@ -561,9 +572,9 @@ namespace PascalCompiler
                 return new StatementListNode(null, "Statement list", c.Line, c.Position);
             }
             List<Node> childs = new List<Node> {ParseStatement()};
-            while (Current.SubType != Tokenizer.TokenSubType.End)
+            while (Current.SubType == Tokenizer.TokenSubType.Semicolon)
             {
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Next();
                 var t = ParseStatement();
                 if (t != null)
                 {
@@ -607,10 +618,15 @@ namespace PascalCompiler
                 case Tokenizer.TokenSubType.LParenthesis:
                 {
                     Next();
-                    var e = ParseExpressionList();
-                    Require(Tokenizer.TokenSubType.RParenthesis);
-                    return new SimpleStatementNode(new List<Node> {d, e}, "Call in statement", c.Line, c.Position);
-                }
+                    if (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+                    {
+                        var e = ParseExpressionList();
+                        Require(Tokenizer.TokenSubType.RParenthesis);
+                        return new SimpleStatementNode(new List<Node> {d, e}, "Call in statement", c.Line, c.Position);
+                    }
+                    Next();
+                    return new SimpleStatementNode(new List<Node> { d }, "Call in statement", c.Line, c.Position);
+                    }
                 case Tokenizer.TokenSubType.Assign:
                 case Tokenizer.TokenSubType.AsteriskAssign:
                 case Tokenizer.TokenSubType.SlashAssign:
@@ -619,10 +635,10 @@ namespace PascalCompiler
                 {
                     Next();
                     var e = ParseExpression();
-                    return new SimpleStatementNode(new List<Node> { d, e }, "Assignment statement", c.Line, c.Position);
+                    return new SimpleStatementNode(new List<Node> {d, e}, "Assignment statement", c.Line, c.Position);
                 }
             }
-            throw new ParserException($"Unexpected token {Current.SubType}", Current.Line, Current.Position);
+            return new SimpleStatementNode(new List<Node> { d }, "Call in statement", c.Line, c.Position);
         }
 
         private DesignatorNode ParseDesignator()
@@ -635,13 +651,20 @@ namespace PascalCompiler
                 Next();
                 var i = Current;
                 Require(Tokenizer.TokenSubType.Identifier);
-                childs.Add(new IdentNode(null, Current));
+                childs.Add(new IdentNode(null, i));
             }
             if (Current.SubType == Tokenizer.TokenSubType.LBracket)
             {
                 Next();
-                childs.Add(ParseExpressionList());
-                Require(Tokenizer.TokenSubType.RBracket);
+                if (Current.SubType != Tokenizer.TokenSubType.RBracket)
+                {
+                    childs.Add(ParseExpressionList());
+                    Require(Tokenizer.TokenSubType.RBracket);
+                }
+                else
+                {
+                    Next();
+                }
             }
             return new DesignatorNode(childs, "Designator", c.Line, c.Position);
         }
@@ -683,11 +706,12 @@ namespace PascalCompiler
                 {
                     var s = Current;
                     Next();
-                    return new WriteStatementNode(new List<Node> { new StringNode(null, s) }, "Write", c.Line, c.Position);
+                    return new WriteStatementNode(new List<Node> {new StringNode(null, s)}, "Write", c.Line,
+                        c.Position);
                 }
                 var e = ParseExpressionList();
                 Require(Tokenizer.TokenSubType.RParenthesis);
-                return new WriteStatementNode(new List<Node> { e }, "Write", c.Line, c.Position);
+                return new WriteStatementNode(new List<Node> {e}, "Write", c.Line, c.Position);
             }
             return new WriteStatementNode(null, "Write", c.Line, c.Position);
         }
@@ -721,7 +745,7 @@ namespace PascalCompiler
             {
                 Next();
                 var e = ParseStatement();
-                return new IfStatementNode(new List<Node> { i, t, e }, "If", c.Line, c.Position);
+                return new IfStatementNode(new List<Node> {i, t, e}, "If", c.Line, c.Position);
             }
             return new IfStatementNode(new List<Node> {i, t}, "If", c.Line, c.Position);
         }
@@ -738,7 +762,7 @@ namespace PascalCompiler
             var u = ParseExpression();
             Require(Tokenizer.TokenSubType.Do);
             var s = ParseStatement();
-            return new ForStatementNode(new List<Node> {new IdentNode(null, i) , e, u, s}, "For", c.Line, c.Position);
+            return new ForStatementNode(new List<Node> {new IdentNode(null, i), e, u, s}, "For", c.Line, c.Position);
         }
 
         private WhileStatementNode ParseWhileStatement()
@@ -755,10 +779,10 @@ namespace PascalCompiler
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Repeat);
-            var s = ParseStatement();
+            var s = ParseStatementList();
             Require(Tokenizer.TokenSubType.Until);
             var e = ParseExpression();
-            return new RepeatStatementNode(new List<Node> { s, e }, "Repeat", c.Line, c.Position);
+            return new RepeatStatementNode(new List<Node> {s, e}, "Repeat", c.Line, c.Position);
         }
 
         private static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
@@ -823,7 +847,7 @@ namespace PascalCompiler
             while (MulOps.Contains(c.SubType))
             {
                 Next();
-                f = new BinOpNode(new List<Node> { f, ParseFactor() }, c.Value, c.Line, c.Position);
+                f = new BinOpNode(new List<Node> {f, ParseFactor()}, c.Value, c.Line, c.Position);
                 c = Current;
             }
             return f;
@@ -835,7 +859,20 @@ namespace PascalCompiler
             switch (c.SubType)
             {
                 case Tokenizer.TokenSubType.Identifier:
-                    return ParseDesignator();
+                    var d = ParseDesignator();
+                    if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
+                    {
+                        Next();
+                        if (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+                        {
+                            var ex = ParseExpressionList();
+                            Require(Tokenizer.TokenSubType.RParenthesis);
+                            return new CallNode(new List<Node> {d, ex}, "Call in expression", c.Line, c.Position);
+                        }
+                        Next();
+                        return new CallNode(new List<Node> { d }, "Call in expression", c.Line, c.Position);
+                    }
+                    return d;
                 case Tokenizer.TokenSubType.IntegerConstant:
                 case Tokenizer.TokenSubType.FloatConstant:
                     Next();

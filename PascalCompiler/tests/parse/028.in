@@ -1,0 +1,30 @@
+program factorial;
+var
+   n: integer;
+
+   procedure readln(var n: integer);
+   begin
+      //read number
+      n := 30;
+   end;
+
+   function fac(n: integer): integer;
+	var
+		res: integer;
+   begin
+      if n = 0 then
+         res := 1
+      else
+         res := n * fac(n - 1);
+   end;
+
+begin
+   readln(n);
+   if n < 0 then
+      n := -n
+   else
+   begin
+      n := n + 1
+   end;
+   fac(n);
+end.

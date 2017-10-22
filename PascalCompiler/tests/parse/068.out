@@ -1,0 +1,16 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Function
+    │   ├─Function heading: foo
+    │   │ ├─Formal parameters
+    │   │ └─char
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    │         └─Assignment statement
+    │           ├─Designator
+    │           │ └─result
+    │           └─43
+    └─Compound statement
+      └─Statement list

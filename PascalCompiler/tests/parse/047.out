@@ -1,0 +1,73 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   ├─a
+    │ │   ├─b
+    │ │   ├─i
+    │ │   └─n
+    │ └─Function
+    │   ├─Function heading: foo
+    │   │ ├─Formal parameters
+    │   │ │ └─Var Parameter
+    │   │ │   ├─integer
+    │   │ │   ├─a
+    │   │ │   └─b
+    │   │ └─integer
+    │   └─Block
+    │     ├─Declarations
+    │     │ └─Var section
+    │     │   └─Variable declaration
+    │     │     ├─integer
+    │     │     └─i
+    │     └─Compound statement
+    │       └─Statement list
+    │         └─For
+    │           ├─i
+    │           ├─0
+    │           ├─Designator
+    │           │ └─n
+    │           └─Compound statement
+    │             └─Statement list
+    │               └─Assignment statement
+    │                 ├─Designator
+    │                 │ └─result
+    │                 └─*
+    │                   ├─Designator
+    │                   │ └─result
+    │                   └─20
+    └─Compound statement
+      └─Statement list
+        └─Repeat
+          ├─Statement list
+          │ ├─Assignment statement
+          │ │ ├─Designator
+          │ │ │ └─n
+          │ │ └─30
+          │ ├─Assignment statement
+          │ │ ├─Designator
+          │ │ │ └─n
+          │ │ └─+
+          │ │   ├─Designator
+          │ │   │ └─n
+          │ │   └─Call in expression
+          │ │     ├─Designator
+          │ │     │ └─foo
+          │ │     └─Expression list
+          │ │       ├─Designator
+          │ │       │ └─a
+          │ │       └─Designator
+          │ │         └─b
+          │ └─Assignment statement
+          │   ├─Designator
+          │   │ └─a
+          │   └─-
+          │     ├─Designator
+          │     │ └─n
+          │     └─20
+          └─>
+            ├─Designator
+            │ └─a
+            └─0

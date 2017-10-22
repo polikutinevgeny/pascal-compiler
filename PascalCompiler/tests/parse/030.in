@@ -1,0 +1,17 @@
+program read_;
+var
+   n, a: integer;
+
+   procedure readln(var n: integer);
+   begin
+      //some block
+   end;
+
+begin
+   while n < 0 do
+      while a <> 0 do
+      begin
+         readln(n);
+         a := a+n+1;
+      end
+end.

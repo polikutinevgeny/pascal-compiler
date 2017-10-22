@@ -1,1 +1,8 @@
-25+5*10*20+30*40/50+(a*b-c/d*e+k*(1-t))
+var
+   a: integer;
+const
+   b = 30;
+begin
+   a := 3;
+   a + b := a + b;
+end.

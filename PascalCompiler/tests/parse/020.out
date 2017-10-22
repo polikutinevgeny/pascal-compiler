@@ -1,0 +1,24 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   └─c
+    │ └─Function
+    │   ├─Function heading: foo
+    │   │ ├─Formal parameters
+    │   │ └─integer
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    └─Compound statement
+      └─Statement list
+        └─Assignment statement
+          ├─Designator
+          │ └─c
+          └─div
+            ├─Call in expression
+            │ └─Designator
+            │   └─foo
+            └─50

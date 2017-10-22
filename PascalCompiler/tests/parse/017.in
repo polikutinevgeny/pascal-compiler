@@ -1,1 +1,17 @@
-a++
+const
+   a1 = 30;
+   b = a1*20;
+var
+   a: integer;
+   function foo(): integer;
+   begin
+
+   end;
+
+begin
+   a := foo();
+   begin
+      if a > 20 then
+         a := -a1;
+   end;
+end.

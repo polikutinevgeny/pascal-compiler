@@ -1,0 +1,22 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Var section
+    │   ├─Variable declaration
+    │   │ ├─integer
+    │   │ └─a
+    │   └─Variable declaration
+    │     ├─Array
+    │     │ ├─integer
+    │     │ └─Range
+    │     │   ├─1
+    │     │   └─2
+    │     └─b
+    └─Compound statement
+      └─Statement list
+        └─Write
+          └─Expression list
+            ├─Designator
+            │ └─a
+            └─Designator
+              └─b

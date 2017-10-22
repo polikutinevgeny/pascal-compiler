@@ -1,0 +1,25 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Constant section
+    │ │ └─a
+    │ │   └─50
+    │ └─Var section
+    │   └─Variable declaration
+    │     ├─integer
+    │     └─i
+    └─Compound statement
+      └─Statement list
+        └─For
+          ├─i
+          ├─10
+          ├─-
+          │ └─Designator
+          │   └─n
+          └─Assignment statement
+            ├─Designator
+            │ └─a
+            └─+
+              ├─Designator
+              │ └─a
+              └─1

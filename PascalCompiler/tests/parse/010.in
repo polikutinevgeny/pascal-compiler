@@ -1,1 +1,5 @@
-((3+5)
+var
+   a: integer;
+
+   a := 3;
+end.

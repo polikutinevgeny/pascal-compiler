@@ -13,7 +13,7 @@ Line |Pos  |Type        |Subtype                  |Value                        
 2    |31   |Identifier  |Identifier               |hello                              |hello                                             
 2    |38   |ReservedWord|Or                       |or                                 |or                                                
 2    |41   |Constant    |IntegerConstant          |20                                 |20                                                
-2    |44   |Operator    |More                     |>                                  |>                                                 
+2    |44   |Operator    |Greater                  |>                                  |>                                                 
 2    |46   |Identifier  |Identifier               |something                          |something                                         
 2    |56   |ReservedWord|And                      |and                                |and                                               
 2    |60   |Identifier  |Identifier               |hello                              |hello                                             

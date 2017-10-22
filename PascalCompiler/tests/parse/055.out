@@ -1,0 +1,29 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Procedure
+    │   ├─Procedure heading: foo
+    │   │ └─Formal parameters
+    │   │   └─Parameter
+    │   │     ├─integer
+    │   │     └─a
+    │   └─Block
+    │     └─Compound statement
+    │       └─Statement list
+    │         ├─Assignment statement
+    │         │ ├─Designator
+    │         │ │ └─a
+    │         │ └─4
+    │         └─Call in statement
+    │           └─Designator
+    │             └─exit
+    └─Compound statement
+      └─Statement list
+        ├─Call in statement
+        │ ├─Designator
+        │ │ └─foo
+        │ └─Expression list
+        │   └─3
+        └─Call in statement
+          └─Designator
+            └─exit

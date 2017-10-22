@@ -1,0 +1,16 @@
+program read_;
+var
+   a, n: integer;
+
+   procedure readln(x: integer);
+   begin
+   end;
+begin
+   while n < 0 do
+   begin
+      readln(n);
+      if n > 0 then
+         while a <> 0 do
+            readln(a)
+   end;
+end.

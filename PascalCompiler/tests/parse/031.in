@@ -1,0 +1,19 @@
+program read_;
+var
+   flag: integer;
+   n: integer;
+
+   procedure readln(var n: integer);
+   begin
+      //some block
+   end;
+
+begin
+   flag := 0;
+   while n < 0 do
+   begin
+      readln(n);
+      if n = -100 then
+         flag := 1;
+   end;
+end.

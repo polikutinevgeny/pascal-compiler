@@ -1,0 +1,19 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Var section
+    │   └─Variable declaration
+    │     ├─integer
+    │     └─n
+    └─Compound statement
+      └─Statement list
+        ├─Assignment statement
+        │ ├─Designator
+        │ │ └─n
+        │ └─3
+        └─While
+          ├─<
+          │ ├─Designator
+          │ │ └─n
+          │ └─0
+          └─

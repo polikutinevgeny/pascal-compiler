@@ -1,5 +1,1 @@
-└─*
-  ├─+
-  │ ├─2
-  │ └─5
-  └─10
+Expected End, got Assign at 6:10

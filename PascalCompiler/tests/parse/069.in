@@ -1,0 +1,13 @@
+   function foo(): integer;
+
+      procedure bar();
+      begin
+         result := 30;
+      end;
+      
+   begin
+      result := 4;
+   end;
+begin
+
+end.

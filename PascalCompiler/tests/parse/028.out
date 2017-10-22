@@ -1,0 +1,92 @@
+└─Program 'factorial'
+  └─Block
+    ├─Declarations
+    │ ├─Var section
+    │ │ └─Variable declaration
+    │ │   ├─integer
+    │ │   └─n
+    │ ├─Procedure
+    │ │ ├─Procedure heading: readln
+    │ │ │ └─Formal parameters
+    │ │ │   └─Var Parameter
+    │ │ │     ├─integer
+    │ │ │     └─n
+    │ │ └─Block
+    │ │   └─Compound statement
+    │ │     └─Statement list
+    │ │       └─Assignment statement
+    │ │         ├─Designator
+    │ │         │ └─n
+    │ │         └─30
+    │ └─Function
+    │   ├─Function heading: fac
+    │   │ ├─Formal parameters
+    │   │ │ └─Parameter
+    │   │ │   ├─integer
+    │   │ │   └─n
+    │   │ └─integer
+    │   └─Block
+    │     ├─Declarations
+    │     │ └─Var section
+    │     │   └─Variable declaration
+    │     │     ├─integer
+    │     │     └─res
+    │     └─Compound statement
+    │       └─Statement list
+    │         └─If
+    │           ├─=
+    │           │ ├─Designator
+    │           │ │ └─n
+    │           │ └─0
+    │           ├─Assignment statement
+    │           │ ├─Designator
+    │           │ │ └─res
+    │           │ └─1
+    │           └─Assignment statement
+    │             ├─Designator
+    │             │ └─res
+    │             └─*
+    │               ├─Designator
+    │               │ └─n
+    │               └─Call in expression
+    │                 ├─Designator
+    │                 │ └─fac
+    │                 └─Expression list
+    │                   └─-
+    │                     ├─Designator
+    │                     │ └─n
+    │                     └─1
+    └─Compound statement
+      └─Statement list
+        ├─Call in statement
+        │ ├─Designator
+        │ │ └─readln
+        │ └─Expression list
+        │   └─Designator
+        │     └─n
+        ├─If
+        │ ├─<
+        │ │ ├─Designator
+        │ │ │ └─n
+        │ │ └─0
+        │ ├─Assignment statement
+        │ │ ├─Designator
+        │ │ │ └─n
+        │ │ └─-
+        │ │   └─Designator
+        │ │     └─n
+        │ └─Compound statement
+        │   └─Statement list
+        │     └─Assignment statement
+        │       ├─Designator
+        │       │ └─n
+        │       └─+
+        │         ├─Designator
+        │         │ └─n
+        │         └─1
+        └─Call in statement
+          ├─Designator
+          │ └─fac
+          └─Expression list
+            └─Designator
+              └─n

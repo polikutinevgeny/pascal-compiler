@@ -1,5 +1,1 @@
-└─+
-  ├─25
-  └─*
-    ├─5
-    └─10
+Expected Dot, got EndOfFile at 3:3

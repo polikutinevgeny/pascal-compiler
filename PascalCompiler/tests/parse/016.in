@@ -1,1 +1,13 @@
--1+2*3/4
+   function foo(): integer;
+   var
+      a: integer;
+   begin
+      foo();
+   end;
+
+var
+   a: integer;
+begin
+   if foo() then
+      a := 30
+end.

@@ -1,0 +1,13 @@
+program read_;
+var
+   n: integer;
+
+   procedure readln(var n: integer);
+   begin
+      //some block
+   end;
+
+begin
+   while n < 0 do
+      readln(n);
+end.

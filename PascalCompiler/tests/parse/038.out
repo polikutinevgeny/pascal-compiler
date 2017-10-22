@@ -1,0 +1,83 @@
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Constant section
+    │ │ ├─aaa
+    │ │ │ └─30
+    │ │ └─bbb
+    │ │   └─-
+    │ │     └─40
+    │ └─Var section
+    │   ├─Variable declaration
+    │   │ ├─integer
+    │   │ └─n
+    │   ├─Variable declaration
+    │   │ ├─integer
+    │   │ ├─i
+    │   │ └─j
+    │   └─Variable declaration
+    │     ├─Array
+    │     │ ├─integer
+    │     │ └─Range
+    │     │   ├─0
+    │     │   └─100
+    │     └─a
+    └─Compound statement
+      └─Statement list
+        └─For
+          ├─i
+          ├─0
+          ├─Designator
+          │ └─n
+          └─Compound statement
+            └─Statement list
+              ├─Assignment statement
+              │ ├─Designator
+              │ │ ├─a
+              │ │ └─Expression list
+              │ │   └─Designator
+              │ │     └─i
+              │ └─0
+              └─For
+                ├─j
+                ├─-
+                │ ├─Designator
+                │ │ └─bbb
+                │ └─40
+                ├─+
+                │ ├─Designator
+                │ │ └─aaa
+                │ └─20
+                └─If
+                  ├─=
+                  │ ├─mod
+                  │ │ ├─Designator
+                  │ │ │ └─j
+                  │ │ └─2
+                  │ └─0
+                  ├─Assignment statement
+                  │ ├─Designator
+                  │ │ ├─a
+                  │ │ └─Expression list
+                  │ │   └─Designator
+                  │ │     └─j
+                  │ └─+
+                  │   ├─Designator
+                  │   │ ├─a
+                  │   │ └─Expression list
+                  │   │   └─Designator
+                  │   │     └─j
+                  │   └─1
+                  └─Assignment statement
+                    ├─Designator
+                    │ ├─a
+                    │ └─Expression list
+                    │   └─Designator
+                    │     └─j
+                    └─+
+                      ├─Designator
+                      │ ├─a
+                      │ └─Expression list
+                      │   └─Designator
+                      │     └─j
+                      └─2

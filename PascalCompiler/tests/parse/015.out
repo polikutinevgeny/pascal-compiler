@@ -1,1 +1,26 @@
-Expected identifier, constant or expression, got Begin at 1:1
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ ├─Procedure
+    │ │ ├─Procedure heading: foo
+    │ │ │ └─Formal parameters
+    │ │ └─Block
+    │ │   ├─Declarations
+    │ │   │ └─Var section
+    │ │   │   └─Variable declaration
+    │ │   │     ├─integer
+    │ │   │     └─a
+    │ │   └─Compound statement
+    │ │     └─Statement list
+    │ │       └─Call in statement
+    │ │         └─Designator
+    │ │           └─foo
+    │ └─Var section
+    │   └─Variable declaration
+    │     ├─char
+    │     └─a
+    └─Compound statement
+      └─Statement list
+        └─Call in statement
+          └─Designator
+            └─foo
