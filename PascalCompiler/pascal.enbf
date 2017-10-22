@@ -42,10 +42,10 @@
 
 <StrucType>                ::= ( <ArrayType> | <RecType> );
 
-<ArrayType>                ::= 'ARRAY' [ '[' <Subrange> [ ',' <Subrange> ]* ']'] 'OF' <Type>;
+<ArrayType>                ::= 'ARRAY' '[' <Subrange> [ ',' <Subrange> ]* ']' 'OF' <Type>;
 
 <RecType>                  ::= 'RECORD'
-                               (<RecordFieldList>)*
+                               <RecordFieldList>
                                'END';
 
 <RecordFieldList>          ::= ( <FieldDecl> [ ';' <FieldDecl> ]* ) [';'];
@@ -54,7 +54,8 @@
 
 <VarSection>               ::= 'VAR' ( <VarDecl> ';' )+;
 
-<VarDecl>                  ::= <IdentList> ':' <Type> [ '=' <TypedConst> ];
+<VarDecl>                  ::= (<Ident> ':' <Type> [ '=' <TypedConst> ]) |
+                               (<IdentList> ':' <Type>);
 
 <Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
 
@@ -126,10 +127,14 @@
 
 <FormalParameters>         ::= '(' [ <FormalParam> (';' <FormalParam> )* ] ')';
 
-<FormalParam>              ::= [ 'VAR' | 'CONST' ] <Parameter>;
+<FormalParam>              ::= <Parameter> | <VarParameter> | <ConstParameter>;
 
-<Parameter>                ::= <IdentList> [ ':' ( [ 'ARRAY' 'OF' ] <Type> ) ] |
+<Parameter>                ::= <IdentList> ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) |
                                <Ident> ':' <Type> '=' <ConstExpr>;
+
+<VarParameter>             ::= 'VAR' <IdentList> [ ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) ];
+
+<ConstParameter>           ::= 'CONST' <Parameter>;
 
 <IdentList>                ::= <Ident> ( ',' <Ident> )*;
 

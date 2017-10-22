@@ -134,6 +134,13 @@ namespace PascalCompiler
         }
     }
 
+    public class SubrangeNode : Node
+    {
+        public SubrangeNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
     public class RecordTypeNode : TypeNode
     {
         public RecordTypeNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
@@ -155,9 +162,93 @@ namespace PascalCompiler
         }
     }
 
+    public class VarNode : Node
+    {
+        public VarNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class FieldNode : Node
+    {
+        public FieldNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class RecordFieldListNode : Node
+    {
+        public RecordFieldListNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class FieldDeclNode : Node
+    {
+        public FieldDeclNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class IdentListNode : Node
+    {
+        public IdentListNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
     public class ProcedureDeclNode : Node
     {
         public ProcedureDeclNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ProcedureHeadingNode : Node
+    {
+        public ProcedureHeadingNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class FormalParametersNode : Node
+    {
+        public FormalParametersNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class FormalParamNode : Node
+    {
+        public FormalParamNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ParameterNode : FormalParamNode
+    {
+        public ParameterNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class VarParameterNode : FormalParamNode
+    {
+        public VarParameterNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ConstParameterNode : FormalParamNode
+    {
+        public ConstParameterNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ParamNode : Node
+    {
+        public ParamNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
         {
         }
     }
