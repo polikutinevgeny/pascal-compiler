@@ -7,6 +7,7 @@ namespace PascalCompiler
     {
         public Node(List<Node> childs, object value, uint line, uint position)
         {
+            Childs = childs;
             Value = value;
             Line = line;
             Position = position;
@@ -260,9 +261,142 @@ namespace PascalCompiler
         }
     }
 
-    public class CompoundStatementNode : Node
+    public class FunctionHeadingNode : Node
+    {
+        public FunctionHeadingNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class CompoundStatementNode : StructStatementNode
     {
         public CompoundStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class StatementListNode : Node
+    {
+        public StatementListNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class StatementNode : Node
+    {
+        public StatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class SimpleStatementNode : StatementNode
+    {
+        public SimpleStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class StructStatementNode : StatementNode
+    {
+        public StructStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ReadStatementNode : SimpleStatementNode
+    {
+        public ReadStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class WriteStatementNode : SimpleStatementNode
+    {
+        public WriteStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class IfStatementNode : StructStatementNode
+    {
+        public IfStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ForStatementNode : StructStatementNode
+    {
+        public ForStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class WhileStatementNode : StructStatementNode
+    {
+        public WhileStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class RepeatStatementNode : StructStatementNode
+    {
+        public RepeatStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class DesignatorNode : Node
+    {
+        public DesignatorNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class IdentNode : SimpleExpressionNode
+    {
+        public IdentNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line, token.Position)
+        {
+        }
+    }
+
+    public class ExpressionListNode : Node
+    {
+        public ExpressionListNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class StringNode : Node
+    {
+        public StringNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
+        {
+        }
+    }
+
+    public class SimpleExpressionNode : Node
+    {
+        public SimpleExpressionNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class BinOpNode : SimpleExpressionNode
+    {
+        public BinOpNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class UnOpNode : SimpleExpressionNode
+    {
+        public UnOpNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class ConstNode : Node
+    {
+        public ConstNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }
@@ -283,7 +417,7 @@ namespace PascalCompiler
                 indent += "│ ";
             }
             writer.WriteLine(node);
-            for (var i = 0; i < node.Childs?.Count; ++i)
+            for (var i = 0; i < node?.Childs?.Count; ++i)
             {
                 PrintTree(writer, node.Childs[i], indent, i == node.Childs.Count - 1);
             }

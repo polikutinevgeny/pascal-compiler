@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace PascalCompiler
 {
@@ -298,6 +297,7 @@ namespace PascalCompiler
             {
                 if (TypeTable.ContainsKey(c.Value.ToString()))
                 {
+                    Next();
                     return new TypeNode(null, c.Value, c.Line, c.Position);
                 }
                 throw new ParserException($"Identifier not found '{c.Value}'", c.Line, c.Position);
@@ -401,7 +401,7 @@ namespace PascalCompiler
                 childs.Add(ParseFormalParameters());
             }
             Require(Tokenizer.TokenSubType.Semicolon);
-            return new ProcedureHeadingNode(childs.Count > 0 ? childs : null, $"Procedure {i.Value}", c.Line,
+            return new ProcedureHeadingNode(childs.Count > 0 ? childs : null, $"Procedure heading: {i.Value}", c.Line,
                 c.Position);
         }
 
@@ -434,11 +434,11 @@ namespace PascalCompiler
             switch (c.SubType)
             {
                 case Tokenizer.TokenSubType.Var:
-                    break;
+                    return ParseVarParameter();
                 case Tokenizer.TokenSubType.Const:
-                    break;
+                    return ParseConstParameter();
                 case Tokenizer.TokenSubType.Identifier:
-                    break;
+                    return ParseParameter();
             }
             throw new ParserException($"Expected var, const or identifier, got {c.SubType}", c.Line, c.Position);
         }
@@ -447,29 +447,411 @@ namespace PascalCompiler
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> { new ParamNode(null, c) };
+            List<Node> childs = new List<Node> {new ParamNode(null, c)};
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
                 Require(Tokenizer.TokenSubType.Comma);
                 childs.Add(new ParamNode(null, Current));
             }
             Require(Tokenizer.TokenSubType.Colon);
+            if (Current.SubType == Tokenizer.TokenSubType.Array)
+            {
+                var p = Current;
+                Require(Tokenizer.TokenSubType.Array);
+                Require(Tokenizer.TokenSubType.Of);
+                var tp = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                childs.Insert(0,
+                    new ArrayTypeNode(new List<Node> {new TypeNode(null, tp.Value, tp.Line, tp.Position)}, "Array",
+                        p.Line, p.Position));
+                return new ParameterNode(childs, "Parameter", c.Line, c.Position);
+            }
+            var t = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            childs.Insert(0, new TypeNode(null, t.Value, t.Line, t.Position));
+            if (childs.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                Require(Tokenizer.TokenSubType.Equal);
+                childs.Add(ParseConstExpr());
+                return new ParameterNode(childs, "Parameter", c.Line, c.Position);
+            }
+            return new ParameterNode(childs, "Parameter", c.Line, c.Position);
+        }
 
+        private VarParameterNode ParseVarParameter()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            List<Node> childs = new List<Node> {new ParamNode(null, c)};
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                Require(Tokenizer.TokenSubType.Comma);
+                childs.Add(new ParamNode(null, Current));
+            }
+            Require(Tokenizer.TokenSubType.Colon);
+            if (Current.SubType == Tokenizer.TokenSubType.Array)
+            {
+                var p = Current;
+                Require(Tokenizer.TokenSubType.Array);
+                Require(Tokenizer.TokenSubType.Of);
+                var tp = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                childs.Insert(0,
+                    new ArrayTypeNode(new List<Node> {new TypeNode(null, tp.Value, tp.Line, tp.Position)}, "Array",
+                        p.Line, p.Position));
+                return new VarParameterNode(childs, " Var Parameter", c.Line, c.Position);
+            }
+            var t = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            childs.Insert(0, new TypeNode(null, t.Value, t.Line, t.Position));
+            return new VarParameterNode(childs, "Var Parameter", c.Line, c.Position);
+        }
+
+        private ConstParameterNode ParseConstParameter()
+        {
+            Require(Tokenizer.TokenSubType.Const);
+            var p = ParseParameter();
+            return new ConstParameterNode(p.Childs, p.Value, p.Line, p.Position);
         }
 
         private FunctionDeclNode ParseFunctionDecl()
         {
-            return null;
+            var c = Current;
+            var h = ParseProcedureHeading();
+            Require(Tokenizer.TokenSubType.Semicolon);
+            var b = ParseBlock();
+            Require(Tokenizer.TokenSubType.Semicolon);
+            return new FunctionDeclNode(new List<Node> {h, b}, "Function", c.Line, c.Position);
+        }
+
+        private FunctionHeadingNode ParseFunctionHeading()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Function);
+            var i = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            List<Node> childs = new List<Node>();
+            if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
+            {
+                childs.Add(ParseFormalParameters());
+            }
+            Require(Tokenizer.TokenSubType.Colon);
+            var t = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            childs.Add(new TypeNode(null, t.Value, t.Line, t.Position));
+            Require(Tokenizer.TokenSubType.Semicolon);
+            return new FunctionHeadingNode(childs, $"Function heading: {i.Value}", c.Line,
+                c.Position);
         }
 
         private CompoundStatementNode ParseCompoundStatement()
         {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Begin);
+            var l = ParseStatementList();
+            Require(Tokenizer.TokenSubType.End);
+            return new CompoundStatementNode(new List<Node> {l}, "Compound statement", c.Line, c.Position);
+        }
+
+        private StatementListNode ParseStatementList()
+        {
+            var c = Current;
+            if (Current.SubType == Tokenizer.TokenSubType.End)
+            {
+                return new StatementListNode(null, "Statement list", c.Line, c.Position);
+            }
+            List<Node> childs = new List<Node> {ParseStatement()};
+            while (Current.SubType != Tokenizer.TokenSubType.End)
+            {
+                Require(Tokenizer.TokenSubType.Semicolon);
+                var t = ParseStatement();
+                if (t != null)
+                {
+                    childs.Add(t);
+                }
+            }
+            return new StatementListNode(childs, "Statement list", c.Line, c.Position);
+        }
+
+        private StatementNode ParseStatement()
+        {
+            switch (Current.SubType)
+            {
+                case Tokenizer.TokenSubType.Identifier:
+                case Tokenizer.TokenSubType.Read:
+                case Tokenizer.TokenSubType.Write:
+                    return ParseSimpleStatement();
+                case Tokenizer.TokenSubType.While:
+                case Tokenizer.TokenSubType.If:
+                case Tokenizer.TokenSubType.For:
+                case Tokenizer.TokenSubType.Repeat:
+                case Tokenizer.TokenSubType.Begin:
+                    return ParseStructStatement();
+            }
             return null;
         }
 
-        private ExpressionNode ParseExpression()
+        private SimpleStatementNode ParseSimpleStatement()
         {
-            return null;
+            var c = Current;
+            switch (Current.SubType)
+            {
+                case Tokenizer.TokenSubType.Read:
+                    return ParseReadStatement();
+                case Tokenizer.TokenSubType.Write:
+                    return ParseWriteStatement();
+            }
+            var d = ParseDesignator();
+            switch (Current.SubType)
+            {
+                case Tokenizer.TokenSubType.LParenthesis:
+                {
+                    Next();
+                    var e = ParseExpressionList();
+                    Require(Tokenizer.TokenSubType.RParenthesis);
+                    return new SimpleStatementNode(new List<Node> {d, e}, "Call in statement", c.Line, c.Position);
+                }
+                case Tokenizer.TokenSubType.Assign:
+                case Tokenizer.TokenSubType.AsteriskAssign:
+                case Tokenizer.TokenSubType.SlashAssign:
+                case Tokenizer.TokenSubType.PlusAssign:
+                case Tokenizer.TokenSubType.MinusAssign:
+                {
+                    Next();
+                    var e = ParseExpression();
+                    return new SimpleStatementNode(new List<Node> { d, e }, "Assignment statement", c.Line, c.Position);
+                }
+            }
+            throw new ParserException($"Unexpected token {Current.SubType}", Current.Line, Current.Position);
+        }
+
+        private DesignatorNode ParseDesignator()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            List<Node> childs = new List<Node> {new IdentNode(null, c)};
+            while (Current.SubType == Tokenizer.TokenSubType.Dot)
+            {
+                Next();
+                var i = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                childs.Add(new IdentNode(null, Current));
+            }
+            if (Current.SubType == Tokenizer.TokenSubType.LBracket)
+            {
+                Next();
+                childs.Add(ParseExpressionList());
+                Require(Tokenizer.TokenSubType.RBracket);
+            }
+            return new DesignatorNode(childs, "Designator", c.Line, c.Position);
+        }
+
+        private ExpressionListNode ParseExpressionList()
+        {
+            var c = Current;
+            List<Node> childs = new List<Node> {ParseExpression()};
+            while (Current.SubType == Tokenizer.TokenSubType.Comma)
+            {
+                Next();
+                childs.Add(ParseExpression());
+            }
+            return new ExpressionListNode(childs, "Expression list", c.Line, c.Position);
+        }
+
+        private ReadStatementNode ParseReadStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Read);
+            if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
+            {
+                Next();
+                var e = ParseExpressionList();
+                Require(Tokenizer.TokenSubType.RParenthesis);
+                return new ReadStatementNode(new List<Node> {e}, "Read", c.Line, c.Position);
+            }
+            return new ReadStatementNode(null, "Read", c.Line, c.Position);
+        }
+
+        private WriteStatementNode ParseWriteStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Write);
+            if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
+            {
+                Next();
+                if (Current.SubType == Tokenizer.TokenSubType.StringConstant)
+                {
+                    var s = Current;
+                    Next();
+                    return new WriteStatementNode(new List<Node> { new StringNode(null, s) }, "Write", c.Line, c.Position);
+                }
+                var e = ParseExpressionList();
+                Require(Tokenizer.TokenSubType.RParenthesis);
+                return new WriteStatementNode(new List<Node> { e }, "Write", c.Line, c.Position);
+            }
+            return new WriteStatementNode(null, "Write", c.Line, c.Position);
+        }
+
+        private StructStatementNode ParseStructStatement()
+        {
+            switch (Current.SubType)
+            {
+                case Tokenizer.TokenSubType.Begin:
+                    return ParseCompoundStatement();
+                case Tokenizer.TokenSubType.If:
+                    return ParseIfStatement();
+                case Tokenizer.TokenSubType.For:
+                    return ParseForStatement();
+                case Tokenizer.TokenSubType.While:
+                    return ParseWhileStatement();
+                case Tokenizer.TokenSubType.Repeat:
+                    return ParseRepeatStatement();
+            }
+            throw new InvalidOperationException($"Current.Subtype was equal to {Current.SubType}");
+        }
+
+        private IfStatementNode ParseIfStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.If);
+            var i = ParseExpression();
+            Require(Tokenizer.TokenSubType.Then);
+            var t = ParseStatement();
+            if (Current.SubType == Tokenizer.TokenSubType.Else)
+            {
+                Next();
+                var e = ParseStatement();
+                return new IfStatementNode(new List<Node> { i, t, e }, "If", c.Line, c.Position);
+            }
+            return new IfStatementNode(new List<Node> {i, t}, "If", c.Line, c.Position);
+        }
+
+        private ForStatementNode ParseForStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.For);
+            var i = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Tokenizer.TokenSubType.Assign);
+            var e = ParseExpression();
+            Require(Tokenizer.TokenSubType.To);
+            var u = ParseExpression();
+            Require(Tokenizer.TokenSubType.Do);
+            var s = ParseStatement();
+            return new ForStatementNode(new List<Node> {new IdentNode(null, i) , e, u, s}, "For", c.Line, c.Position);
+        }
+
+        private WhileStatementNode ParseWhileStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.While);
+            var e = ParseExpression();
+            Require(Tokenizer.TokenSubType.Do);
+            var s = ParseStatement();
+            return new WhileStatementNode(new List<Node> {e, s}, "While", c.Line, c.Position);
+        }
+
+        private RepeatStatementNode ParseRepeatStatement()
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Repeat);
+            var s = ParseStatement();
+            Require(Tokenizer.TokenSubType.Until);
+            var e = ParseExpression();
+            return new RepeatStatementNode(new List<Node> { s, e }, "Repeat", c.Line, c.Position);
+        }
+
+        private static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
+        {
+            Tokenizer.TokenSubType.Less,
+            Tokenizer.TokenSubType.Greater,
+            Tokenizer.TokenSubType.LEqual,
+            Tokenizer.TokenSubType.GEqual,
+            Tokenizer.TokenSubType.NEqual,
+            Tokenizer.TokenSubType.Equal,
+        };
+
+        private static HashSet<Tokenizer.TokenSubType> AddOps { get; } = new HashSet<Tokenizer.TokenSubType>
+        {
+            Tokenizer.TokenSubType.Plus,
+            Tokenizer.TokenSubType.Minus,
+            Tokenizer.TokenSubType.Or,
+            Tokenizer.TokenSubType.Xor,
+        };
+
+        private static HashSet<Tokenizer.TokenSubType> MulOps { get; } = new HashSet<Tokenizer.TokenSubType>
+        {
+            Tokenizer.TokenSubType.Asterisk,
+            Tokenizer.TokenSubType.Slash,
+            Tokenizer.TokenSubType.Div,
+            Tokenizer.TokenSubType.Mod,
+            Tokenizer.TokenSubType.And,
+            Tokenizer.TokenSubType.Shl,
+            Tokenizer.TokenSubType.Shr,
+        };
+
+        private Node ParseExpression()
+        {
+            Node e = ParseSimpleExpression();
+            var c = Current;
+            while (RelOps.Contains(c.SubType))
+            {
+                Next();
+                e = new BinOpNode(new List<Node> {e, ParseSimpleExpression()}, c.Value, c.Line, c.Position);
+                c = Current;
+            }
+            return e;
+        }
+
+        private Node ParseSimpleExpression()
+        {
+            Node t = ParseTerm();
+            var c = Current;
+            while (AddOps.Contains(c.SubType))
+            {
+                Next();
+                t = new BinOpNode(new List<Node> {t, ParseTerm()}, c.Value, c.Line, c.Position);
+                c = Current;
+            }
+            return t;
+        }
+
+        private Node ParseTerm()
+        {
+            Node f = ParseFactor();
+            var c = Current;
+            while (MulOps.Contains(c.SubType))
+            {
+                Next();
+                f = new BinOpNode(new List<Node> { f, ParseFactor() }, c.Value, c.Line, c.Position);
+                c = Current;
+            }
+            return f;
+        }
+
+        private Node ParseFactor()
+        {
+            var c = Current;
+            switch (c.SubType)
+            {
+                case Tokenizer.TokenSubType.Identifier:
+                    return ParseDesignator();
+                case Tokenizer.TokenSubType.IntegerConstant:
+                case Tokenizer.TokenSubType.FloatConstant:
+                    Next();
+                    return new ConstNode(null, c.Value, c.Line, c.Position);
+                case Tokenizer.TokenSubType.LParenthesis:
+                    Next();
+                    Node e = ParseExpression();
+                    Require(Tokenizer.TokenSubType.RParenthesis);
+                    return e;
+                case Tokenizer.TokenSubType.Plus:
+                case Tokenizer.TokenSubType.Minus:
+                case Tokenizer.TokenSubType.Not:
+                    Next();
+                    return new UnOpNode(new List<Node> {ParseFactor()}, c.Value, c.Line, c.Position);
+            }
+            throw new ParserException($"Unexpected token {c.SubType}", c.Line, c.Position);
         }
 
         private void Require(Tokenizer.TokenSubType type)

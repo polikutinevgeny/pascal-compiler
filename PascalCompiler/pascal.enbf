@@ -69,16 +69,13 @@
                                'NOT' <Factor>                      |
                                [ '+' | '-' ] <Factor>;
 
-<RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | 'IN' | 'IS' |
-                               'AS' | '=';
+<RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | '=';
 
 <AddOp>                    ::= '+' | '-' | 'OR' | 'XOR';
 
 <MulOp>                    ::= '*' | '/' | 'DIV' | 'MOD' | 'AND' | 'SHL' | 'SHR';
 
-<Designator>               ::= <Ident> [ '.' <Ident> ]* [ <DesignatorSubElement> ]*;
-
-<DesignatorSubElement>     ::= '[' <ExprList> ']';
+<Designator>               ::= <Ident> [ '.' <Ident> ]* [ '[' <ExprList> ']' ]*;
 
 <ExprList>                 ::= <Expression> ( ',' <Expression> )*;
 
@@ -86,36 +83,32 @@
 
 <StmtList>                 ::= <Statement> ( ';' <Statement> )*;
 
-<SimpleStatement>          ::= <Designator> [ '(' <ExprList> ')' ] |
-                               <Designator> (':=' | '+=' | '-=' | '*=' | '/=') <Expression>'     |
-                               <ReadStatement>                     |
+<SimpleStatement>          ::= <Designator> [ '(' <ExprList> ')' ]                           |
+                               <Designator> (':=' | '+=' | '-=' | '*=' | '/=') <Expression>' |
+                               <ReadStatement>                                               | 
                                <WriteStatement>;
 
-<ReadStatement>            ::= 'READ' [ '(' <IdentList> | <String> ')' ];
+<ReadStatement>            ::= 'READ' [ '(' <IdentList> ')' ];
 
-<IdentList>                 ::= <Ident> ( ',' <Ident> )*;
+<IdentList>                ::= <Ident> ( ',' <Ident> )*;
 
-<WriteStatement>            ::= 'WRITE' [ '(' <ExprList> | <String> ')' ];
+<WriteStatement>           ::= 'WRITE' [ '(' <ExprList> | <String> ')' ];
 
 <StructStmt>               ::= <CompoundStmt>    |
-                               <ConditionalStmt> |
-                               <LoopStmt>;
+                               <IfStmt>          |
+                               <RepeatStmt>      | 
+                               <WhileStmt>       | 
+                               <ForStmt>;
 
 <CompoundStmt>             ::= 'BEGIN' <StmtList> 'END';
 
-<ConditionalStmt>          ::= <IfStmt>;
-
 <IfStmt>                   ::= 'IF' <Expression> 'THEN' <Statement> [ 'ELSE' <Statement> ];
-
-<LoopStmt>                 ::= <RepeatStmt> | <WhileStmt> | <ForStmt>;
 
 <RepeatStmt>               ::= 'REPEAT' <Statement> 'UNTIL' <Expression>;
 
 <WhileStmt>                ::= 'WHILE' <Expression> 'DO' <Statement>;
 
-<ForStmt>                  ::= 'FOR' <Ident> ':=' <Expression> ( 'TO' | 'DOWNTO' ) <Expression> 'DO' <Statement>;
-
-<WithStmt>                 ::= 'WITH' <IdentList> 'DO' <Statement>;
+<ForStmt>                  ::= 'FOR' <Ident> ':=' <Expression> 'TO' <Expression> 'DO' <Statement>;
 
 <ProcedureDecl>            ::= <ProcedureHeading> ';' <Block> ';';
 
@@ -130,7 +123,7 @@
 <FormalParam>              ::= <Parameter> | <VarParameter> | <ConstParameter>;
 
 <Parameter>                ::= <IdentList> ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) |
-                               <Ident> ':' <Type> '=' <ConstExpr>;
+                               <Ident> ':' <TypeID> '=' <ConstExpr>;
 
 <VarParameter>             ::= 'VAR' <IdentList> [ ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) ];
 

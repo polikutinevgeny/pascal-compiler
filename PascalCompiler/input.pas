@@ -1,15 +1,18 @@
-﻿helloandwelcome there
-how are tou {
-test
-}
-123..456
-123/456*789
-'#%111111''test-test'#&67'test'
-'h'#13#10'ello'
-$123&456%1110[test1](12)(.34.)[56.)(.78]
-123.456
-123.456.789
-initialization
-i := 1000000000000;
-if := 25.3;
-s := #123#125;
+﻿program imya;
+var
+   i: integer;
+   a: float;
+   arr: array[0..9] of Integer;
+const
+    c = 10.1;
+begin
+   for i := 0 to 10 do
+      for i := 0 to 3 do
+      begin
+         a := 34.5;
+         if a >= 35 then
+            a := 33
+         else
+            a := a - i * - i;
+      end;
+end.
