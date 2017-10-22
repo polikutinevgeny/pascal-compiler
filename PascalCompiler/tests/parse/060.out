@@ -2,6 +2,4 @@
   └─Block
     └─Compound statement
       └─Statement list
-        └─Call in statement
-          └─Designator
-            └─continue
+        └─continue

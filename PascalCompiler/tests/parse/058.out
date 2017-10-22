@@ -8,9 +8,5 @@
             └─Statement list
               ├─While
               │ ├─2
-              │ └─Call in statement
-              │   └─Designator
-              │     └─continue
-              └─Call in statement
-                └─Designator
-                  └─break
+              │ └─continue
+              └─break

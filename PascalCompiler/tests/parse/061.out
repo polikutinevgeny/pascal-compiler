@@ -13,9 +13,5 @@
           ├─10
           └─Compound statement
             └─Statement list
-              ├─Call in statement
-              │ └─Designator
-              │   └─break
-              └─Call in statement
-                └─Designator
-                  └─continue
+              ├─break
+              └─continue

@@ -1,9 +1,6 @@
 └─Program ''
   └─Block
     ├─Declarations
-    │ ├─Constant section
-    │ │ └─h
-    │ │   └─20
     │ └─Var section
     │   ├─Variable declaration
     │   │ ├─integer
@@ -14,8 +11,15 @@
     │     │ └─Range
     │     │   ├─1
     │     │   └─2
-    │     └─b
+    │     ├─b
+    │     └─Array constant
+    │       ├─0
+    │       └─1
     └─Compound statement
       └─Statement list
         └─Write
-          └─fsdfsd
+          └─Expression list
+            ├─Designator
+            │ └─a
+            └─Designator
+              └─b

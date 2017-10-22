@@ -1,1 +1,24 @@
-Identifier not found 'double' at 3:7
+└─Program ''
+  └─Block
+    ├─Declarations
+    │ └─Var section
+    │   ├─Variable declaration
+    │   │ ├─integer
+    │   │ └─i
+    │   └─Variable declaration
+    │     ├─real
+    │     └─a
+    └─Compound statement
+      └─Statement list
+        └─For
+          ├─i
+          ├─0
+          ├─10
+          └─For
+            ├─i
+            ├─3
+            ├─0
+            └─Assignment statement
+              ├─Designator
+              │ └─a
+              └─34.5

@@ -86,14 +86,14 @@ namespace PascalCompiler
         }
     }
 
-    public class ArrayConstantNode : Node
+    public class ArrayConstantNode : TypedConstantNode
     {
         public ArrayConstantNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }
 
-    public class RecordConstantNode : Node
+    public class RecordConstantNode : TypedConstantNode
     {
         public RecordConstantNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
@@ -404,6 +404,20 @@ namespace PascalCompiler
     public class CallNode : Node
     {
         public CallNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
+    public class BreakNode : StatementNode
+    {
+        public BreakNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line, token.Position)
+        {
+        }
+    }
+
+    public class ContinueNode : StatementNode
+    {
+        public ContinueNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line, token.Position)
         {
         }
     }

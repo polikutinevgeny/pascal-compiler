@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace PascalCompiler
 {
@@ -154,20 +153,25 @@ namespace PascalCompiler
         private TypedConstantNode ParseTypedConstant(string type)
         {
             var c = Current;
-            if (type == "Array" || TypeTable[type] == Type.Array) // array may be anonymous
+            // anonymous
+            switch (type)
             {
-                var t = ParseArrayConstant();
-                return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                case "Array":
+                    return ParseArrayConstant();
+                case "Record":
+                    return ParseRecordConstant();
             }
-            else if (type == "Record" || TypeTable[type] == Type.Record) // record may be anonymous
+            switch (TypeTable[type])
             {
-                var t = ParseRecordConstant();
-                return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
-            }
-            else if (TypeTable[type] == Type.Simple)
-            {
-                var t = ParseConstExpr();
-                return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                case Type.Array:
+                    return ParseArrayConstant();
+                case Type.Record:
+                    return ParseRecordConstant();
+                case Type.Simple:
+                {
+                    var t = ParseConstExpr();
+                    return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
+                }
             }
             throw new InvalidOperationException($"No typed constant found at {c.Line}:{c.Position}");
         }
@@ -203,6 +207,7 @@ namespace PascalCompiler
                 Require(Tokenizer.TokenSubType.Semicolon);
                 recordElem.Add(ParseRecordFieldConstant());
             }
+            Require(Tokenizer.TokenSubType.RParenthesis);
             return new RecordConstantNode(recordElem, "Record constant", c.Line, c.Position);
         }
 
@@ -219,15 +224,12 @@ namespace PascalCompiler
         {
             Require(Tokenizer.TokenSubType.Var);
             var c = Current;
-            List<Node> declList = new List<Node>();
+            List<Node> declList = new List<Node> {ParseVarDecl()};
+            Require(Tokenizer.TokenSubType.Semicolon);
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
                 declList.Add(ParseVarDecl());
                 Require(Tokenizer.TokenSubType.Semicolon);
-            }
-            if (declList.Count == 0)
-            {
-                throw new ParserException("Empty var section", c.Line, c.Position);
             }
             return new VarSectionNode(declList, "Var section", c.Line, c.Position);
         }
@@ -248,10 +250,11 @@ namespace PascalCompiler
             }
             Require(Tokenizer.TokenSubType.Colon);
             childs.Insert(0, ParseType());
-            if (childs.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (childs.Count == 2 && Current.SubType == Tokenizer.TokenSubType.Equal)
             {
+                Next();
                 childs.Add(ParseTypedConstant(childs[0].Value.ToString()));
-                return new VarDeclNode(childs, c.Value, c.Line, c.Position);
+                return new VarDeclNode(childs, "Variable declaration", c.Line, c.Position);
             }
             return new VarDeclNode(childs, "Variable declaration", c.Line, c.Position);
         }
@@ -498,7 +501,6 @@ namespace PascalCompiler
                 tmp = Current;
                 Next();
                 childs.Add(new ParamNode(null, tmp));
-                tmp = Current;
             }
             Require(Tokenizer.TokenSubType.Colon);
             if (Current.SubType == Tokenizer.TokenSubType.Array)
@@ -586,7 +588,8 @@ namespace PascalCompiler
 
         private StatementNode ParseStatement()
         {
-            switch (Current.SubType)
+            var c = Current;
+            switch (c.SubType)
             {
                 case Tokenizer.TokenSubType.Identifier:
                 case Tokenizer.TokenSubType.Read:
@@ -598,6 +601,12 @@ namespace PascalCompiler
                 case Tokenizer.TokenSubType.Repeat:
                 case Tokenizer.TokenSubType.Begin:
                     return ParseStructStatement();
+                case Tokenizer.TokenSubType.Break:
+                    Next();
+                    return new BreakNode(null, c);
+                case Tokenizer.TokenSubType.Continue:
+                    Next();
+                    return new ContinueNode(null, c);
             }
             return null;
         }
@@ -706,6 +715,7 @@ namespace PascalCompiler
                 {
                     var s = Current;
                     Next();
+                    Require(Tokenizer.TokenSubType.RParenthesis);
                     return new WriteStatementNode(new List<Node> {new StringNode(null, s)}, "Write", c.Line,
                         c.Position);
                 }

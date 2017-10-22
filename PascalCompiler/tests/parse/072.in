@@ -4,5 +4,5 @@ var
    a: integer;
    b: array[1..2] of integer;
 begin
-   write(a, ' ', b[1], h, 'fsdfsd')
+   write('fsdfsd')
 end.

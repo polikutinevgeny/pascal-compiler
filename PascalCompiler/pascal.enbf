@@ -86,7 +86,9 @@
 <SimpleStatement>          ::= <Designator> [ '(' [<ExprList>] ')' ]                         |
                                <Designator> (':=' | '+=' | '-=' | '*=' | '/=') <Expression>' |
                                <ReadStatement>                                               | 
-                               <WriteStatement>;
+                               <WriteStatement>                                              |
+                               'BREAK'                                                       |
+                               'CONTINUE';
 
 <ReadStatement>            ::= 'READ' [ '(' <IdentList> ')' ];
 
