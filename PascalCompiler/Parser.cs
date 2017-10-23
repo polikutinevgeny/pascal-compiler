@@ -359,10 +359,14 @@ namespace PascalCompiler
         {
             var c = Current;
             List<Node> childs = new List<Node> {ParseFieldDecl()};
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            while (Current.SubType == Tokenizer.TokenSubType.Semicolon)
             {
-                Require(Tokenizer.TokenSubType.Semicolon);
-                childs.Add(ParseFieldDecl());
+                Next();
+                if (Current.SubType == Tokenizer.TokenSubType.End)
+                {
+                    break;
+                }
+                childs.Add(ParseFieldDecl()); 
             }
             if (Current.SubType == Tokenizer.TokenSubType.Semicolon)
             {

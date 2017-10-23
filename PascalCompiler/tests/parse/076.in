@@ -1,6 +1,18 @@
+type
+   testr = record
+     i: Integer;
+     j: Real;
+   end;
+   testa = array[3..4] of integer;
 var
    a: integer;
    b: array[1..2] of integer = (0, 1);
+   r: record
+      i: Integer;
+      j: Integer
+   end = (i:1; j:2);
+   c: testr = (i:1; j:2);
+   d: testa = (1, 2);
 begin
    write(a, b);
 end.

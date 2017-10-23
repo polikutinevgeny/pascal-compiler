@@ -1,20 +1,65 @@
 └─Program ''
   └─Block
     ├─Declarations
+    │ ├─Type section
+    │ │ ├─testr
+    │ │ │ └─Record
+    │ │ │   └─Field list
+    │ │ │     ├─Field declaration
+    │ │ │     │ ├─integer
+    │ │ │     │ └─i
+    │ │ │     └─Field declaration
+    │ │ │       ├─real
+    │ │ │       └─j
+    │ │ └─testa
+    │ │   └─Array
+    │ │     ├─integer
+    │ │     └─Range
+    │ │       ├─3
+    │ │       └─4
     │ └─Var section
     │   ├─Variable declaration
     │   │ ├─integer
     │   │ └─a
+    │   ├─Variable declaration
+    │   │ ├─Array
+    │   │ │ ├─integer
+    │   │ │ └─Range
+    │   │ │   ├─1
+    │   │ │   └─2
+    │   │ ├─b
+    │   │ └─Array constant
+    │   │   ├─0
+    │   │   └─1
+    │   ├─Variable declaration
+    │   │ ├─Record
+    │   │ │ └─Field list
+    │   │ │   ├─Field declaration
+    │   │ │   │ ├─integer
+    │   │ │   │ └─i
+    │   │ │   └─Field declaration
+    │   │ │     ├─integer
+    │   │ │     └─j
+    │   │ ├─r
+    │   │ └─Record constant
+    │   │   ├─i
+    │   │   │ └─1
+    │   │   └─j
+    │   │     └─2
+    │   ├─Variable declaration
+    │   │ ├─testr
+    │   │ ├─c
+    │   │ └─Record constant
+    │   │   ├─i
+    │   │   │ └─1
+    │   │   └─j
+    │   │     └─2
     │   └─Variable declaration
-    │     ├─Array
-    │     │ ├─integer
-    │     │ └─Range
-    │     │   ├─1
-    │     │   └─2
-    │     ├─b
+    │     ├─testa
+    │     ├─d
     │     └─Array constant
-    │       ├─0
-    │       └─1
+    │       ├─1
+    │       └─2
     └─Compound statement
       └─Statement list
         └─Write
