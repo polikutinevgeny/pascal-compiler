@@ -149,7 +149,7 @@ namespace PascalCompiler
                             TokenSubType.IntegerConstant,
                             lexeme.Substring(0, lexeme.Length - 2),
                             line, pos + 1 - (uint) lexeme.Length,
-                            Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 2)));
+                            Convert.ToInt64(lexeme.Substring(0, lexeme.Length - 2)));
                         pos -= 2;
                         PushBack(c);
                         PushBack(lexeme[lexeme.Length - 2]);
@@ -179,7 +179,7 @@ namespace PascalCompiler
                                 TokenSubType.IntegerConstant,
                                 lexeme.Substring(0, lexeme.Length - 1),
                                 line, pos - (uint) lexeme.Length + 1,
-                                Convert.ToUInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                                Convert.ToInt64(lexeme.Substring(0, lexeme.Length - 1)));
                         }
                         catch (OverflowException)
                         {
@@ -232,12 +232,13 @@ namespace PascalCompiler
                         Token temp;
                         try
                         {
+                            var s = DecodeChars(lexeme.Substring(0, lexeme.Length - 1));
                             temp = new Token(
                                 TokenType.Constant,
-                                TokenSubType.StringConstant,
+                                s.Length == 1 ? TokenSubType.CharConstant : TokenSubType.StringConstant,
                                 lexeme.Substring(0, lexeme.Length - 1),
                                 line, pos - (uint) lexeme.Length + 1,
-                                DecodeChars(lexeme.Substring(0, lexeme.Length - 1)));
+                                s);
                         }
                         catch (ConvertException e)
                         {
@@ -316,16 +317,16 @@ namespace PascalCompiler
 
     private void PushBack(char ch) => _buffer.Push(ch);
 
-    private static ulong DecodeNumber(string input)
+    private static long DecodeNumber(string input)
     {
         switch (input[0])
         {
             case '%':
-                return Convert.ToUInt64(input.Substring(1), 2);
+                return Convert.ToInt64(input.Substring(1), 2);
             case '&':
-                return Convert.ToUInt64(input.Substring(1), 8);
+                return Convert.ToInt64(input.Substring(1), 8);
             case '$':
-                return Convert.ToUInt64(input.Substring(1), 16);
+                return Convert.ToInt64(input.Substring(1), 16);
             default:
                 throw new ConvertException("Illegal base of integer constant", 0);
         }

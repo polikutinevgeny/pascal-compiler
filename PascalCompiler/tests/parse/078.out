@@ -1,0 +1,35 @@
+└─Program 'p'
+  └─Block
+    ├─Declarations
+    │ └─Var section
+    │   ├─Variable declaration
+    │   │ ├─char
+    │   │ ├─c
+    │   │ └─"
+    │   │   └─"
+    │   └─Variable declaration
+    │     ├─integer
+    │     ├─d
+    │     └─3
+    │       └─3
+    └─Compound statement
+      └─Statement list
+        ├─Write
+        │ └─Expression list
+        │   └─<>
+        │     ├─Designator
+        │     │ └─c
+        │     └─Designator
+        │       └─c
+        ├─Write
+        │ └─Expression list
+        │   └─+
+        │     ├─Designator
+        │     │ └─d
+        │     └─3
+        └─Write
+          └─Expression list
+            └─<>
+              ├─Designator
+              │ └─c
+              └─"

@@ -843,6 +843,12 @@ namespace PascalCompiler
 
         private Node ParseSimpleExpression()
         {
+            if (Current.SubType == Tokenizer.TokenSubType.CharConstant)
+            {
+                var tmp = Current;
+                Next();
+                return new ConstNode(null, tmp.Value, tmp.Line, tmp.Position);
+            }
             Node t = ParseTerm();
             var c = Current;
             while (AddOps.Contains(c.SubType))

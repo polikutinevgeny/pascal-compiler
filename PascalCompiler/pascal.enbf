@@ -60,6 +60,7 @@
 <Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
 
 <SimpleExpression>         ::= <Term> [ <AddOp> <Term> ]*;
+<SimpleExpression>         ::= (<Term> [ <AddOp> <Term> ]*) | <CharConst>;
 
 <Term>                     ::= <Factor> [ <MulOp> <Factor> ]*;
 

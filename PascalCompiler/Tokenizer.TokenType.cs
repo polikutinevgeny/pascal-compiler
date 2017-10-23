@@ -122,6 +122,7 @@ namespace PascalCompiler
             IntegerConstant,
             FloatConstant,
             StringConstant,
+            CharConstant,
             Range,
             // Hint directives
             Deprecated,

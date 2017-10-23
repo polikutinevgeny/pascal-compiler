@@ -1,0 +1,9 @@
+program p;
+var
+    c: char = #34;
+    d: integer = 3;
+begin
+    write(c <> c);
+    write(d + 3);
+    write(c <> #34);
+end.
