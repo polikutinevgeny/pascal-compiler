@@ -63,11 +63,10 @@
 
 <Term>                     ::= <Factor> [ <MulOp> <Factor> ]*;
 
-<Factor>                   ::= <Designator>                                              |
-                               <Ident> ['(' [<ExprList>] ')'] ['.' <Designator>]         |
-                               <Number>                                                  |
-                               '(' <Expression> ')'                                      |
-                               'NOT' <Factor>                                            |
+<Factor>                   ::= <Designator> [ '(' [<ExprList>] ')' ] |
+                               <Number>                              |
+                               '(' <Expression> ')'                  |
+                               'NOT' <Factor>                        |
                                [ '+' | '-' ] <Factor>;
 
 <RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | '=';

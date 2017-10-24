@@ -1,0 +1,11 @@
+const
+    a = (2 + 2 * 37) / 8;
+    b = 10 mod 4 div 3;
+    c = 2 << 4;
+    d = 'c';
+var
+    t: char;
+begin
+    t := d + 2;
+    t := 'c' < 2;
+end.
