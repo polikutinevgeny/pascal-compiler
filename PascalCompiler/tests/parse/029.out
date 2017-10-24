@@ -1,29 +1,21 @@
-└─Program 'read_'
-  └─Block
-    ├─Declarations
-    │ ├─Var section
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   └─n
-    │ └─Procedure
-    │   ├─Procedure heading: readln
-    │   │ └─Formal parameters
-    │   │   └─Var Parameter
-    │   │     ├─integer
-    │   │     └─n
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    └─Compound statement
-      └─Statement list
-        └─While
-          ├─<
-          │ ├─Designator
-          │ │ └─n
-          │ └─0
-          └─Call in statement
-            ├─Designator
-            │ └─readln
-            └─Expression list
-              └─Designator
-                └─n
+program read_
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  read_: read_;
+  n: n : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure readln(n : (integer = (built-in))  modifier: Var)
+      n: n : (integer = (built-in))  modifier: Var;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+└─while
+  ├─Less
+  │ ├─Designator
+  │ │ └─n
+  │ └─0
+  └─Call in statement
+    ├─Designator
+    │ └─readln
+    └─Expression list
+      └─Designator
+        └─n

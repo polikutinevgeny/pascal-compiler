@@ -1,0 +1,5 @@
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  r: r : record ([c, c : (integer = (built-in)) ], [a, a : array of record ([i, i : (integer = (built-in)) ]) ]) = ([c : (integer = (built-in)) , 3], [a : array of record ([i, i : (integer = (built-in)) ]) , (([i : (integer = (built-in)) , 1]), ([i : (integer = (built-in)) , 2]))]);

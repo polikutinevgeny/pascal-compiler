@@ -1,12 +1,11 @@
-└─Program ''
-  └─Block
-    └─Compound statement
-      └─Statement list
-        └─While
-          ├─1
-          └─Compound statement
-            └─Statement list
-              ├─While
-              │ ├─2
-              │ └─continue
-              └─break
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+└─while
+  ├─1
+  └─compound statement
+    ├─while
+    │ ├─2
+    │ └─continue
+    └─break

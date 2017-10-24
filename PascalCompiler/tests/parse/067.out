@@ -1,16 +1,11 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Function
-    │   ├─Function heading: foo
-    │   │ ├─Formal parameters
-    │   │ └─integer
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    │         └─Assignment statement
-    │           ├─Designator
-    │           │ └─result
-    │           └─132
-    └─Compound statement
-      └─Statement list
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function foo(), return type : (integer = (built-in))
+  └─Assignment statement
+    ├─Designator
+    │ └─result
+    └─132
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,35 +1,26 @@
-└─Program 'p'
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─char
-    │   │ ├─c
-    │   │ └─"
-    │   │   └─"
-    │   └─Variable declaration
-    │     ├─integer
-    │     ├─d
-    │     └─3
-    │       └─3
-    └─Compound statement
-      └─Statement list
-        ├─Write
-        │ └─Expression list
-        │   └─<>
-        │     ├─Designator
-        │     │ └─c
-        │     └─Designator
-        │       └─c
-        ├─Write
-        │ └─Expression list
-        │   └─+
-        │     ├─Designator
-        │     │ └─d
-        │     └─3
-        └─Write
-          └─Expression list
-            └─<>
-              ├─Designator
-              │ └─c
-              └─"
+program p
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  p: p;
+  c: c : (char = (built-in)) = ";
+  d: d : (integer = (built-in)) = 3;
+├─Write
+│ └─Expression list
+│   └─NEqual
+│     ├─Designator
+│     │ └─c
+│     └─Designator
+│       └─c
+├─Write
+│ └─Expression list
+│   └─Plus
+│     ├─Designator
+│     │ └─d
+│     └─3
+└─Write
+  └─Expression list
+    └─NEqual
+      ├─Designator
+      │ └─c
+      └─"

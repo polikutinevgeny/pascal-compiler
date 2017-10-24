@@ -1,29 +1,23 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Procedure
-    │   ├─Procedure heading: foo
-    │   │ └─Formal parameters
-    │   │   └─Parameter
-    │   │     ├─integer
-    │   │     └─a
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    │         ├─Assignment statement
-    │         │ ├─Designator
-    │         │ │ └─a
-    │         │ └─4
-    │         └─Call in statement
-    │           └─Designator
-    │             └─exit
-    └─Compound statement
-      └─Statement list
-        ├─Call in statement
-        │ ├─Designator
-        │ │ └─foo
-        │ └─Expression list
-        │   └─3
-        └─Call in statement
-          └─Designator
-            └─exit
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure foo(a : (integer = (built-in))  modifier: Value)
+      a: a : (integer = (built-in))  modifier: Value;
+  ├─Assignment statement
+  │ ├─Designator
+  │ │ └─a
+  │ └─4
+  └─Call in statement
+    └─Designator
+      └─exit
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Call in statement
+│ ├─Designator
+│ │ └─foo
+│ └─Expression list
+│   └─3
+└─Call in statement
+  └─Designator
+    └─exit

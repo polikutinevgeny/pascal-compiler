@@ -21,12 +21,12 @@
 <TypedConstant>            ::= ( <ConstExpr> | <ArrayConstant> | <RecordConstant> );
 
 <ArrayConstant>            ::= '(' 
-                               ( <ConstExpr> [ ',' <ConstExpr> ]* )
+                               ( <TypedConstant> [ ',' <TypedConstant> ]* )
                                ')';
 
 <RecordConstant>           ::= '(' ( <RecordFieldConstant> [ ';' <RecordFieldConstant> ]* ) ')';
 
-<RecordFieldConstant>      ::= <Ident> ':' <ConstExpr>;
+<RecordFieldConstant>      ::= <Ident> ':' <TypedConstant>;
 
 <Type>                     ::= <TypeID>        |
                                <SimpleType>    |
@@ -59,15 +59,15 @@
 
 <Expression>               ::= <SimpleExpression> [ <RelOp> <SimpleExpression> ]*;
 
-<SimpleExpression>         ::= <Term> [ <AddOp> <Term> ]*;
 <SimpleExpression>         ::= (<Term> [ <AddOp> <Term> ]*) | <CharConst>;
 
 <Term>                     ::= <Factor> [ <MulOp> <Factor> ]*;
 
-<Factor>                   ::= <Designator> [ '(' [<ExprList>] ')' ] |
-                               <Number>                              |
-                               '(' <Expression> ')'                  |
-                               'NOT' <Factor>                        |
+<Factor>                   ::= <Designator>                                              |
+                               <Ident> ['(' [<ExprList>] ')'] ['.' <Designator>]         |
+                               <Number>                                                  |
+                               '(' <Expression> ')'                                      |
+                               'NOT' <Factor>                                            |
                                [ '+' | '-' ] <Factor>;
 
 <RelOp>                    ::= '>' | '<' | '<=' | '>=' | '<>' | '=';
@@ -76,7 +76,7 @@
 
 <MulOp>                    ::= '*' | '/' | 'DIV' | 'MOD' | 'AND' | 'SHL' | 'SHR';
 
-<Designator>               ::= <Ident> [ '.' <Ident> ]* [ '[' <ExprList> ']' ]*;
+<Designator>               ::= <Ident> ['[' <ExprList> ']'] [ '.' <Designator> ];
 
 <ExprList>                 ::= <Expression> ( ',' <Expression> )*;
 
@@ -125,10 +125,10 @@
 
 <FormalParam>              ::= <Parameter> | <VarParameter> | <ConstParameter>;
 
-<Parameter>                ::= <IdentList> ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) |
+<Parameter>                ::= <IdentList> ':' ( (*[ 'ARRAY' 'OF' ]*) <TypeID> ) |
                                <Ident> ':' <TypeID> '=' <ConstExpr>;
 
-<VarParameter>             ::= 'VAR' <IdentList> [ ':' ( [ 'ARRAY' 'OF' ] <TypeID> ) ];
+<VarParameter>             ::= 'VAR' <IdentList> [ ':' ( (*[ 'ARRAY' 'OF' ]*) <TypeID> ) ];
 
 <ConstParameter>           ::= 'CONST' <Parameter>;
 

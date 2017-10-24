@@ -1,5 +1,5 @@
-└─Program ''
-  └─Block
-    └─Compound statement
-      └─Statement list
-        └─break
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+└─break

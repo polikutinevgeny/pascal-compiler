@@ -1,33 +1,26 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   └─Variable declaration
-    │     ├─integer
-    │     ├─a
-    │     ├─b
-    │     ├─i
-    │     └─n
-    └─Compound statement
-      └─Statement list
-        └─Repeat
-          ├─Statement list
-          │ └─Compound statement
-          │   └─Statement list
-          │     ├─Assignment statement
-          │     │ ├─Designator
-          │     │ │ └─n
-          │     │ └─30
-          │     └─Compound statement
-          │       └─Statement list
-          │         └─Assignment statement
-          │           ├─Designator
-          │           │ └─a
-          │           └─-
-          │             ├─Designator
-          │             │ └─n
-          │             └─20
-          └─>
-            ├─Designator
-            │ └─a
-            └─0
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a: a : (integer = (built-in)) ;
+  b: b : (integer = (built-in)) ;
+  i: i : (integer = (built-in)) ;
+  n: n : (integer = (built-in)) ;
+└─repeat
+  ├─Greater
+  │ ├─Designator
+  │ │ └─a
+  │ └─0
+  └─compound statement
+    ├─Assignment statement
+    │ ├─Designator
+    │ │ └─n
+    │ └─30
+    └─compound statement
+      └─Assignment statement
+        ├─Designator
+        │ └─a
+        └─Minus
+          ├─Designator
+          │ └─n
+          └─20

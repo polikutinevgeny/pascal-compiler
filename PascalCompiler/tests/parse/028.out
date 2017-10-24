@@ -1,92 +1,73 @@
-└─Program 'factorial'
-  └─Block
-    ├─Declarations
-    │ ├─Var section
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   └─n
-    │ ├─Procedure
-    │ │ ├─Procedure heading: readln
-    │ │ │ └─Formal parameters
-    │ │ │   └─Var Parameter
-    │ │ │     ├─integer
-    │ │ │     └─n
-    │ │ └─Block
-    │ │   └─Compound statement
-    │ │     └─Statement list
-    │ │       └─Assignment statement
-    │ │         ├─Designator
-    │ │         │ └─n
-    │ │         └─30
-    │ └─Function
-    │   ├─Function heading: fac
-    │   │ ├─Formal parameters
-    │   │ │ └─Parameter
-    │   │ │   ├─integer
-    │   │ │   └─n
-    │   │ └─integer
-    │   └─Block
-    │     ├─Declarations
-    │     │ └─Var section
-    │     │   └─Variable declaration
-    │     │     ├─integer
-    │     │     └─res
-    │     └─Compound statement
-    │       └─Statement list
-    │         └─If
-    │           ├─=
-    │           │ ├─Designator
-    │           │ │ └─n
-    │           │ └─0
-    │           ├─Assignment statement
-    │           │ ├─Designator
-    │           │ │ └─res
-    │           │ └─1
-    │           └─Assignment statement
-    │             ├─Designator
-    │             │ └─res
-    │             └─*
-    │               ├─Designator
-    │               │ └─n
-    │               └─Call in expression
-    │                 ├─Designator
-    │                 │ └─fac
-    │                 └─Expression list
-    │                   └─-
-    │                     ├─Designator
-    │                     │ └─n
-    │                     └─1
-    └─Compound statement
-      └─Statement list
-        ├─Call in statement
-        │ ├─Designator
-        │ │ └─readln
-        │ └─Expression list
-        │   └─Designator
-        │     └─n
-        ├─If
-        │ ├─<
-        │ │ ├─Designator
-        │ │ │ └─n
-        │ │ └─0
-        │ ├─Assignment statement
-        │ │ ├─Designator
-        │ │ │ └─n
-        │ │ └─-
-        │ │   └─Designator
-        │ │     └─n
-        │ └─Compound statement
-        │   └─Statement list
-        │     └─Assignment statement
-        │       ├─Designator
-        │       │ └─n
-        │       └─+
-        │         ├─Designator
-        │         │ └─n
-        │         └─1
-        └─Call in statement
+program factorial
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  factorial: factorial;
+  n: n : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure readln(n : (integer = (built-in))  modifier: Var)
+      n: n : (integer = (built-in))  modifier: Var;
+  └─Assignment statement
+    ├─Designator
+    │ └─n
+    └─30
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function fac(n : (integer = (built-in))  modifier: Value), return type : (integer = (built-in))
+      n: n : (integer = (built-in))  modifier: Value;
+      res: res : (integer = (built-in)) ;
+  └─If
+    ├─Equal
+    │ ├─Designator
+    │ │ └─n
+    │ └─0
+    ├─Assignment statement
+    │ ├─Designator
+    │ │ └─res
+    │ └─1
+    └─Assignment statement
+      ├─Designator
+      │ └─res
+      └─Asterisk
+        ├─Designator
+        │ └─n
+        └─Call in expression
           ├─Designator
           │ └─fac
           └─Expression list
-            └─Designator
-              └─n
+            └─Minus
+              ├─Designator
+              │ └─n
+              └─1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Call in statement
+│ ├─Designator
+│ │ └─readln
+│ └─Expression list
+│   └─Designator
+│     └─n
+├─If
+│ ├─Less
+│ │ ├─Designator
+│ │ │ └─n
+│ │ └─0
+│ ├─Assignment statement
+│ │ ├─Designator
+│ │ │ └─n
+│ │ └─Minus
+│ │   └─Designator
+│ │     └─n
+│ └─compound statement
+│   └─Assignment statement
+│     ├─Designator
+│     │ └─n
+│     └─Plus
+│       ├─Designator
+│       │ └─n
+│       └─1
+└─Call in statement
+  ├─Designator
+  │ └─fac
+  └─Expression list
+    └─Designator
+      └─n

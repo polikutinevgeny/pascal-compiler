@@ -1,48 +1,37 @@
-└─Program 'read_'
-  └─Block
-    ├─Declarations
-    │ ├─Var section
-    │ │ ├─Variable declaration
-    │ │ │ ├─integer
-    │ │ │ └─flag
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   └─n
-    │ └─Procedure
-    │   ├─Procedure heading: readln
-    │   │ └─Formal parameters
-    │   │   └─Var Parameter
-    │   │     ├─integer
-    │   │     └─n
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    └─Compound statement
-      └─Statement list
-        ├─Assignment statement
-        │ ├─Designator
-        │ │ └─flag
-        │ └─0
-        └─While
-          ├─<
-          │ ├─Designator
-          │ │ └─n
-          │ └─0
-          └─Compound statement
-            └─Statement list
-              ├─Call in statement
-              │ ├─Designator
-              │ │ └─readln
-              │ └─Expression list
-              │   └─Designator
-              │     └─n
-              └─If
-                ├─=
-                │ ├─Designator
-                │ │ └─n
-                │ └─-
-                │   └─100
-                └─Assignment statement
-                  ├─Designator
-                  │ └─flag
-                  └─1
+program read_
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  read_: read_;
+  flag: flag : (integer = (built-in)) ;
+  n: n : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure readln(n : (integer = (built-in))  modifier: Var)
+      n: n : (integer = (built-in))  modifier: Var;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Assignment statement
+│ ├─Designator
+│ │ └─flag
+│ └─0
+└─while
+  ├─Less
+  │ ├─Designator
+  │ │ └─n
+  │ └─0
+  └─compound statement
+    ├─Call in statement
+    │ ├─Designator
+    │ │ └─readln
+    │ └─Expression list
+    │   └─Designator
+    │     └─n
+    └─If
+      ├─Equal
+      │ ├─Designator
+      │ │ └─n
+      │ └─Minus
+      │   └─100
+      └─Assignment statement
+        ├─Designator
+        │ └─flag
+        └─1

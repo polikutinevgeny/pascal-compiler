@@ -1,0 +1,12 @@
+var
+    r: record
+        c : integer;
+        a : array[1..2] of record
+            i: integer;
+        end;
+    end = (
+        c : 3;
+        a : ((i : 1), (i : 2));
+    );
+begin
+end.

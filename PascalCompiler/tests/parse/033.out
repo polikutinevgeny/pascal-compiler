@@ -1,19 +1,15 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   └─Variable declaration
-    │     ├─integer
-    │     └─n
-    └─Compound statement
-      └─Statement list
-        ├─Assignment statement
-        │ ├─Designator
-        │ │ └─n
-        │ └─3
-        └─While
-          ├─<
-          │ ├─Designator
-          │ │ └─n
-          │ └─0
-          └─
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  n: n : (integer = (built-in)) ;
+├─Assignment statement
+│ ├─Designator
+│ │ └─n
+│ └─3
+└─while
+  ├─Less
+  │ ├─Designator
+  │ │ └─n
+  │ └─0
+  └─

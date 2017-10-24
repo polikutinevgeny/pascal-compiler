@@ -1,1 +1,18 @@
-Expected Do, got Identifier at 5:16
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  n: n : (integer = (built-in)) ;
+├─Assignment statement
+│ ├─Designator
+│ │ └─n
+│ └─1
+└─while
+  ├─Less
+  │ ├─Designator
+  │ │ └─n
+  │ └─0
+  └─Assignment statement
+    ├─Designator
+    │ └─n
+    └─1

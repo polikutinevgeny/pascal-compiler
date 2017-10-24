@@ -2,5 +2,7 @@ var
    n: integer;
 
 begin
-   while n < 0 doo
+   n := 1;
+   while n < 0 do
+     n := 1;
 end.

@@ -1,14 +1,10 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Procedure
-    │   ├─Procedure heading: foo
-    │   │ └─Formal parameters
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    └─Compound statement
-      └─Statement list
-        └─Call in statement
-          └─Designator
-            └─foo
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure foo()
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+└─Call in statement
+  └─Designator
+    └─foo

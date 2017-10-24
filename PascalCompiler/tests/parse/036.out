@@ -1,27 +1,19 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Constant section
-    │ │ └─a
-    │ │   └─*
-    │ │     ├─50
-    │ │     └─50
-    │ └─Var section
-    │   └─Variable declaration
-    │     ├─integer
-    │     ├─i
-    │     └─n
-    └─Compound statement
-      └─Statement list
-        └─For
-          ├─i
-          ├─0
-          ├─Designator
-          │ └─n
-          └─Assignment statement
-            ├─Designator
-            │ └─n
-            └─+
-              ├─Designator
-              │ └─a
-              └─1
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a: a :  = 2500;
+  i: i : (integer = (built-in)) ;
+  n: n : (integer = (built-in)) ;
+└─For
+  ├─i
+  ├─0
+  ├─Designator
+  │ └─n
+  └─Assignment statement
+    ├─Designator
+    │ └─n
+    └─Plus
+      ├─Designator
+      │ └─a
+      └─1

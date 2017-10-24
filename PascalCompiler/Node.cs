@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 
 namespace PascalCompiler
 {
     public abstract class Node
     {
+        public Node() {}
+
         public Node(List<Node> childs, object value, uint line, uint position)
         {
             Childs = childs;
@@ -59,15 +60,9 @@ namespace PascalCompiler
 
     public class ConstantDeclNode : Node
     {
-        public string Type { get; set; }
-        public ConstantDeclNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
-        {
-        }
-    }
 
-    public class TypedConstantNode : Node
-    {
-        public TypedConstantNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        public ConstantDeclNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
+            position)
         {
         }
     }
@@ -81,21 +76,8 @@ namespace PascalCompiler
 
     public class ExpressionNode : Node
     {
+        public TypeSymbol Type { get; set; }
         public ExpressionNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
-        {
-        }
-    }
-
-    public class ArrayConstantNode : TypedConstantNode
-    {
-        public ArrayConstantNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
-        {
-        }
-    }
-
-    public class RecordConstantNode : TypedConstantNode
-    {
-        public RecordConstantNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }
@@ -270,6 +252,7 @@ namespace PascalCompiler
 
     public class CompoundStatementNode : StructStatementNode
     {
+        public List<Statement> Statements { get; set; }
         public CompoundStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
@@ -282,21 +265,21 @@ namespace PascalCompiler
         }
     }
 
-    public class StatementNode : Node
+    public class Statement : Node
     {
-        public StatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        public Statement(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }
 
-    public class SimpleStatementNode : StatementNode
+    public class SimpleStatementNode : Statement
     {
         public SimpleStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
     }
 
-    public class StructStatementNode : StatementNode
+    public class StructStatementNode : Statement
     {
         public StructStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
@@ -333,6 +316,7 @@ namespace PascalCompiler
 
     public class WhileStatementNode : StructStatementNode
     {
+        public Node Condition { get; set; }
         public WhileStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
@@ -340,6 +324,7 @@ namespace PascalCompiler
 
     public class RepeatStatementNode : StructStatementNode
     {
+        public Node Condition { get; set; }
         public RepeatStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
@@ -347,6 +332,8 @@ namespace PascalCompiler
 
     public class DesignatorNode : Node
     {
+        public TypeSymbol Type { get; set; }
+        public List<ExpressionNode> Indexes { get; set; }
         public DesignatorNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
         }
@@ -408,40 +395,17 @@ namespace PascalCompiler
         }
     }
 
-    public class BreakNode : StatementNode
+    public class BreakNode : Statement
     {
         public BreakNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line, token.Position)
         {
         }
     }
 
-    public class ContinueNode : StatementNode
+    public class ContinueNode : Statement
     {
         public ContinueNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line, token.Position)
         {
-        }
-    }
-
-    public static class TreePrinter
-    {
-        public static void PrintTree(StreamWriter writer, Node node, string indent, bool last)
-        {
-            writer.Write(indent);
-            if (last)
-            {
-                writer.Write("└─");
-                indent += "  ";
-            }
-            else
-            {
-                writer.Write("├─");
-                indent += "│ ";
-            }
-            writer.WriteLine(node);
-            for (var i = 0; i < node?.Childs?.Count; ++i)
-            {
-                PrintTree(writer, node.Childs[i], indent, i == node.Childs.Count - 1);
-            }
         }
     }
 }

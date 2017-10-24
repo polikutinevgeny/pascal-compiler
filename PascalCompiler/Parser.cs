@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace PascalCompiler
 {
@@ -17,14 +18,114 @@ namespace PascalCompiler
             }
         }
 
-        private enum Type
+        public class EvaluatorException : Exception
         {
-            Simple,
-            Record,
-            Array,
+            public EvaluatorException(string message) : base(message)
+            {
+            }
         }
 
-        private Dictionary<string, Type> TypeTable { get; set; }
+        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; set; } =
+            new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>>
+            {
+                {Tokenizer.TokenSubType.Plus, (l, r) => l + r},
+                {Tokenizer.TokenSubType.Minus, (l, r) => l - r},
+                {Tokenizer.TokenSubType.Asterisk, (l, r) => l * r},
+                {Tokenizer.TokenSubType.Slash, (l, r) => (double) l / (double) r},
+                {Tokenizer.TokenSubType.Greater, (l, r) => (int) (l > r)},
+                {Tokenizer.TokenSubType.Less, (l, r) => (int) (l < r)},
+                {Tokenizer.TokenSubType.GEqual, (l, r) => (int) (l >= r)},
+                {Tokenizer.TokenSubType.LEqual, (l, r) => (int) (l <= r)},
+                {Tokenizer.TokenSubType.NEqual, (l, r) => (int) (l != r)},
+                {Tokenizer.TokenSubType.Equal, (l, r) => (long) (l == r)},
+                {
+                    Tokenizer.TokenSubType.Or, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l | r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.Xor, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l ^ r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.Div, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l / r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.Mod, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l % r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.And, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l & r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.Shl, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l << r;
+                    }
+                },
+                {
+                    Tokenizer.TokenSubType.Shr, (l, r) =>
+                    {
+                        if (l.GetType() is double || r.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return l >> r;
+                    }
+                },
+            };
+
+        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; set; } =
+            new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>>
+            {
+                {Tokenizer.TokenSubType.Plus, i => i},
+                {Tokenizer.TokenSubType.Minus, i => -i},
+                {
+                    Tokenizer.TokenSubType.Not, i =>
+                    {
+                        if (i.GetType() is double)
+                        {
+                            throw new EvaluatorException("Illegal operation");
+                        }
+                        return ~i;
+                    }
+                },
+            };
 
         private readonly IEnumerator<Tokenizer.Token> _tokenizer;
 
@@ -35,23 +136,17 @@ namespace PascalCompiler
         public Parser(IEnumerator<Tokenizer.Token> tokenizer)
         {
             _tokenizer = tokenizer;
-            TypeTable = new Dictionary<string, Type>
-            {
-                {"integer", Type.Simple},
-                {"real", Type.Simple},
-                {"char", Type.Simple},
-            };
         }
 
-        public Node Parse()
+        public PascalProgram Parse()
         {
             Next();
-            ProgramNode p = ParseProgram();
+            PascalProgram p = ParseProgram();
             Require(Tokenizer.TokenSubType.EndOfFile);
             return p;
         }
 
-        private ProgramNode ParseProgram()
+        private PascalProgram ParseProgram()
         {
             var c = Current;
             string name = "";
@@ -63,534 +158,617 @@ namespace PascalCompiler
                 name = n.Value.ToString();
                 Require(Tokenizer.TokenSubType.Semicolon);
             }
-            var b = ParseBlock();
-            Require(Tokenizer.TokenSubType.Dot);
-            return new ProgramNode(new List<Node> {b}, $"Program '{name}'", c.Line, c.Position);
-        }
-
-        private BlockNode ParseBlock()
-        {
-            if (Current.SubType != Tokenizer.TokenSubType.Begin)
+            SymTable st = new SymTable()
             {
-                var d = ParseDeclSection();
-                var c = ParseCompoundStatement();
-                return new BlockNode(new List<Node> {d, c}, "Block", d.Line, d.Position);
+                {TypeSymbol.IntTypeSymbol.Name, TypeSymbol.IntTypeSymbol},
+                {TypeSymbol.RealTypeSymbol.Name, TypeSymbol.RealTypeSymbol},
+                {TypeSymbol.CharTypeSymbol.Name, TypeSymbol.CharTypeSymbol},
+            };
+            if (st.LookUp(name) != null)
+            {
+                throw new ParserException("Illegal program name", c.Line, c.Position);
+            }
+            ProgramSymbol pn = null;
+            if (name != "")
+            {
+                pn = new ProgramSymbol() { Name = name };
+                st.Add(name, pn);
             }
             else
             {
-                var c = ParseCompoundStatement();
-                return new BlockNode(new List<Node> {c}, "Block", c.Line, c.Position);
+                pn = new ProgramSymbol() { Name = "" };
+            }
+            var b = ParseBlock(st);
+            Require(Tokenizer.TokenSubType.Dot);
+            return new PascalProgram() {Block = b, Name = pn};
+        }
+
+        private Block ParseBlock(SymTable symTable)
+        {
+            if (Current.SubType != Tokenizer.TokenSubType.Begin)
+            {
+                ParseDeclSection(symTable);
+                var c = ParseCompoundStatement(symTable);
+                return new Block() {StatementList = c.Statements, SymTable = symTable};
+            }
+            else
+            {
+                var c = ParseCompoundStatement(symTable);
+                return new Block() {StatementList = c.Statements, SymTable = symTable};
             }
         }
 
-        private DeclSectionNode ParseDeclSection()
+        private void ParseDeclSection(SymTable symTable)
         {
-            List<Node> declList = new List<Node>();
             var c = Current;
             while (true)
             {
                 switch (Current.SubType)
                 {
                     case Tokenizer.TokenSubType.Const:
-                        declList.Add(ParseConstSection());
+                        ParseConstSection(symTable);
                         break;
                     case Tokenizer.TokenSubType.Var:
-                        declList.Add(ParseVarSection());
+                        ParseVarSection(symTable);
                         break;
                     case Tokenizer.TokenSubType.Type:
-                        declList.Add(ParseTypeSection());
+                        ParseTypeSection(symTable);
                         break;
                     case Tokenizer.TokenSubType.Procedure:
-                        declList.Add(ParseProcedureDecl());
+                        ParseProcedureDecl(symTable);
                         break;
                     case Tokenizer.TokenSubType.Function:
-                        declList.Add(ParseFunctionDecl());
+                        ParseFunctionDecl(symTable);
                         break;
                     default:
-                        return new DeclSectionNode(declList, "Declarations", c.Line, c.Position);
+                        return;
                 }
             }
         }
 
-        private ConstSectionNode ParseConstSection()
+        private void ParseConstSection(SymTable symTable)
         {
             Require(Tokenizer.TokenSubType.Const);
             var c = Current;
-            List<Node> declList = new List<Node>();
+            bool f = true;
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
-                declList.Add(ParseConstantDecl());
+                ParseConstantDecl(symTable);
                 Require(Tokenizer.TokenSubType.Semicolon);
+                f = false;
             }
-            if (declList.Count == 0)
+            if (f)
             {
                 throw new ParserException("Empty constant section", c.Line, c.Position);
             }
-            return new ConstSectionNode(declList, "Constant section", c.Line, c.Position);
         }
 
-        private ConstantDeclNode ParseConstantDecl()
+        private void ParseConstantDecl(SymTable symTable)
         {
             var c = Current;
             Next();
             if (Current.SubType == Tokenizer.TokenSubType.Equal)
             {
                 Next();
-                var ce = ParseConstExpr();
-                return new ConstantDeclNode(new List<Node> {ce}, c.Value, c.Line, c.Position);
+                var ce = ParseConstExpr(symTable);
+                if (symTable.ContainsKey(c.Value.ToString()))
+                {
+                    throw new ParserException($"Duplicate identifier {c.Value}", c.Line, c.Position);
+                }
+                symTable.Add(c.Value.ToString(),
+                    new ConstSymbol()
+                    {
+                        Name = c.Value.ToString(),
+                        Type = ce.Type,
+                        Value = new SimpleConstant() {Type = ce.Type, Value = ce.Value}
+                    });
+                return;
             }
             if (Current.SubType == Tokenizer.TokenSubType.Colon)
             {
                 Next();
-                var t = ParseType();
+                var t = ParseType(symTable);
                 Require(Tokenizer.TokenSubType.Equal);
-                var tc = ParseTypedConstant(t.Value.ToString());
-                return new ConstantDeclNode(new List<Node> {t, tc}, c.Value, c.Line, c.Position);
+                var tc = ParseTypedConstant(symTable, t);
+                symTable.Add(c.Value.ToString(),
+                    new TypedConstSymbol()
+                    {
+                        Name = c.Value.ToString(),
+                        Type = t,
+                        Value = new SimpleConstant() {Type = t, Value = tc}
+                    });
+                return;
             }
             throw new ParserException($"Expected '=' or ':', got {Current.SubType}.", Current.Line, Current.Position);
         }
 
-        private TypedConstantNode ParseTypedConstant(string type)
+        private Constant ParseTypedConstant(SymTable symTable, TypeSymbol t)
         {
-            var c = Current;
-            // anonymous
-            switch (type)
+            switch (t)
             {
-                case "Array":
-                    return ParseArrayConstant();
-                case "Record":
-                    return ParseRecordConstant();
+                case ArrayTypeSymbol at:
+                    return ParseArrayConstant(symTable, at);
+                case RecordTypeSymbol rt:
+                    return ParseRecordConstant(symTable, rt);
+                default:
+                    return ParseConstExpr(symTable);
             }
-            switch (TypeTable[type])
-            {
-                case Type.Array:
-                    return ParseArrayConstant();
-                case Type.Record:
-                    return ParseRecordConstant();
-                case Type.Simple:
-                {
-                    var t = ParseConstExpr();
-                    return new TypedConstantNode(new List<Node> {t}, t.Value, c.Line, c.Position);
-                }
-            }
-            throw new InvalidOperationException($"No typed constant found at {c.Line}:{c.Position}");
         }
 
-        // TODO: Evaluate expression at compile time
-        private ConstExprNode ParseConstExpr()
+        private SimpleConstant ParseConstExpr(SymTable symTable)
         {
-            var e = ParseExpression();
-            return new ConstExprNode(e.Childs, e.Value, e.Line, e.Position);
+            var e = ParseExpression(symTable);
+            return new SimpleConstant() {Value = EvaluateConstExpr(e, symTable), Type = null};
         }
 
-        private ArrayConstantNode ParseArrayConstant()
+        private ArrayConstant ParseArrayConstant(SymTable symTable, ArrayTypeSymbol arrayType)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.LParenthesis);
-            List<Node> arrayElem = new List<Node> {ParseConstExpr()};
+            List<Constant> arrayElem =
+                new List<Constant> {ParseTypedConstant(symTable, arrayType.ElementType)};
             while (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
             {
                 Require(Tokenizer.TokenSubType.Comma);
-                arrayElem.Add(ParseConstExpr());
+                arrayElem.Add(ParseTypedConstant(symTable, arrayType.ElementType));
             }
             Require(Tokenizer.TokenSubType.RParenthesis);
-            return new ArrayConstantNode(arrayElem, "Array constant", c.Line, c.Position);
+            return new ArrayConstant() {Elements = arrayElem, Type = arrayType};
         }
 
-        private RecordConstantNode ParseRecordConstant()
+        private RecordConstant ParseRecordConstant(SymTable symTable, RecordTypeSymbol recordType)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.LParenthesis);
-            List<Node> recordElem = new List<Node> {ParseRecordFieldConstant()};
-            while (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+            Dictionary<VarSymbol, Constant> recordElem = new Dictionary<VarSymbol, Constant>();
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
+                var i = Current;
+                var f = recordType.Fields.LookUp(i.Value.ToString());
+                if (f == null)
+                {
+                    throw new ParserException($"Unknown identifier {i.Value}", i.Line, i.Position);
+                }
+                if (recordElem.ContainsKey((VarSymbol) f))
+                {
+                    throw new ParserException($"Field {i.Value} already initialized", i.Line, i.Position);
+                }
+                Next();
+                Require(Tokenizer.TokenSubType.Colon);
+                var v = ParseTypedConstant(symTable, ((VarSymbol) f).Type);
+                recordElem.Add((VarSymbol) f, v);
+                if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+                {
+                    break;
+                }
                 Require(Tokenizer.TokenSubType.Semicolon);
-                recordElem.Add(ParseRecordFieldConstant());
             }
             Require(Tokenizer.TokenSubType.RParenthesis);
-            return new RecordConstantNode(recordElem, "Record constant", c.Line, c.Position);
+            return new RecordConstant() {Type = recordType, Values = recordElem};
         }
 
-        private RecordFieldConstantNode ParseRecordFieldConstant()
-        {
-            var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            Require(Tokenizer.TokenSubType.Colon);
-            var v = ParseConstExpr();
-            return new RecordFieldConstantNode(new List<Node> {v}, c.Value, c.Line, c.Position);
-        }
-
-        private VarSectionNode ParseVarSection()
+        private void ParseVarSection(SymTable symTable)
         {
             Require(Tokenizer.TokenSubType.Var);
             var c = Current;
-            List<Node> declList = new List<Node> {ParseVarDecl()};
+            ParseVarDecl(symTable);
             Require(Tokenizer.TokenSubType.Semicolon);
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
-                declList.Add(ParseVarDecl());
+                ParseVarDecl(symTable);
                 Require(Tokenizer.TokenSubType.Semicolon);
             }
-            return new VarSectionNode(declList, "Var section", c.Line, c.Position);
         }
 
-        private VarDeclNode ParseVarDecl()
+        private void ParseVarDecl(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
             var tmp = Current;
-            List<Node> childs = new List<Node> {new VarNode(null, c)};
+            List<string> idents = new List<string> {c.Value.ToString()};
             while (tmp.SubType == Tokenizer.TokenSubType.Comma)
             {
                 Next();
                 tmp = Current;
                 Require(Tokenizer.TokenSubType.Identifier);
-                childs.Add(new VarNode(null, tmp));
+                idents.Add(tmp.Value.ToString());
                 tmp = Current;
             }
             Require(Tokenizer.TokenSubType.Colon);
-            childs.Insert(0, ParseType());
-            if (childs.Count == 2 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            var t = ParseType(symTable);
+            if (idents.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
             {
                 Next();
-                childs.Add(ParseTypedConstant(childs[0].Value.ToString()));
-                return new VarDeclNode(childs, "Variable declaration", c.Line, c.Position);
+                var v = ParseTypedConstant(symTable, t);
+                symTable.Add(idents[0], new VarSymbol() {Name = idents[0], Type = t, Value = v});
+                return;
             }
-            return new VarDeclNode(childs, "Variable declaration", c.Line, c.Position);
+            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                throw new ParserException("Only 1 variable can be initialized", Current.Line, Current.Position);
+            }
+            foreach (var i in idents)
+            {
+                symTable.Add(i, new VarSymbol() {Name = i, Type = t, Value = null});
+            }
         }
 
-        private TypeSectionNode ParseTypeSection()
+        private void ParseTypeSection(SymTable symTable)
         {
             Require(Tokenizer.TokenSubType.Type);
             var c = Current;
-            List<Node> declList = new List<Node>();
+            ParseTypeDecl(symTable);
+            Require(Tokenizer.TokenSubType.Semicolon);
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
-                declList.Add(ParseTypeDecl());
-                Require(Tokenizer.TokenSubType.Semicolon);
+                ParseTypeDecl(symTable);
+//                Require(Tokenizer.TokenSubType.Semicolon);
             }
-            if (declList.Count == 0)
-            {
-                throw new ParserException("Empty type section", c.Line, c.Position);
-            }
-            return new TypeSectionNode(declList, "Type section", c.Line, c.Position);
         }
 
-        private TypeDeclNode ParseTypeDecl()
+        private void ParseTypeDecl(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
             Require(Tokenizer.TokenSubType.Equal);
-            var v = ParseType();
-            switch (v)
+            var t = ParseType(symTable);
+//            Next();
+            t.Name = c.Value.ToString();
+            switch (t)
             {
-                case ArrayTypeNode _:
-                    TypeTable.Add(c.Value.ToString(), Type.Array);
+                case ArrayTypeSymbol at:
+                    symTable.Add(at.Name, at);
                     break;
-                case RecordTypeNode _:
-                    TypeTable.Add(c.Value.ToString(), Type.Record);
+                case RecordTypeSymbol rt:
+                    symTable.Add(rt.Name, rt);
                     break;
                 default:
-                    TypeTable.Add(c.Value.ToString(), Type.Simple);
+                    symTable.Add(t.Name, t);
                     break;
             }
-            return new TypeDeclNode(new List<Node> {v}, c.Value, c.Line, c.Position);
         }
 
-        private TypeNode ParseType()
+        private TypeSymbol ParseType(SymTable symTable)
         {
             var c = Current;
             if (c.SubType == Tokenizer.TokenSubType.Identifier)
             {
-                if (TypeTable.ContainsKey(c.Value.ToString()))
+                Next();
+                var t = symTable.LookUp(c.Value.ToString());
+                if (!(t is TypeSymbol))
                 {
-                    Next();
-                    return new TypeNode(null, c.Value, c.Line, c.Position);
+                    throw new ParserException("Error in type definition", c.Line, c.Position);
                 }
-                throw new ParserException($"Identifier not found '{c.Value}'", c.Line, c.Position);
+                return (TypeSymbol) t;
             }
             if (c.SubType == Tokenizer.TokenSubType.Array)
             {
-                return ParseArrayType();
+                return ParseArrayType(symTable);
             }
             if (c.SubType == Tokenizer.TokenSubType.Record)
             {
-                return ParseRecordType();
+                return ParseRecordType(symTable);
             }
             throw new ParserException($"Expected type, found '{c.SubType}'", c.Line, c.Position);
         }
 
-        private ArrayTypeNode ParseArrayType()
+        private ArrayTypeSymbol ParseArrayType(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Array);
             Require(Tokenizer.TokenSubType.LBracket);
-            List<Node> childs = new List<Node> {ParseSubrange()};
+            var rangeList = new List<(int Left, int Right)> {ParseSubrange(symTable)};
             while (Current.SubType != Tokenizer.TokenSubType.RBracket)
             {
                 Require(Tokenizer.TokenSubType.Comma);
-                childs.Add(ParseSubrange());
+                rangeList.Add(ParseSubrange(symTable));
             }
             Require(Tokenizer.TokenSubType.RBracket);
             Require(Tokenizer.TokenSubType.Of);
-            childs.Insert(0, ParseType());
-            return new ArrayTypeNode(childs, "Array", c.Line, c.Position);
+            var t = ParseType(symTable);
+            return new ArrayTypeSymbol() {Name = null, ElementType = t, Ranges = rangeList};
         }
 
-        private SubrangeNode ParseSubrange()
+        private (int Left, int Right) ParseSubrange(SymTable symTable)
         {
             var c = Current;
-            var l = ParseConstExpr();
+            var l = ParseConstExpr(symTable).Value;
             Require(Tokenizer.TokenSubType.Range);
-            var r = ParseConstExpr();
-            return new SubrangeNode(new List<Node> {l, r}, "Range", c.Line, c.Position);
+            var r = ParseConstExpr(symTable).Value;
+            if (!(l is int && r is int))
+            {
+                throw new ParserException("Only integer values can be used in array range", c.Line, c.Position);
+            }
+            return (Left: (int) l, Right: (int) r);
         }
 
-        private RecordTypeNode ParseRecordType()
+        private RecordTypeSymbol ParseRecordType(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Record);
-            var f = ParseRecordFieldList();
+            SymTable recSymTable = new SymTable() {Parent = null};
+            ParseRecordFieldList(symTable, recSymTable);
             Require(Tokenizer.TokenSubType.End);
-            return new RecordTypeNode(new List<Node> {f}, "Record", c.Line, c.Position);
+            return new RecordTypeSymbol() {Name = null, Fields = recSymTable};
         }
 
-        private RecordFieldListNode ParseRecordFieldList()
+        private void ParseRecordFieldList(SymTable parentSymTable, SymTable recSymTable)
         {
             var c = Current;
-            List<Node> childs = new List<Node> {ParseFieldDecl()};
-            while (Current.SubType == Tokenizer.TokenSubType.Semicolon)
+            ParseFieldDecl(parentSymTable, recSymTable);
+            if (Current.SubType == Tokenizer.TokenSubType.End)
             {
-                Next();
+                return;
+            }
+            Require(Tokenizer.TokenSubType.Semicolon);
+            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            {
+                ParseFieldDecl(parentSymTable, recSymTable);
                 if (Current.SubType == Tokenizer.TokenSubType.End)
                 {
                     break;
                 }
-                childs.Add(ParseFieldDecl()); 
+                Require(Tokenizer.TokenSubType.Semicolon);
             }
-            if (Current.SubType == Tokenizer.TokenSubType.Semicolon)
-            {
-                Next();
-            }
-            return new RecordFieldListNode(childs, "Field list", c.Line, c.Position);
         }
 
-        private FieldDeclNode ParseFieldDecl()
+        private void ParseFieldDecl(SymTable parentSymTable, SymTable recSymTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> {new FieldNode(null, c)};
+            List<string> idents = new List<string> {c.Value.ToString()};
             var t = Current;
             while (t.SubType == Tokenizer.TokenSubType.Comma)
             {
                 Next();
                 t = Current;
                 Require(Tokenizer.TokenSubType.Identifier);
-                childs.Add(new FieldNode(null, t));
+                idents.Add(t.Value.ToString());
             }
             Require(Tokenizer.TokenSubType.Colon);
-            childs.Insert(0, ParseType());
-            return new FieldDeclNode(childs, "Field declaration", c.Line, c.Position);
+            var tp = ParseType(parentSymTable);
+            foreach (var i in idents)
+            {
+                if (recSymTable.ContainsKey(i))
+                {
+                    throw new ParserException($"Field {i} already declared", c.Line, c.Position);
+                }
+                recSymTable.Add(i, new VarSymbol() {Name = i, Type = tp, Value = null});
+            }
         }
 
-        private ProcedureDeclNode ParseProcedureDecl()
+        private void ParseProcedureDecl(SymTable symTable)
         {
             var c = Current;
-            var h = ParseProcedureHeading();
+            SymTable procSymTable = new SymTable() {Parent = symTable};
+            var h = ParseProcedureHeading(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
-            var b = ParseBlock();
+            var b = ParseBlock(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
-            return new ProcedureDeclNode(new List<Node> {h, b}, "Procedure", c.Line, c.Position);
+            symTable.Add(h.Name, new ProcedureSymbol() {Name = h.Name, Block = b, Parameters = h.Parameters});
         }
 
-        private ProcedureHeadingNode ParseProcedureHeading()
+        private (string Name, Parameters Parameters) ParseProcedureHeading(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Procedure);
             var i = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node>();
             if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
             {
-                childs.Add(ParseFormalParameters());
+                var p = ParseFormalParameters(symTable);
+                return (Name: i.Value.ToString(), Parameters: p);
             }
-            return new ProcedureHeadingNode(childs.Count > 0 ? childs : null, $"Procedure heading: {i.Value}", c.Line,
-                c.Position);
+            return (Name: i.Value.ToString(), Parameters: new Parameters());
         }
 
-        private FormalParametersNode ParseFormalParameters()
+        private Parameters ParseFormalParameters(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.LParenthesis);
-            List<Node> parameters = new List<Node>();
+            Parameters parameters = new Parameters();
             if (Current.SubType == Tokenizer.TokenSubType.Identifier ||
                 Current.SubType == Tokenizer.TokenSubType.Var ||
                 Current.SubType == Tokenizer.TokenSubType.Const)
             {
-                parameters.Add(ParseFormalParam());
+                parameters.AddRange(ParseFormalParam(symTable));
             }
+            if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+            {
+                Next();
+                return parameters;
+            }
+            Require(Tokenizer.TokenSubType.Semicolon);
             while (
                 Current.SubType == Tokenizer.TokenSubType.Identifier ||
                 Current.SubType == Tokenizer.TokenSubType.Var ||
                 Current.SubType == Tokenizer.TokenSubType.Const)
             {
+                parameters.AddRange(ParseFormalParam(symTable));
+                if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+                {
+                    Next();
+                    return parameters;
+                }
                 Require(Tokenizer.TokenSubType.Semicolon);
-                parameters.Add(ParseFormalParam());
             }
             Require(Tokenizer.TokenSubType.RParenthesis);
-            return new FormalParametersNode(parameters.Count > 0 ? parameters : null, "Formal parameters", c.Line,
-                c.Position);
+            return parameters;
         }
 
-        private FormalParamNode ParseFormalParam()
+        private Parameters ParseFormalParam(SymTable symTable)
         {
             var c = Current;
             switch (c.SubType)
             {
                 case Tokenizer.TokenSubType.Var:
-                    return ParseVarParameter();
+                    return ParseVarParameter(symTable);
                 case Tokenizer.TokenSubType.Const:
-                    return ParseConstParameter();
+                    return ParseConstParameter(symTable);
                 case Tokenizer.TokenSubType.Identifier:
-                    return ParseParameter();
+                    return ParseParameter(symTable);
             }
             throw new ParserException($"Expected var, const or identifier, got {c.SubType}", c.Line, c.Position);
         }
 
-        private ParameterNode ParseParameter()
+        private Parameters ParseParameter(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> {new ParamNode(null, c)};
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
-            {
-                Require(Tokenizer.TokenSubType.Comma);
-                childs.Add(new ParamNode(null, Current));
-            }
-            Require(Tokenizer.TokenSubType.Colon);
-            if (Current.SubType == Tokenizer.TokenSubType.Array)
-            {
-                var p = Current;
-                Require(Tokenizer.TokenSubType.Array);
-                Require(Tokenizer.TokenSubType.Of);
-                var tp = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
-                childs.Insert(0,
-                    new ArrayTypeNode(new List<Node> {new TypeNode(null, tp.Value, tp.Line, tp.Position)}, "Array",
-                        p.Line, p.Position));
-                return new ParameterNode(childs, "Parameter", c.Line, c.Position);
-            }
-            var t = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            childs.Insert(0, new TypeNode(null, t.Value, t.Line, t.Position));
-            if (childs.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
-            {
-                Require(Tokenizer.TokenSubType.Equal);
-                childs.Add(ParseConstExpr());
-                return new ParameterNode(childs, "Parameter", c.Line, c.Position);
-            }
-            return new ParameterNode(childs, "Parameter", c.Line, c.Position);
-        }
-
-        private VarParameterNode ParseVarParameter()
-        {
-            var c = Current;
-            Require(Tokenizer.TokenSubType.Var);
-            var tmp = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> {new ParamNode(null, tmp)};
+            List<string> idents = new List<string> {c.Value.ToString()};
             while (Current.SubType == Tokenizer.TokenSubType.Comma)
             {
                 Next();
-                tmp = Current;
-                Next();
-                childs.Add(new ParamNode(null, tmp));
+                var tmp = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                idents.Add(tmp.Value.ToString());
             }
             Require(Tokenizer.TokenSubType.Colon);
-            if (Current.SubType == Tokenizer.TokenSubType.Array)
-            {
-                var p = Current;
-                Require(Tokenizer.TokenSubType.Array);
-                Require(Tokenizer.TokenSubType.Of);
-                var tp = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
-                childs.Insert(0,
-                    new ArrayTypeNode(new List<Node> {new TypeNode(null, tp.Value, tp.Line, tp.Position)}, "Array",
-                        p.Line, p.Position));
-                return new VarParameterNode(childs, " Var Parameter", c.Line, c.Position);
-            }
             var t = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            childs.Insert(0, new TypeNode(null, t.Value, t.Line, t.Position));
-            return new VarParameterNode(childs, "Var Parameter", c.Line, c.Position);
+            var tp = symTable.LookUp(t.Value.ToString());
+            if (!(tp is TypeSymbol))
+            {
+                throw new ParserException("Illegal type declaration", t.Line, t.Position);
+            }
+            if (idents.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                Require(Tokenizer.TokenSubType.Equal);
+                var v = ParseConstExpr(symTable);
+                var s = new ParameterSymbol() {Name = idents[0], ParameterModifier = ParameterModifier.Value, Type = (TypeSymbol)tp, Value = v};
+                symTable.Add(idents[0], s);
+                return new Parameters {s};
+            }
+            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            {
+                throw new ParserException("Only one parameter can have default value", Current.Line, Current.Position);
+            }
+            var p = new Parameters();
+            foreach (var i in idents)
+            {
+                var s = new ParameterSymbol()
+                {
+                    Name = i,
+                    ParameterModifier = ParameterModifier.Value,
+                    Type = (TypeSymbol)tp,
+                    Value = null
+                };
+                p.Add(s);
+                symTable.Add(i, s);
+            }
+            return p;
         }
 
-        private ConstParameterNode ParseConstParameter()
+        private Parameters ParseVarParameter(SymTable symTable)
+        {
+            Require(Tokenizer.TokenSubType.Var);
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            List<string> idents = new List<string> {c.Value.ToString()};
+            while (Current.SubType == Tokenizer.TokenSubType.Comma)
+            {
+                Next();
+                var tmp = Current;
+                Require(Tokenizer.TokenSubType.Identifier);
+                idents.Add(tmp.Value.ToString());
+            }
+            Require(Tokenizer.TokenSubType.Colon);
+            var t = Current;
+            Require(Tokenizer.TokenSubType.Identifier);
+            var tp = symTable.LookUp(t.Value.ToString());
+            if (!(tp is TypeSymbol))
+            {
+                throw new ParserException("Illegal type declaration", t.Line, t.Position);
+            }
+            var p = new Parameters();
+            foreach (var i in idents)
+            {
+                var s = new ParameterSymbol()
+                {
+                    Name = i,
+                    ParameterModifier = ParameterModifier.Var,
+                    Type = (TypeSymbol)tp
+                };
+                p.Add(s);
+                symTable.Add(i, s);
+            }
+            return p;
+        }
+
+        private Parameters ParseConstParameter(SymTable symTable)
         {
             Require(Tokenizer.TokenSubType.Const);
-            var p = ParseParameter();
-            return new ConstParameterNode(p.Childs, p.Value, p.Line, p.Position);
+            var p = ParseParameter(symTable);
+            foreach (ParameterSymbol ps in p)
+            {
+                ps.ParameterModifier = ParameterModifier.Const;
+            }
+            return p;
         }
 
-        private FunctionDeclNode ParseFunctionDecl()
+        private void ParseFunctionDecl(SymTable symTable)
         {
             var c = Current;
-            var h = ParseFunctionHeading();
+            SymTable procSymTable = new SymTable() {Parent = symTable};
+            var h = ParseFunctionHeading(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
-            var b = ParseBlock();
+            var b = ParseBlock(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
-            return new FunctionDeclNode(new List<Node> {h, b}, "Function", c.Line, c.Position);
+            symTable.Add(h.Name,
+                new FunctionSymbol() {Name = h.Name, Block = b, Parameters = h.Parameters, ReturnType = h.ReturnType});
         }
 
-        private FunctionHeadingNode ParseFunctionHeading()
+        private (string Name, Parameters Parameters, TypeSymbol ReturnType) ParseFunctionHeading(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Function);
             var i = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node>();
             if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
             {
-                childs.Add(ParseFormalParameters());
+                var p = ParseFormalParameters(symTable);
+                Require(Tokenizer.TokenSubType.Colon);
+                var rt = ParseType(symTable);
+                return (Name: i.Value.ToString(), Parameters: p, ReturnType: rt);
             }
             Require(Tokenizer.TokenSubType.Colon);
-            var t = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            childs.Add(new TypeNode(null, t.Value, t.Line, t.Position));
-            return new FunctionHeadingNode(childs, $"Function heading: {i.Value}", c.Line,
-                c.Position);
+            var ret = ParseType(symTable);
+            return (Name: i.Value.ToString(), Parameters: new Parameters(), ReturnType: ret);
         }
 
-        private CompoundStatementNode ParseCompoundStatement()
+        private CompoundStatementNode ParseCompoundStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Begin);
-            var l = ParseStatementList();
+            var l = ParseStatementList(symTable);
             Require(Tokenizer.TokenSubType.End);
-            return new CompoundStatementNode(new List<Node> {l}, "Compound statement", c.Line, c.Position);
+            return new CompoundStatementNode(null, "Compound statement", c.Line, c.Position)
+            {
+                Statements = l
+            };
         }
 
-        private StatementListNode ParseStatementList()
+        private List<Statement> ParseStatementList(SymTable symTable)
         {
             var c = Current;
             if (Current.SubType == Tokenizer.TokenSubType.End)
             {
-                return new StatementListNode(null, "Statement list", c.Line, c.Position);
+                return new List<Statement>();
             }
-            List<Node> childs = new List<Node> {ParseStatement()};
+            List<Statement> statementList = new List<Statement> {ParseStatement(symTable)};
             while (Current.SubType == Tokenizer.TokenSubType.Semicolon)
             {
                 Next();
-                var t = ParseStatement();
+                var t = ParseStatement(symTable);
                 if (t != null)
                 {
-                    childs.Add(t);
+                    statementList.Add(t);
                 }
             }
-            return new StatementListNode(childs, "Statement list", c.Line, c.Position);
+            return statementList;
         }
 
-        private StatementNode ParseStatement()
+        private Statement ParseStatement(SymTable symTable)
         {
             var c = Current;
             switch (c.SubType)
@@ -598,13 +776,13 @@ namespace PascalCompiler
                 case Tokenizer.TokenSubType.Identifier:
                 case Tokenizer.TokenSubType.Read:
                 case Tokenizer.TokenSubType.Write:
-                    return ParseSimpleStatement();
+                    return ParseSimpleStatement(symTable);
                 case Tokenizer.TokenSubType.While:
                 case Tokenizer.TokenSubType.If:
                 case Tokenizer.TokenSubType.For:
                 case Tokenizer.TokenSubType.Repeat:
                 case Tokenizer.TokenSubType.Begin:
-                    return ParseStructStatement();
+                    return ParseStructStatement(symTable);
                 case Tokenizer.TokenSubType.Break:
                     Next();
                     return new BreakNode(null, c);
@@ -615,50 +793,50 @@ namespace PascalCompiler
             return null;
         }
 
-        private SimpleStatementNode ParseSimpleStatement()
+        private SimpleStatementNode ParseSimpleStatement(SymTable symTable)
         {
             var c = Current;
             switch (Current.SubType)
             {
                 case Tokenizer.TokenSubType.Read:
-                    return ParseReadStatement();
+                    return ParseReadStatement(symTable);
                 case Tokenizer.TokenSubType.Write:
-                    return ParseWriteStatement();
+                    return ParseWriteStatement(symTable);
             }
-            var d = ParseDesignator();
+            var d = ParseDesignator(symTable);
             switch (Current.SubType)
             {
                 case Tokenizer.TokenSubType.LParenthesis:
-                {
-                    Next();
-                    if (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
                     {
-                        var e = ParseExpressionList();
-                        Require(Tokenizer.TokenSubType.RParenthesis);
-                        return new SimpleStatementNode(new List<Node> {d, e}, "Call in statement", c.Line, c.Position);
-                    }
-                    Next();
-                    return new SimpleStatementNode(new List<Node> { d }, "Call in statement", c.Line, c.Position);
+                        Next();
+                        if (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+                        {
+                            var e = ParseExpressionList(symTable);
+                            Require(Tokenizer.TokenSubType.RParenthesis);
+                            return new SimpleStatementNode(new List<Node> { d, e }, "Call in statement", c.Line, c.Position);
+                        }
+                        Next();
+                        return new SimpleStatementNode(new List<Node> { d }, "Call in statement", c.Line, c.Position);
                     }
                 case Tokenizer.TokenSubType.Assign:
                 case Tokenizer.TokenSubType.AsteriskAssign:
                 case Tokenizer.TokenSubType.SlashAssign:
                 case Tokenizer.TokenSubType.PlusAssign:
                 case Tokenizer.TokenSubType.MinusAssign:
-                {
-                    Next();
-                    var e = ParseExpression();
-                    return new SimpleStatementNode(new List<Node> {d, e}, "Assignment statement", c.Line, c.Position);
-                }
+                    {
+                        Next();
+                        var e = ParseExpression(symTable);
+                        return new SimpleStatementNode(new List<Node> { d, e }, "Assignment statement", c.Line, c.Position);
+                    }
             }
             return new SimpleStatementNode(new List<Node> { d }, "Call in statement", c.Line, c.Position);
         }
 
-        private DesignatorNode ParseDesignator()
+        private DesignatorNode ParseDesignator(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Identifier);
-            List<Node> childs = new List<Node> {new IdentNode(null, c)};
+            List<Node> childs = new List<Node> { new IdentNode(null, c) };
             while (Current.SubType == Tokenizer.TokenSubType.Dot)
             {
                 Next();
@@ -671,7 +849,7 @@ namespace PascalCompiler
                 Next();
                 if (Current.SubType != Tokenizer.TokenSubType.RBracket)
                 {
-                    childs.Add(ParseExpressionList());
+                    childs.Add(ParseExpressionList(symTable));
                     Require(Tokenizer.TokenSubType.RBracket);
                 }
                 else
@@ -682,33 +860,33 @@ namespace PascalCompiler
             return new DesignatorNode(childs, "Designator", c.Line, c.Position);
         }
 
-        private ExpressionListNode ParseExpressionList()
+        private ExpressionListNode ParseExpressionList(SymTable symTable)
         {
             var c = Current;
-            List<Node> childs = new List<Node> {ParseExpression()};
+            List<Node> childs = new List<Node> { ParseExpression(symTable) };
             while (Current.SubType == Tokenizer.TokenSubType.Comma)
             {
                 Next();
-                childs.Add(ParseExpression());
+                childs.Add(ParseExpression(symTable));
             }
             return new ExpressionListNode(childs, "Expression list", c.Line, c.Position);
         }
 
-        private ReadStatementNode ParseReadStatement()
+        private ReadStatementNode ParseReadStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Read);
             if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
             {
                 Next();
-                var e = ParseExpressionList();
+                var e = ParseExpressionList(symTable);
                 Require(Tokenizer.TokenSubType.RParenthesis);
-                return new ReadStatementNode(new List<Node> {e}, "Read", c.Line, c.Position);
+                return new ReadStatementNode(new List<Node> { e }, "Read", c.Line, c.Position);
             }
             return new ReadStatementNode(null, "Read", c.Line, c.Position);
         }
 
-        private WriteStatementNode ParseWriteStatement()
+        private WriteStatementNode ParseWriteStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Write);
@@ -720,83 +898,89 @@ namespace PascalCompiler
                     var s = Current;
                     Next();
                     Require(Tokenizer.TokenSubType.RParenthesis);
-                    return new WriteStatementNode(new List<Node> {new StringNode(null, s)}, "Write", c.Line,
+                    return new WriteStatementNode(new List<Node> { new StringNode(null, s) }, "Write", c.Line,
                         c.Position);
                 }
-                var e = ParseExpressionList();
+                var e = ParseExpressionList(symTable);
                 Require(Tokenizer.TokenSubType.RParenthesis);
-                return new WriteStatementNode(new List<Node> {e}, "Write", c.Line, c.Position);
+                return new WriteStatementNode(new List<Node> { e }, "Write", c.Line, c.Position);
             }
             return new WriteStatementNode(null, "Write", c.Line, c.Position);
         }
 
-        private StructStatementNode ParseStructStatement()
+        private StructStatementNode ParseStructStatement(SymTable symTable)
         {
             switch (Current.SubType)
             {
                 case Tokenizer.TokenSubType.Begin:
-                    return ParseCompoundStatement();
+                    return ParseCompoundStatement(symTable);
                 case Tokenizer.TokenSubType.If:
-                    return ParseIfStatement();
+                    return ParseIfStatement(symTable);
                 case Tokenizer.TokenSubType.For:
-                    return ParseForStatement();
+                    return ParseForStatement(symTable);
                 case Tokenizer.TokenSubType.While:
-                    return ParseWhileStatement();
+                    return ParseWhileStatement(symTable);
                 case Tokenizer.TokenSubType.Repeat:
-                    return ParseRepeatStatement();
+                    return ParseRepeatStatement(symTable);
             }
             throw new InvalidOperationException($"Current.Subtype was equal to {Current.SubType}");
         }
 
-        private IfStatementNode ParseIfStatement()
+        private IfStatementNode ParseIfStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.If);
-            var i = ParseExpression();
+            var i = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.Then);
-            var t = ParseStatement();
+            var t = ParseStatement(symTable);
             if (Current.SubType == Tokenizer.TokenSubType.Else)
             {
                 Next();
-                var e = ParseStatement();
-                return new IfStatementNode(new List<Node> {i, t, e}, "If", c.Line, c.Position);
+                var e = ParseStatement(symTable);
+                return new IfStatementNode(new List<Node> { i, t, e }, "If", c.Line, c.Position);
             }
-            return new IfStatementNode(new List<Node> {i, t}, "If", c.Line, c.Position);
+            return new IfStatementNode(new List<Node> { i, t }, "If", c.Line, c.Position);
         }
 
-        private ForStatementNode ParseForStatement()
+        private ForStatementNode ParseForStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.For);
             var i = Current;
             Require(Tokenizer.TokenSubType.Identifier);
             Require(Tokenizer.TokenSubType.Assign);
-            var e = ParseExpression();
+            var e = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.To);
-            var u = ParseExpression();
+            var u = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.Do);
-            var s = ParseStatement();
-            return new ForStatementNode(new List<Node> {new IdentNode(null, i), e, u, s}, "For", c.Line, c.Position);
+            var s = ParseStatement(symTable);
+            return new ForStatementNode(new List<Node> { new IdentNode(null, i), e, u, s }, "For", c.Line, c.Position);
         }
 
-        private WhileStatementNode ParseWhileStatement()
+        private WhileStatementNode ParseWhileStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.While);
-            var e = ParseExpression();
+            var e = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.Do);
-            var s = ParseStatement();
-            return new WhileStatementNode(new List<Node> {e, s}, "While", c.Line, c.Position);
+            var s = ParseStatement(symTable);
+            return new WhileStatementNode(new List<Node> {s}, "While", c.Line, c.Position)
+            {
+                Condition = e
+            };
         }
 
-        private RepeatStatementNode ParseRepeatStatement()
+        private RepeatStatementNode ParseRepeatStatement(SymTable symTable)
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Repeat);
-            var s = ParseStatementList();
+            var s = ParseStatementList(symTable);
             Require(Tokenizer.TokenSubType.Until);
-            var e = ParseExpression();
-            return new RepeatStatementNode(new List<Node> {s, e}, "Repeat", c.Line, c.Position);
+            var e = ParseExpression(symTable);
+            return new RepeatStatementNode(new List<Node>(s), "Repeat", c.Line, c.Position)
+            {
+                Condition = e
+            };
         }
 
         private static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
@@ -828,20 +1012,20 @@ namespace PascalCompiler
             Tokenizer.TokenSubType.Shr,
         };
 
-        private Node ParseExpression()
+        private Node ParseExpression(SymTable symTable)
         {
-            Node e = ParseSimpleExpression();
+            Node e = ParseSimpleExpression(symTable);
             var c = Current;
             while (RelOps.Contains(c.SubType))
             {
                 Next();
-                e = new BinOpNode(new List<Node> {e, ParseSimpleExpression()}, c.Value, c.Line, c.Position);
+                e = new BinOpNode(new List<Node> { e, ParseSimpleExpression(symTable) }, c.SubType, c.Line, c.Position);
                 c = Current;
             }
             return e;
         }
 
-        private Node ParseSimpleExpression()
+        private Node ParseSimpleExpression(SymTable symTable)
         {
             if (Current.SubType == Tokenizer.TokenSubType.CharConstant)
             {
@@ -849,45 +1033,45 @@ namespace PascalCompiler
                 Next();
                 return new ConstNode(null, tmp.Value, tmp.Line, tmp.Position);
             }
-            Node t = ParseTerm();
+            Node t = ParseTerm(symTable);
             var c = Current;
             while (AddOps.Contains(c.SubType))
             {
                 Next();
-                t = new BinOpNode(new List<Node> {t, ParseTerm()}, c.Value, c.Line, c.Position);
+                t = new BinOpNode(new List<Node> { t, ParseTerm(symTable) }, c.SubType, c.Line, c.Position);
                 c = Current;
             }
             return t;
         }
 
-        private Node ParseTerm()
+        private Node ParseTerm(SymTable symTable)
         {
-            Node f = ParseFactor();
+            Node f = ParseFactor(symTable);
             var c = Current;
             while (MulOps.Contains(c.SubType))
             {
                 Next();
-                f = new BinOpNode(new List<Node> {f, ParseFactor()}, c.Value, c.Line, c.Position);
+                f = new BinOpNode(new List<Node> { f, ParseFactor(symTable) }, c.SubType, c.Line, c.Position);
                 c = Current;
             }
             return f;
         }
 
-        private Node ParseFactor()
+        private Node ParseFactor(SymTable symTable)
         {
             var c = Current;
             switch (c.SubType)
             {
                 case Tokenizer.TokenSubType.Identifier:
-                    var d = ParseDesignator();
+                    var d = ParseDesignator(symTable);
                     if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
                     {
                         Next();
                         if (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
                         {
-                            var ex = ParseExpressionList();
+                            var ex = ParseExpressionList(symTable);
                             Require(Tokenizer.TokenSubType.RParenthesis);
-                            return new CallNode(new List<Node> {d, ex}, "Call in expression", c.Line, c.Position);
+                            return new CallNode(new List<Node> { d, ex }, "Call in expression", c.Line, c.Position);
                         }
                         Next();
                         return new CallNode(new List<Node> { d }, "Call in expression", c.Line, c.Position);
@@ -899,16 +1083,43 @@ namespace PascalCompiler
                     return new ConstNode(null, c.Value, c.Line, c.Position);
                 case Tokenizer.TokenSubType.LParenthesis:
                     Next();
-                    Node e = ParseExpression();
+                    Node e = ParseExpression(symTable);
                     Require(Tokenizer.TokenSubType.RParenthesis);
                     return e;
                 case Tokenizer.TokenSubType.Plus:
                 case Tokenizer.TokenSubType.Minus:
                 case Tokenizer.TokenSubType.Not:
                     Next();
-                    return new UnOpNode(new List<Node> {ParseFactor()}, c.Value, c.Line, c.Position);
+                    return new UnOpNode(new List<Node> { ParseFactor(symTable) }, c.SubType, c.Line, c.Position);
             }
             throw new ParserException($"Unexpected token {c.SubType}", c.Line, c.Position);
+        }
+
+        private dynamic EvaluateConstExpr(Node expr, SymTable symTable)
+        {
+            if (expr is ConstNode)
+            {
+                return expr.Value;
+            }
+            if (expr is DesignatorNode)
+            {
+                var temp = symTable.LookUp(expr.Childs[0].Value.ToString());
+                if (expr.Childs.Count == 1 && (temp is ConstSymbol))
+                {
+                    return ((SimpleConstant) (temp as ConstSymbol).Value).Value;
+                }
+                throw new EvaluatorException("Illegal operation");
+            }
+            if (expr is BinOpNode)
+            {
+                return BinaryOps[(Tokenizer.TokenSubType)expr.Value](EvaluateConstExpr(expr.Childs[0], symTable),
+                    EvaluateConstExpr(expr.Childs[1], symTable));
+            }
+            if (expr is UnOpNode)
+            {
+                return UnaryOps[(Tokenizer.TokenSubType)expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
+            }
+            throw new InvalidOperationException($"Node of type {expr.GetType()} met in expression");
         }
 
         private void Require(Tokenizer.TokenSubType type)

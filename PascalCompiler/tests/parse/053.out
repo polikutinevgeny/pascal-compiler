@@ -1,78 +1,64 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Type section
-    │ │ └─arry
-    │ │   └─Array
-    │ │     ├─integer
-    │ │     └─Range
-    │ │       ├─0
-    │ │       └─200
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ ├─a
-    │   │ ├─b
-    │   │ ├─i
-    │   │ └─n
-    │   └─Variable declaration
-    │     ├─arry
-    │     └─arr
-    └─Compound statement
-      └─Statement list
-        └─Repeat
-          ├─Statement list
-          │ ├─Assignment statement
-          │ │ ├─Designator
-          │ │ │ └─n
-          │ │ └─-
-          │ │   ├─Designator
-          │ │   │ └─n
-          │ │   └─1
-          │ ├─While
-          │ │ ├─<>
-          │ │ │ ├─Designator
-          │ │ │ │ └─n
-          │ │ │ └─1
-          │ │ └─Assignment statement
-          │ │   ├─Designator
-          │ │   │ └─b
-          │ │   └─shl
-          │ │     ├─Designator
-          │ │     │ └─n
-          │ │     └─1
-          │ └─For
-          │   ├─i
-          │   ├─0
-          │   ├─Designator
-          │   │ └─n
-          │   └─Compound statement
-          │     └─Statement list
-          │       ├─Assignment statement
-          │       │ ├─Designator
-          │       │ │ ├─arry
-          │       │ │ └─Expression list
-          │       │ │   └─Designator
-          │       │ │     └─i
-          │       │ └─*
-          │       │   ├─Designator
-          │       │   │ ├─arry
-          │       │   │ └─Expression list
-          │       │   │   └─Designator
-          │       │   │     └─i
-          │       │   └─Designator
-          │       │     └─b
-          │       └─Assignment statement
-          │         ├─Designator
-          │         │ ├─arry
-          │         │ └─Expression list
-          │         │   └─-
-          │         │     ├─Designator
-          │         │     │ └─n
-          │         │     └─Designator
-          │         │       └─i
-          │         └─0
-          └─>
-            ├─Designator
-            │ └─a
-            └─0
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  arry: arry = array of (integer = (built-in));
+  a: a : (integer = (built-in)) ;
+  b: b : (integer = (built-in)) ;
+  i: i : (integer = (built-in)) ;
+  n: n : (integer = (built-in)) ;
+  arr: arr : arry = array of (integer = (built-in)) ;
+└─repeat
+  ├─Greater
+  │ ├─Designator
+  │ │ └─a
+  │ └─0
+  ├─Assignment statement
+  │ ├─Designator
+  │ │ └─n
+  │ └─Minus
+  │   ├─Designator
+  │   │ └─n
+  │   └─1
+  ├─while
+  │ ├─NEqual
+  │ │ ├─Designator
+  │ │ │ └─n
+  │ │ └─1
+  │ └─Assignment statement
+  │   ├─Designator
+  │   │ └─b
+  │   └─Shl
+  │     ├─Designator
+  │     │ └─n
+  │     └─1
+  └─For
+    ├─i
+    ├─0
+    ├─Designator
+    │ └─n
+    └─compound statement
+      ├─Assignment statement
+      │ ├─Designator
+      │ │ ├─arry
+      │ │ └─Expression list
+      │ │   └─Designator
+      │ │     └─i
+      │ └─Asterisk
+      │   ├─Designator
+      │   │ ├─arry
+      │   │ └─Expression list
+      │   │   └─Designator
+      │   │     └─i
+      │   └─Designator
+      │     └─b
+      └─Assignment statement
+        ├─Designator
+        │ ├─arry
+        │ └─Expression list
+        │   └─Minus
+        │     ├─Designator
+        │     │ └─n
+        │     └─Designator
+        │       └─i
+        └─0

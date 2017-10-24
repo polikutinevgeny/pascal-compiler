@@ -1,43 +1,28 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Constant section
-    │ │ ├─a1
-    │ │ │ └─30
-    │ │ └─b
-    │ │   └─*
-    │ │     ├─Designator
-    │ │     │ └─a1
-    │ │     └─20
-    │ ├─Var section
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   └─a
-    │ └─Function
-    │   ├─Function heading: foo
-    │   │ ├─Formal parameters
-    │   │ └─integer
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    └─Compound statement
-      └─Statement list
-        ├─Assignment statement
-        │ ├─Designator
-        │ │ └─a
-        │ └─Call in expression
-        │   └─Designator
-        │     └─foo
-        └─Compound statement
-          └─Statement list
-            └─If
-              ├─>
-              │ ├─Designator
-              │ │ └─a
-              │ └─20
-              └─Assignment statement
-                ├─Designator
-                │ └─a
-                └─-
-                  └─Designator
-                    └─a1
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a1: a1 :  = 30;
+  b: b :  = 600;
+  a: a : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function foo(), return type : (integer = (built-in))
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Assignment statement
+│ ├─Designator
+│ │ └─a
+│ └─Call in expression
+│   └─Designator
+│     └─foo
+└─compound statement
+  └─If
+    ├─Greater
+    │ ├─Designator
+    │ │ └─a
+    │ └─20
+    └─Assignment statement
+      ├─Designator
+      │ └─a
+      └─Minus
+        └─Designator
+          └─a1

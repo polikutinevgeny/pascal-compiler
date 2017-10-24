@@ -1,25 +1,15 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ └─i
-    │   └─Variable declaration
-    │     ├─Record
-    │     │ └─Field list
-    │     │   └─Field declaration
-    │     │     ├─integer
-    │     │     └─i
-    │     └─j
-    └─Compound statement
-      └─Statement list
-        └─For
-          ├─i
-          ├─0
-          ├─10
-          └─Assignment statement
-            ├─Designator
-            │ ├─j
-            │ └─i
-            └─20
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  i: i : (integer = (built-in)) ;
+  j: j : record ([i, i : (integer = (built-in)) ]) ;
+└─For
+  ├─i
+  ├─0
+  ├─10
+  └─Assignment statement
+    ├─Designator
+    │ ├─j
+    │ └─i
+    └─20

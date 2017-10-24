@@ -1,27 +1,19 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Var section
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   └─a
-    │ └─Function
-    │   ├─Function heading: foo
-    │   │ ├─Formal parameters
-    │   │ └─integer
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    │         └─Assignment statement
-    │           ├─Designator
-    │           │ └─result
-    │           └─4
-    └─Compound statement
-      └─Statement list
-        └─Write
-          └─Expression list
-            ├─Designator
-            │ └─a
-            └─Call in expression
-              └─Designator
-                └─foo
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a: a : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function foo(), return type : (integer = (built-in))
+  └─Assignment statement
+    ├─Designator
+    │ └─result
+    └─4
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+└─Write
+  └─Expression list
+    ├─Designator
+    │ └─a
+    └─Call in expression
+      └─Designator
+        └─foo

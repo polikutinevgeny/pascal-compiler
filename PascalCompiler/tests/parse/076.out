@@ -1,70 +1,42 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Type section
-    │ │ ├─testr
-    │ │ │ └─Record
-    │ │ │   └─Field list
-    │ │ │     ├─Field declaration
-    │ │ │     │ ├─integer
-    │ │ │     │ └─i
-    │ │ │     └─Field declaration
-    │ │ │       ├─real
-    │ │ │       └─j
-    │ │ └─testa
-    │ │   └─Array
-    │ │     ├─integer
-    │ │     └─Range
-    │ │       ├─3
-    │ │       └─4
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ └─a
-    │   ├─Variable declaration
-    │   │ ├─Array
-    │   │ │ ├─integer
-    │   │ │ └─Range
-    │   │ │   ├─1
-    │   │ │   └─2
-    │   │ ├─b
-    │   │ └─Array constant
-    │   │   ├─0
-    │   │   └─1
-    │   ├─Variable declaration
-    │   │ ├─Record
-    │   │ │ └─Field list
-    │   │ │   ├─Field declaration
-    │   │ │   │ ├─integer
-    │   │ │   │ └─i
-    │   │ │   └─Field declaration
-    │   │ │     ├─integer
-    │   │ │     └─j
-    │   │ ├─r
-    │   │ └─Record constant
-    │   │   ├─i
-    │   │   │ └─1
-    │   │   └─j
-    │   │     └─2
-    │   ├─Variable declaration
-    │   │ ├─testr
-    │   │ ├─c
-    │   │ └─Record constant
-    │   │   ├─i
-    │   │   │ └─1
-    │   │   └─j
-    │   │     └─2
-    │   └─Variable declaration
-    │     ├─testa
-    │     ├─d
-    │     └─Array constant
-    │       ├─1
-    │       └─2
-    └─Compound statement
-      └─Statement list
-        └─Write
-          └─Expression list
-            ├─Designator
-            │ └─a
-            └─Designator
-              └─b
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  testr: testr = record ([i, i : (integer = (built-in)) ], [j, j : (real = (built-in)) ]);
+  testa: testa = array of (integer = (built-in));
+  a: a : (integer = (built-in)) ;
+  b: b : array of (integer = (built-in)) = (0, 1);
+  r: r : record ([i, i : (integer = (built-in)) ], [j, j : (integer = (built-in)) ]) = ([i : (integer = (built-in)) , 1], [j : (integer = (built-in)) , 2]);
+  c: c : testr = record ([i, i : (integer = (built-in)) ], [j, j : (real = (built-in)) ]) = ([i : (integer = (built-in)) , 1], [j : (real = (built-in)) , 2]);
+  d: d : testa = array of (integer = (built-in)) = (1, 2);
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure hello(a : testr = record ([i, i : (integer = (built-in)) ], [j, j : (real = (built-in)) ])  modifier: Value, b : testa = array of (integer = (built-in))  modifier: Value, c : (integer = (built-in)) = 10 modifier: Value)
+      a: a : testr = record ([i, i : (integer = (built-in)) ], [j, j : (real = (built-in)) ])  modifier: Value;
+      b: b : testa = array of (integer = (built-in))  modifier: Value;
+      c: c : (integer = (built-in)) = 10 modifier: Value;
+  ├─Assignment statement
+  │ ├─Designator
+  │ │ ├─a
+  │ │ └─i
+  │ └─Designator
+  │   └─c
+  └─Assignment statement
+    ├─Designator
+    │ ├─a
+    │ └─j
+    └─10.6
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function hell(c : (real = (built-in)) = 1.66666666666667 modifier: Value), return type : (char = (built-in))
+      c: c : (real = (built-in)) = 1.66666666666667 modifier: Value;
+  └─Assignment statement
+    ├─Designator
+    │ └─c
+    └─3
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+└─Write
+  └─Expression list
+    ├─Designator
+    │ └─a
+    └─Designator
+      └─b

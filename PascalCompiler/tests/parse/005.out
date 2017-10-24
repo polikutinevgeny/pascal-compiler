@@ -1,13 +1,9 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   └─Variable declaration
-    │     ├─integer
-    │     └─a
-    └─Compound statement
-      └─Statement list
-        └─Assignment statement
-          ├─Designator
-          │ └─a
-          └─3
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a: a : (integer = (built-in)) ;
+└─Assignment statement
+  ├─Designator
+  │ └─a
+  └─3

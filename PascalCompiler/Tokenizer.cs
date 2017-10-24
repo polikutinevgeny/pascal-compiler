@@ -149,7 +149,7 @@ namespace PascalCompiler
                             TokenSubType.IntegerConstant,
                             lexeme.Substring(0, lexeme.Length - 2),
                             line, pos + 1 - (uint) lexeme.Length,
-                            Convert.ToInt64(lexeme.Substring(0, lexeme.Length - 2)));
+                            Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 2)));
                         pos -= 2;
                         PushBack(c);
                         PushBack(lexeme[lexeme.Length - 2]);
@@ -179,7 +179,7 @@ namespace PascalCompiler
                                 TokenSubType.IntegerConstant,
                                 lexeme.Substring(0, lexeme.Length - 1),
                                 line, pos - (uint) lexeme.Length + 1,
-                                Convert.ToInt64(lexeme.Substring(0, lexeme.Length - 1)));
+                                Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 1)));
                         }
                         catch (OverflowException)
                         {
@@ -322,11 +322,11 @@ namespace PascalCompiler
         switch (input[0])
         {
             case '%':
-                return Convert.ToInt64(input.Substring(1), 2);
+                return Convert.ToInt32(input.Substring(1), 2);
             case '&':
-                return Convert.ToInt64(input.Substring(1), 8);
+                return Convert.ToInt32(input.Substring(1), 8);
             case '$':
-                return Convert.ToInt64(input.Substring(1), 16);
+                return Convert.ToInt32(input.Substring(1), 16);
             default:
                 throw new ConvertException("Illegal base of integer constant", 0);
         }

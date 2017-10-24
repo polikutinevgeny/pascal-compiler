@@ -3,7 +3,7 @@ type
      i: Integer;
      j: Real;
    end;
-   testa = array[3..4] of integer;
+   testa = array[3..4] of integer
 var
    a: integer;
    b: array[1..2] of integer = (0, 1);
@@ -13,6 +13,15 @@ var
    end = (i:1; j:2);
    c: testr = (i:1; j:2);
    d: testa = (1, 2);
+procedure hello(a: testr; b: testa; c: integer = 5 + 5);
+begin
+  a.i := c;
+  a.j := 10.6;
+end;
+function hell(c: real = 5.0 / 3) : char;
+begin
+  c := 3;
+end;
 begin
    write(a, b);
 end.

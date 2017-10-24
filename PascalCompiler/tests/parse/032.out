@@ -1,48 +1,39 @@
-└─Program 'read_'
-  └─Block
-    ├─Declarations
-    │ ├─Var section
-    │ │ └─Variable declaration
-    │ │   ├─integer
-    │ │   ├─a
-    │ │   └─n
-    │ └─Procedure
-    │   ├─Procedure heading: readln
-    │   │ └─Formal parameters
-    │   │   └─Parameter
-    │   │     ├─integer
-    │   │     └─x
-    │   └─Block
-    │     └─Compound statement
-    │       └─Statement list
-    └─Compound statement
-      └─Statement list
-        └─While
-          ├─<
-          │ ├─Designator
-          │ │ └─n
-          │ └─0
-          └─Compound statement
-            └─Statement list
-              ├─Call in statement
-              │ ├─Designator
-              │ │ └─readln
-              │ └─Expression list
-              │   └─Designator
-              │     └─n
-              └─If
-                ├─>
-                │ ├─Designator
-                │ │ └─n
-                │ └─0
-                └─While
-                  ├─<>
-                  │ ├─Designator
-                  │ │ └─a
-                  │ └─0
-                  └─Call in statement
-                    ├─Designator
-                    │ └─readln
-                    └─Expression list
-                      └─Designator
-                        └─a
+program read_
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  read_: read_;
+  a: a : (integer = (built-in)) ;
+  n: n : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure readln(x : (integer = (built-in))  modifier: Value)
+      x: x : (integer = (built-in))  modifier: Value;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+└─while
+  ├─Less
+  │ ├─Designator
+  │ │ └─n
+  │ └─0
+  └─compound statement
+    ├─Call in statement
+    │ ├─Designator
+    │ │ └─readln
+    │ └─Expression list
+    │   └─Designator
+    │     └─n
+    └─If
+      ├─Greater
+      │ ├─Designator
+      │ │ └─n
+      │ └─0
+      └─while
+        ├─NEqual
+        │ ├─Designator
+        │ │ └─a
+        │ └─0
+        └─Call in statement
+          ├─Designator
+          │ └─readln
+          └─Expression list
+            └─Designator
+              └─a

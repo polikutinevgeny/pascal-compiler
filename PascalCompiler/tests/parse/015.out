@@ -1,26 +1,15 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ ├─Procedure
-    │ │ ├─Procedure heading: foo
-    │ │ │ └─Formal parameters
-    │ │ └─Block
-    │ │   ├─Declarations
-    │ │   │ └─Var section
-    │ │   │   └─Variable declaration
-    │ │   │     ├─integer
-    │ │   │     └─a
-    │ │   └─Compound statement
-    │ │     └─Statement list
-    │ │       └─Call in statement
-    │ │         └─Designator
-    │ │           └─foo
-    │ └─Var section
-    │   └─Variable declaration
-    │     ├─char
-    │     └─a
-    └─Compound statement
-      └─Statement list
-        └─Call in statement
-          └─Designator
-            └─foo
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure foo()
+      a: a : (integer = (built-in)) ;
+  └─Call in statement
+    └─Designator
+      └─foo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  a: a : (char = (built-in)) ;
+└─Call in statement
+  └─Designator
+    └─foo

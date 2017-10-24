@@ -1,22 +1,12 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ └─a
-    │   └─Variable declaration
-    │     ├─Array
-    │     │ ├─integer
-    │     │ └─Range
-    │     │   ├─1
-    │     │   └─2
-    │     └─b
-    └─Compound statement
-      └─Statement list
-        └─Write
-          └─Expression list
-            ├─Designator
-            │ └─a
-            └─Designator
-              └─b
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  a: a : (integer = (built-in)) ;
+  b: b : array of (integer = (built-in)) ;
+└─Write
+  └─Expression list
+    ├─Designator
+    │ └─a
+    └─Designator
+      └─b

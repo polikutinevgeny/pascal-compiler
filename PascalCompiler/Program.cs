@@ -60,8 +60,8 @@ namespace PascalCompiler
                                 using (var tokenStream = tokenizer.GetEnumerator())
                                 using (Parser parser = new Parser(tokenStream))
                                 {
-                                    Node n = parser.Parse();
-                                    TreePrinter.PrintTree(writer, n, "", true);
+                                    var p = parser.Parse();
+                                    TreePrinter.PrintProgram(writer, p);
                                 }
                             }
                             catch (Tokenizer.TokenizerException e)

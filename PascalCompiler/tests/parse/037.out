@@ -1,62 +1,49 @@
-└─Program ''
-  └─Block
-    ├─Declarations
-    │ └─Var section
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ └─n
-    │   ├─Variable declaration
-    │   │ ├─integer
-    │   │ └─i
-    │   └─Variable declaration
-    │     ├─Array
-    │     │ ├─integer
-    │     │ └─Range
-    │     │   ├─0
-    │     │   └─100
-    │     ├─a
-    │     └─b
-    └─Compound statement
-      └─Statement list
-        └─For
-          ├─i
-          ├─0
-          ├─Designator
-          │ └─n
-          └─Compound statement
-            └─Statement list
-              ├─Assignment statement
-              │ ├─Designator
-              │ │ ├─a
-              │ │ └─Expression list
-              │ │   └─Designator
-              │ │     └─i
-              │ └─*
-              │   ├─2
-              │   └─Designator
-              │     └─i
-              └─If
-                ├─=
-                │ ├─mod
-                │ │ ├─Designator
-                │ │ │ └─i
-                │ │ └─2
-                │ └─0
-                ├─Assignment statement
-                │ ├─Designator
-                │ │ ├─b
-                │ │ └─Expression list
-                │ │   └─Designator
-                │ │     └─i
-                │ └─*
-                │   ├─2
-                │   └─Designator
-                │     └─i
-                └─Assignment statement
-                  ├─Designator
-                  │ ├─b
-                  │ └─Expression list
-                  │   └─Designator
-                  │     └─i
-                  └─Designator
-                    └─i
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  n: n : (integer = (built-in)) ;
+  i: i : (integer = (built-in)) ;
+  a: a : array of (integer = (built-in)) ;
+  b: b : array of (integer = (built-in)) ;
+└─For
+  ├─i
+  ├─0
+  ├─Designator
+  │ └─n
+  └─compound statement
+    ├─Assignment statement
+    │ ├─Designator
+    │ │ ├─a
+    │ │ └─Expression list
+    │ │   └─Designator
+    │ │     └─i
+    │ └─Asterisk
+    │   ├─2
+    │   └─Designator
+    │     └─i
+    └─If
+      ├─Equal
+      │ ├─Mod
+      │ │ ├─Designator
+      │ │ │ └─i
+      │ │ └─2
+      │ └─0
+      ├─Assignment statement
+      │ ├─Designator
+      │ │ ├─b
+      │ │ └─Expression list
+      │ │   └─Designator
+      │ │     └─i
+      │ └─Asterisk
+      │   ├─2
+      │   └─Designator
+      │     └─i
+      └─Assignment statement
+        ├─Designator
+        │ ├─b
+        │ └─Expression list
+        │   └─Designator
+        │     └─i
+        └─Designator
+          └─i
