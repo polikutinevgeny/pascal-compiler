@@ -76,7 +76,7 @@
 
 <MulOp>                    ::= '*' | '/' | 'DIV' | 'MOD' | 'AND' | 'SHL' | 'SHR';
 
-<Designator>               ::= <Ident> ['[' <ExprList> ']'] [ '.' <Designator> ];
+<Designator>               ::= <Ident> ['.' <Ident>]* ['[' <ExprList> ']'];
 
 <ExprList>                 ::= <Expression> ( ',' <Expression> )*;
 
