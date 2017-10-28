@@ -1,16 +1,13 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  c: c : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  c: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function foo(), return type : (integer = (built-in))
+  function foo(): integer
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 └─Assignment statement
-  ├─Designator
-  │ └─c
+  ├─c
   └─Div
-    ├─Call in expression
-    │ └─Designator
-    │   └─foo
+    ├─foo call
     └─50

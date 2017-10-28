@@ -1,21 +1,18 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  h: h :  = 20;
-  a: a : (integer = (built-in)) ;
-  b: b : array of (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  h: integer = 20;
+  a: integer ;
+  b: #array ;
 └─Write
   └─Expression list
     ├─Plus
-    │ ├─Designator
-    │ │ └─a
+    │ ├─a
     │ └─2
     ├─Mod
-    │ ├─Designator
-    │ │ └─h
+    │ ├─h
     │ └─3
-    └─Designator
+    └─Index
       ├─b
-      └─Expression list
-        └─2
+      └─2

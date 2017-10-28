@@ -1,39 +1,30 @@
 program read_
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  read_: read_;
-  a: a : (integer = (built-in)) ;
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  program read_;
+  a: integer ;
+  n: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  procedure readln(x : (integer = (built-in))  modifier: Value)
-      x: x : (integer = (built-in))  modifier: Value;
+  procedure readln((Value, x, integer))
+      Value x: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 └─while
   ├─Less
-  │ ├─Designator
-  │ │ └─n
+  │ ├─n
   │ └─0
   └─compound statement
-    ├─Call in statement
-    │ ├─Designator
-    │ │ └─readln
-    │ └─Expression list
-    │   └─Designator
-    │     └─n
+    ├─Call statement wrapper
+    │ └─readln call
+    │   └─n
     └─If
       ├─Greater
-      │ ├─Designator
-      │ │ └─n
+      │ ├─n
       │ └─0
       └─while
         ├─NEqual
-        │ ├─Designator
-        │ │ └─a
+        │ ├─a
         │ └─0
-        └─Call in statement
-          ├─Designator
-          │ └─readln
-          └─Expression list
-            └─Designator
-              └─a
+        └─Call statement wrapper
+          └─readln call
+            └─a

@@ -1,0 +1,4 @@
+var
+    a: Integer = 5.3;
+begin
+end.

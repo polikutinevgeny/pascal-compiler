@@ -1,73 +1,53 @@
 program factorial
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  factorial: factorial;
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  program factorial;
+  n: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  procedure readln(n : (integer = (built-in))  modifier: Var)
-      n: n : (integer = (built-in))  modifier: Var;
+  procedure readln((Var, n, integer))
+      Var n: integer ;
   └─Assignment statement
-    ├─Designator
-    │ └─n
+    ├─n
     └─30
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function fac(n : (integer = (built-in))  modifier: Value), return type : (integer = (built-in))
-      n: n : (integer = (built-in))  modifier: Value;
-      res: res : (integer = (built-in)) ;
+  function fac((Value, n, integer)): integer
+      Value n: integer ;
+      res: integer ;
   └─If
     ├─Equal
-    │ ├─Designator
-    │ │ └─n
+    │ ├─n
     │ └─0
     ├─Assignment statement
-    │ ├─Designator
-    │ │ └─res
+    │ ├─res
     │ └─1
     └─Assignment statement
-      ├─Designator
-      │ └─res
+      ├─res
       └─Asterisk
-        ├─Designator
-        │ └─n
-        └─Call in expression
-          ├─Designator
-          │ └─fac
-          └─Expression list
-            └─Minus
-              ├─Designator
-              │ └─n
-              └─1
+        ├─n
+        └─fac call
+          └─Minus
+            ├─n
+            └─1
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-├─Call in statement
-│ ├─Designator
-│ │ └─readln
-│ └─Expression list
-│   └─Designator
-│     └─n
+├─Call statement wrapper
+│ └─readln call
+│   └─n
 ├─If
 │ ├─Less
-│ │ ├─Designator
-│ │ │ └─n
+│ │ ├─n
 │ │ └─0
 │ ├─Assignment statement
-│ │ ├─Designator
-│ │ │ └─n
+│ │ ├─n
 │ │ └─Minus
-│ │   └─Designator
-│ │     └─n
+│ │   └─n
 │ └─compound statement
 │   └─Assignment statement
-│     ├─Designator
-│     │ └─n
+│     ├─n
 │     └─Plus
-│       ├─Designator
-│       │ └─n
+│       ├─n
 │       └─1
-└─Call in statement
-  ├─Designator
-  │ └─fac
-  └─Expression list
-    └─Designator
-      └─n
+└─Call statement wrapper
+  └─fac call
+    └─n

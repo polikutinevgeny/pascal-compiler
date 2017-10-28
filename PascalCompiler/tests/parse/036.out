@@ -1,19 +1,16 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a: a :  = 2500;
-  i: i : (integer = (built-in)) ;
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  a: integer = 2500;
+  i: integer ;
+  n: integer ;
 └─For
   ├─i
   ├─0
-  ├─Designator
-  │ └─n
+  ├─n
   └─Assignment statement
-    ├─Designator
-    │ └─n
+    ├─n
     └─Plus
-      ├─Designator
-      │ └─a
+      ├─a
       └─1

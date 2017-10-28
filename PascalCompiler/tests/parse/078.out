@@ -1,26 +1,22 @@
 program p
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  p: p;
-  c: c : (char = (built-in)) = ";
-  d: d : (integer = (built-in)) = 3;
+  integer;
+  real;
+  char;
+  program p;
+  c: char = ";
+  d: integer = 3;
 ├─Write
 │ └─Expression list
 │   └─NEqual
-│     ├─Designator
-│     │ └─c
-│     └─Designator
-│       └─c
+│     ├─c
+│     └─c
 ├─Write
 │ └─Expression list
 │   └─Plus
-│     ├─Designator
-│     │ └─d
+│     ├─d
 │     └─3
 └─Write
   └─Expression list
     └─NEqual
-      ├─Designator
-      │ └─c
+      ├─c
       └─"

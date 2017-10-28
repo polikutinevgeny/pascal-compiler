@@ -1,22 +1,18 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a: a : (integer = (built-in)) ;
-  b: b :  = 30;
+  integer;
+  real;
+  char;
+  a: integer ;
+  b: integer = 30;
 ├─Assignment statement
-│ ├─Designator
-│ │ └─a
+│ ├─a
 │ └─3
 └─Assignment statement
-  ├─Designator
-  │ └─a
+  ├─a
   └─Mod
     ├─Div
     │ ├─Asterisk
-    │ │ ├─Designator
-    │ │ │ └─a
-    │ │ └─Designator
-    │ │   └─b
+    │ │ ├─a
+    │ │ └─b
     │ └─20
     └─20

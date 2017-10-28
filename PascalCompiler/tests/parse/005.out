@@ -1,9 +1,8 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a: a : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  a: integer ;
 └─Assignment statement
-  ├─Designator
-  │ └─a
+  ├─a
   └─3

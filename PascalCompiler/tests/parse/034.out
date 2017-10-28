@@ -1,18 +1,15 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  n: integer ;
 ├─Assignment statement
-│ ├─Designator
-│ │ └─n
+│ ├─n
 │ └─1
 └─while
   ├─Less
-  │ ├─Designator
-  │ │ └─n
+  │ ├─n
   │ └─0
   └─Assignment statement
-    ├─Designator
-    │ └─n
+    ├─n
     └─1

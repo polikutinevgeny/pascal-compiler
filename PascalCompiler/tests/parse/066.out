@@ -1,11 +1,11 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  i: i : (integer = (built-in)) ;
-  j: j : (integer = (built-in)) ;
-  k: k : (integer = (built-in)) ;
-  a: a : (real = (built-in)) ;
+  integer;
+  real;
+  char;
+  i: integer ;
+  j: integer ;
+  k: integer ;
+  a: real ;
 └─For
   ├─i
   ├─0
@@ -23,6 +23,5 @@ program
         ├─0
         ├─10
         └─Assignment statement
-          ├─Designator
-          │ └─a
+          ├─a
           └─34.5

@@ -1,7 +1,7 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
+  integer;
+  real;
+  char;
 └─while
   ├─1
   └─compound statement

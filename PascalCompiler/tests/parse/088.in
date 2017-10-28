@@ -1,0 +1,5 @@
+const
+    a: Integer = 6.3;
+
+begin
+end.

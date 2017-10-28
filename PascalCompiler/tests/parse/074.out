@@ -1,15 +1,1 @@
-program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a: a : (integer = (built-in)) ;
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  procedure foo()
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-└─Write
-  └─Expression list
-    ├─Designator
-    │ └─a
-    └─Call in expression
-      └─Designator
-        └─foo
+Illegal identifier at 7:13

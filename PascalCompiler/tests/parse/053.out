@@ -1,64 +1,49 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  arry: arry = array of (integer = (built-in));
-  a: a : (integer = (built-in)) ;
-  b: b : (integer = (built-in)) ;
-  i: i : (integer = (built-in)) ;
-  n: n : (integer = (built-in)) ;
-  arr: arr : arry = array of (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  arry[0..200]: array of integer;
+  a: integer ;
+  b: integer ;
+  i: integer ;
+  n: integer ;
+  arr: arry ;
 └─repeat
   ├─Greater
-  │ ├─Designator
-  │ │ └─a
+  │ ├─a
   │ └─0
   ├─Assignment statement
-  │ ├─Designator
-  │ │ └─n
+  │ ├─n
   │ └─Minus
-  │   ├─Designator
-  │   │ └─n
+  │   ├─n
   │   └─1
   ├─while
   │ ├─NEqual
-  │ │ ├─Designator
-  │ │ │ └─n
+  │ │ ├─n
   │ │ └─1
   │ └─Assignment statement
-  │   ├─Designator
-  │   │ └─b
+  │   ├─b
   │   └─Shl
-  │     ├─Designator
-  │     │ └─n
+  │     ├─n
   │     └─1
   └─For
     ├─i
     ├─0
-    ├─Designator
-    │ └─n
+    ├─n
     └─compound statement
       ├─Assignment statement
-      │ ├─Designator
-      │ │ ├─arry
-      │ │ └─Expression list
-      │ │   └─Designator
-      │ │     └─i
+      │ ├─Index
+      │ │ ├─arr
+      │ │ └─i
       │ └─Asterisk
-      │   ├─Designator
-      │   │ ├─arry
-      │   │ └─Expression list
-      │   │   └─Designator
-      │   │     └─i
-      │   └─Designator
-      │     └─b
+      │   ├─Index
+      │   │ ├─arr
+      │   │ └─i
+      │   └─b
       └─Assignment statement
-        ├─Designator
-        │ ├─arry
-        │ └─Expression list
-        │   └─Minus
-        │     ├─Designator
-        │     │ └─n
-        │     └─Designator
-        │       └─i
+        ├─Index
+        │ ├─arr
+        │ └─Minus
+        │   ├─n
+        │   └─i
         └─0

@@ -1,8 +1,8 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  i: i : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  i: integer ;
 └─For
   ├─i
   ├─0

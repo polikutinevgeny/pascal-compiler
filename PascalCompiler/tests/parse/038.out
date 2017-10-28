@@ -1,66 +1,52 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  aaa: aaa :  = 30;
-  bbb: bbb :  = -40;
-  n: n : (integer = (built-in)) ;
-  i: i : (integer = (built-in)) ;
-  j: j : (integer = (built-in)) ;
-  a: a : array of (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  aaa: integer = 30;
+  bbb: integer = -40;
+  n: integer ;
+  i: integer ;
+  j: integer ;
+  a: #array ;
 └─For
   ├─i
   ├─0
-  ├─Designator
-  │ └─n
+  ├─n
   └─compound statement
     ├─Assignment statement
-    │ ├─Designator
+    │ ├─Index
     │ │ ├─a
-    │ │ └─Expression list
-    │ │   └─Designator
-    │ │     └─i
+    │ │ └─i
     │ └─0
     └─For
       ├─j
       ├─Minus
-      │ ├─Designator
-      │ │ └─bbb
+      │ ├─bbb
       │ └─40
       ├─Plus
-      │ ├─Designator
-      │ │ └─aaa
+      │ ├─aaa
       │ └─20
       └─If
         ├─Equal
         │ ├─Mod
-        │ │ ├─Designator
-        │ │ │ └─j
+        │ │ ├─j
         │ │ └─2
         │ └─0
         ├─Assignment statement
-        │ ├─Designator
+        │ ├─Index
         │ │ ├─a
-        │ │ └─Expression list
-        │ │   └─Designator
-        │ │     └─j
+        │ │ └─j
         │ └─Plus
-        │   ├─Designator
+        │   ├─Index
         │   │ ├─a
-        │   │ └─Expression list
-        │   │   └─Designator
-        │   │     └─j
+        │   │ └─j
         │   └─1
         └─Assignment statement
-          ├─Designator
+          ├─Index
           │ ├─a
-          │ └─Expression list
-          │   └─Designator
-          │     └─j
+          │ └─j
           └─Plus
-            ├─Designator
+            ├─Index
             │ ├─a
-            │ └─Expression list
-            │   └─Designator
-            │     └─j
+            │ └─j
             └─2

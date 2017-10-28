@@ -1,15 +1,15 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  i: i : (integer = (built-in)) ;
-  j: j : record ([i, i : (integer = (built-in)) ]) ;
+  integer;
+  real;
+  char;
+  i: integer ;
+  j: #record ;
 └─For
   ├─i
   ├─0
   ├─10
   └─Assignment statement
-    ├─Designator
+    ├─Member access
     │ ├─j
     │ └─i
     └─20

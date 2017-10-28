@@ -1,49 +1,38 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  n: n : (integer = (built-in)) ;
-  i: i : (integer = (built-in)) ;
-  a: a : array of (integer = (built-in)) ;
-  b: b : array of (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  n: integer ;
+  i: integer ;
+  a: #array ;
+  b: #array ;
 └─For
   ├─i
   ├─0
-  ├─Designator
-  │ └─n
+  ├─n
   └─compound statement
     ├─Assignment statement
-    │ ├─Designator
+    │ ├─Index
     │ │ ├─a
-    │ │ └─Expression list
-    │ │   └─Designator
-    │ │     └─i
+    │ │ └─i
     │ └─Asterisk
     │   ├─2
-    │   └─Designator
-    │     └─i
+    │   └─i
     └─If
       ├─Equal
       │ ├─Mod
-      │ │ ├─Designator
-      │ │ │ └─i
+      │ │ ├─i
       │ │ └─2
       │ └─0
       ├─Assignment statement
-      │ ├─Designator
+      │ ├─Index
       │ │ ├─b
-      │ │ └─Expression list
-      │ │   └─Designator
-      │ │     └─i
+      │ │ └─i
       │ └─Asterisk
       │   ├─2
-      │   └─Designator
-      │     └─i
+      │   └─i
       └─Assignment statement
-        ├─Designator
+        ├─Index
         │ ├─b
-        │ └─Expression list
-        │   └─Designator
-        │     └─i
-        └─Designator
-          └─i
+        │ └─i
+        └─i

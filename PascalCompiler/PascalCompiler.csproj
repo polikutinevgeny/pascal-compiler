@@ -52,7 +52,9 @@
     <Compile Include="Constant.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Parser.Statements.cs" />
+    <Compile Include="Parser.Declaration.cs" />
+    <Compile Include="Parser.Evaluator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymTable.cs" />

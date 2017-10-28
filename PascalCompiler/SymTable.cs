@@ -78,7 +78,7 @@ namespace PascalCompiler
     {
         public TypeSymbol ElementType { get; set; }
         public (int Begin, int End) Range { get; set; }
-        public int Length => Range.End - Range.Begin;
+        public int Length => Range.End - Range.Begin + 1;
 
         public ArrayTypeSymbol()
         {

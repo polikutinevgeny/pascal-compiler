@@ -1,15 +1,13 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
+  integer;
+  real;
+  char;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure foo()
-      a: a : (integer = (built-in)) ;
-  └─Call in statement
-    └─Designator
-      └─foo
+      a: integer ;
+  └─Call statement wrapper
+    └─foo call
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  a: a : (char = (built-in)) ;
-└─Call in statement
-  └─Designator
-    └─foo
+  a: char ;
+└─Call statement wrapper
+  └─foo call

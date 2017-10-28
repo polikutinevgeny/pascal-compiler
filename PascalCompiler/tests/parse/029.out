@@ -1,21 +1,17 @@
 program read_
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  read_: read_;
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  program read_;
+  n: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  procedure readln(n : (integer = (built-in))  modifier: Var)
-      n: n : (integer = (built-in))  modifier: Var;
+  procedure readln((Var, n, integer))
+      Var n: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 └─while
   ├─Less
-  │ ├─Designator
-  │ │ └─n
+  │ ├─n
   │ └─0
-  └─Call in statement
-    ├─Designator
-    │ └─readln
-    └─Expression list
-      └─Designator
-        └─n
+  └─Call statement wrapper
+    └─readln call
+      └─n

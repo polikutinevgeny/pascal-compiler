@@ -1,14 +1,1 @@
-program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  procedure foo()
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  a: a : (char = (built-in)) ;
-└─Assignment statement
-  ├─Designator
-  │ └─a
-  └─Call in expression
-    └─Designator
-      └─foo
+Illegal identifier at 8:9

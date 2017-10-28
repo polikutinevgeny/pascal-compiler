@@ -1,18 +1,1 @@
-program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function foo(), return type : (integer = (built-in))
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      procedure bar()
-    └─Assignment statement
-      ├─Designator
-      │ └─result
-      └─30
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  └─Assignment statement
-    ├─Designator
-    │ └─result
-    └─4
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Illegal identifier at 4:10

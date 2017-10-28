@@ -1,7 +1,1 @@
-program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-└─Call in statement
-  └─Designator
-    └─exit
+Illegal identifier at 2:4

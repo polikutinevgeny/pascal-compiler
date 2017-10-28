@@ -1,0 +1,10 @@
+const
+    a: record
+        a: Integer;
+        b: record
+            c: Real;
+        end;
+    end = (a:10; b:(c:'c'));
+
+begin
+end.

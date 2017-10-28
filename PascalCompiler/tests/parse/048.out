@@ -1,26 +1,22 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a: a : (integer = (built-in)) ;
-  b: b : (integer = (built-in)) ;
-  i: i : (integer = (built-in)) ;
-  n: n : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  a: integer ;
+  b: integer ;
+  i: integer ;
+  n: integer ;
 └─repeat
   ├─Greater
-  │ ├─Designator
-  │ │ └─a
+  │ ├─a
   │ └─0
   └─compound statement
     ├─Assignment statement
-    │ ├─Designator
-    │ │ └─n
+    │ ├─n
     │ └─30
     └─compound statement
       └─Assignment statement
-        ├─Designator
-        │ └─a
+        ├─a
         └─Minus
-          ├─Designator
-          │ └─n
+          ├─n
           └─20

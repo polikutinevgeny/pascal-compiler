@@ -1,20 +1,16 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
+  integer;
+  real;
+  char;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function foo(), return type : (integer = (built-in))
-      a: a : (integer = (built-in)) ;
-  └─Call in statement
-    └─Designator
-      └─foo
+  function foo(): integer
+      a: integer ;
+  └─Call statement wrapper
+    └─foo call
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  a: a : (integer = (built-in)) ;
+  a: integer ;
 └─If
-  ├─Call in expression
-  │ └─Designator
-  │   └─foo
+  ├─foo call
   └─Assignment statement
-    ├─Designator
-    │ └─a
+    ├─a
     └─30

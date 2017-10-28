@@ -1,28 +1,22 @@
 program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-  a1: a1 :  = 30;
-  b: b :  = 600;
-  a: a : (integer = (built-in)) ;
+  integer;
+  real;
+  char;
+  a1: integer = 30;
+  b: integer = 600;
+  a: integer ;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function foo(), return type : (integer = (built-in))
+  function foo(): integer
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ├─Assignment statement
-│ ├─Designator
-│ │ └─a
-│ └─Call in expression
-│   └─Designator
-│     └─foo
+│ ├─a
+│ └─foo call
 └─compound statement
   └─If
     ├─Greater
-    │ ├─Designator
-    │ │ └─a
+    │ ├─a
     │ └─20
     └─Assignment statement
-      ├─Designator
-      │ └─a
+      ├─a
       └─Minus
-        └─Designator
-          └─a1
+        └─a1

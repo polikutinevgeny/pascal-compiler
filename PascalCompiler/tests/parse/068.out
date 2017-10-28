@@ -1,11 +1,1 @@
-program 
-  integer: (integer = (built-in));
-  real: (real = (built-in));
-  char: (char = (built-in));
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  function foo(), return type : (char = (built-in))
-  └─Assignment statement
-    ├─Designator
-    │ └─result
-    └─43
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Illegal identifier at 3:7
