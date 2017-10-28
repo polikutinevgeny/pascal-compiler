@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PascalCompiler
 {
-    public class SymTable : Dictionary<string, Symbol>
+    public class SymTable : OrderedDictionary
     {
         public SymTable Parent { get; set; }
 
         public Symbol LookUp(string name)
         {
-            if (ContainsKey(name))
-                return this[name];
+            if (Contains(name))
+                return (Symbol) this[name];
             return Parent?.LookUp(name);
         }
     }
@@ -29,94 +30,101 @@ namespace PascalCompiler
     {
         public static readonly TypeSymbol IntTypeSymbol = new TypeSymbol()
         {
-            Name = "integer",
-            Parent = null
+            Name = "integer"
         };
 
         public static readonly TypeSymbol RealTypeSymbol = new TypeSymbol()
         {
-            Name = "real",
-            Parent = null
+            Name = "real"
         };
 
         public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol()
         {
-            Name = "char",
-            Parent = null
+            Name = "char"
         };
 
-        public TypeSymbol Parent { get; private set; }
-
-        public TypeSymbol() { }
-
-        public TypeSymbol(TypeSymbol parent)
+        public TypeSymbol()
         {
-            TypeSymbol p = parent;
-            while (p.Parent != null)
-                p = p.Parent;
-            Parent = p;
         }
 
         public override string ToString()
         {
-            return $"({(Name != null ? Name.ToString() + " = " : "")}({Parent?.ToString() ?? "built-in"}))";
+            return $"{Name}";
+        }
+    }
+
+    public class Alias : TypeSymbol
+    {
+        public Alias(TypeSymbol parent) => this.Parent = parent;
+
+        public TypeSymbol Parent { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name} as {Parent.Name}";
+        }
+
+        public Symbol GetOriginalSymbol()
+        {
+            if (Parent is Alias a)
+            {
+                return a.GetOriginalSymbol();
+            }
+            return Parent;
         }
     }
 
     public class ArrayTypeSymbol : TypeSymbol
     {
         public TypeSymbol ElementType { get; set; }
-        public List<(int Begin, int End)> Ranges { get; set; } = new List<(int Begin, int End)>();
-        public ArrayTypeSymbol() { }
+        public (int Begin, int End) Range { get; set; }
+        public int Length => Range.End - Range.Begin;
+
+        public ArrayTypeSymbol()
+        {
+        }
 
         public override string ToString()
         {
-            return $"{(Name != null ? Name.ToString() + " = " : "")}array of {ElementType}";
+            return $"{Name}[{Range.Begin}..{Range.End}]: array of {ElementType}";
         }
     }
 
     public class RecordTypeSymbol : TypeSymbol
     {
         public SymTable Fields;
-        public RecordTypeSymbol() { }
+
+        public RecordTypeSymbol()
+        {
+        }
 
         public override string ToString()
         {
-            return $"{(Name != null ? Name.ToString() + " = " : "")}record ({string.Join(", ", Fields)})";
+            return $"{Name}: record";
         }
     }
 
-    public class ConstSymbol : Symbol
+    public abstract class ValueSymbol : Symbol
     {
         public TypeSymbol Type { get; set; }
         public Constant Value { get; set; }
 
         public override string ToString()
         {
-            return $"{Name} : {Type} = {Value}";
+            return $"{Name}: {Type.Name} {(Value != null ? $"= {Value}" : "")}";
         }
     }
 
-    public class TypedConstSymbol : Symbol
+    public class ConstSymbol : ValueSymbol
     {
-        public TypeSymbol Type { get; set; }
-        public Constant Value { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Name} : {Type} = {Value}";
-        }
     }
 
-    public class VarSymbol : Symbol
+    public class TypedConstSymbol : ValueSymbol
     {
-        public TypeSymbol Type { get; set; }
-        public Constant Value { get; set; }
+    }
 
-        public override string ToString()
-        {
-            return $"{Name} : {Type} {(Value != null ? $"= {Value}" : "")}";
-        }
+    public class VarSymbol : ValueSymbol
+    {
     }
 
     public class ParameterSymbol : VarSymbol
@@ -125,11 +133,17 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return base.ToString() + $" modifier: {ParameterModifier}";
+            return $"{ParameterModifier} {base.ToString()}";
         }
     }
 
-    public class ProgramSymbol : Symbol { }
+    public class ProgramSymbol : Symbol
+    {
+        public override string ToString()
+        {
+            return $"program {Name}";
+        }
+    }
 
     public abstract class SubprogramSymbol : Symbol
     {
@@ -139,10 +153,21 @@ namespace PascalCompiler
 
     public class ProcedureSymbol : SubprogramSymbol
     {
+        public override string ToString()
+        {
+            return
+                $"procedure {Name}({String.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))})";
+        }
     }
 
     public class FunctionSymbol : SubprogramSymbol
     {
         public TypeSymbol ReturnType { get; set; }
+
+        public override string ToString()
+        {
+            return
+                $"function {Name}({String.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))}): {ReturnType.Name}";
+        }
     }
 }

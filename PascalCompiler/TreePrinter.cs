@@ -14,25 +14,25 @@ namespace PascalCompiler
 
         public static void PrintBlock(StreamWriter writer, Block block, string indent)
         {
-            foreach (var el in block.SymTable)
+            foreach (var el in block.SymTable.Values)
             {
-                if (el.Value is ProcedureSymbol pc)
+                if (el is ProcedureSymbol pc)
                 {
                     writer.WriteLine(indent + new string('━', 40));
-                    writer.WriteLine(indent + indent + $"  procedure {pc.Name}({String.Join(", ", pc.Parameters)})");
+                    writer.WriteLine(indent + indent + $"  {pc}");
                     PrintBlock(writer, pc.Block, indent + "  ");
                     writer.WriteLine(indent + new string('━', 40));
                     continue;
                 }
-                if (el.Value is FunctionSymbol fc)
+                if (el is FunctionSymbol fc)
                 {
                     writer.WriteLine(indent + new string('━', 40));
-                    writer.WriteLine(indent + indent + $"  function {fc.Name}({String.Join(", ", fc.Parameters)}), return type : {fc.ReturnType}");
+                    writer.WriteLine(indent + indent + $"  {fc}");
                     PrintBlock(writer, fc.Block, indent + "  ");
                     writer.WriteLine(indent + new string('━', 40));
                     continue;
                 }
-                writer.WriteLine(indent + indent + $"  {el.Key}: {el.Value};");
+                writer.WriteLine(indent + indent + $"  {el};");
             }
             foreach (var st in block.StatementList.Take(block.StatementList.Count - 1))
             {

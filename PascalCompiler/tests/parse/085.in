@@ -1,0 +1,20 @@
+type
+    r = record
+        a: array[1..5] of record
+            c: Integer;
+        end;
+        b: real;
+    end;
+function test(t: Real): r;
+begin
+
+end;
+
+var
+    i: record
+        c : Real
+    end;
+
+begin
+    i.c := test(3.3).a[3+3].c;
+end.

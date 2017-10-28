@@ -1,0 +1,24 @@
+program 
+  integer;
+  real;
+  char;
+  r: record;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function test((Value, t, real)): r
+      Value t: real ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  i:  ;
+└─Assignment statement
+  ├─Member access
+  │ ├─i
+  │ └─c
+  └─Member access
+    ├─Index
+    │ ├─Member access
+    │ │ ├─test call
+    │ │ │ └─3.3
+    │ │ └─a
+    │ └─Plus
+    │   ├─3
+    │   └─3
+    └─c
