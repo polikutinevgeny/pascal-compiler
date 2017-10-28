@@ -1,0 +1,7 @@
+var hello: real;
+procedure hello(var a, b: integer; const c, d: real; const f: integer = 10);
+var e: integer;
+begin
+end;
+begin
+end.

@@ -1,0 +1,6 @@
+program 
+  integer: (t = (built-in));
+  real: (g = (built-in));
+  char: (char = (built-in));
+  t: (t = (built-in));
+  g: (g = (built-in));

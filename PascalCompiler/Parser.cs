@@ -32,16 +32,16 @@ namespace PascalCompiler
                 {Tokenizer.TokenSubType.Minus, (l, r) => l - r},
                 {Tokenizer.TokenSubType.Asterisk, (l, r) => l * r},
                 {Tokenizer.TokenSubType.Slash, (l, r) => (double) l / (double) r},
-                {Tokenizer.TokenSubType.Greater, (l, r) => (int) (l > r)},
-                {Tokenizer.TokenSubType.Less, (l, r) => (int) (l < r)},
-                {Tokenizer.TokenSubType.GEqual, (l, r) => (int) (l >= r)},
-                {Tokenizer.TokenSubType.LEqual, (l, r) => (int) (l <= r)},
-                {Tokenizer.TokenSubType.NEqual, (l, r) => (int) (l != r)},
-                {Tokenizer.TokenSubType.Equal, (l, r) => (long) (l == r)},
+                {Tokenizer.TokenSubType.Greater, (l, r) => Convert.ToInt32(l > r)},
+                {Tokenizer.TokenSubType.Less, (l, r) => Convert.ToInt32(l < r)},
+                {Tokenizer.TokenSubType.GEqual, (l, r) => Convert.ToInt32(l >= r)},
+                {Tokenizer.TokenSubType.LEqual, (l, r) => Convert.ToInt32(l <= r)},
+                {Tokenizer.TokenSubType.NEqual, (l, r) => Convert.ToInt32(l != r)},
+                {Tokenizer.TokenSubType.Equal, (l, r) => Convert.ToInt32(l == r)},
                 {
                     Tokenizer.TokenSubType.Or, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -51,7 +51,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.Xor, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -61,7 +61,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.Div, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -71,7 +71,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.Mod, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -81,7 +81,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.And, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -91,7 +91,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.Shl, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -101,7 +101,7 @@ namespace PascalCompiler
                 {
                     Tokenizer.TokenSubType.Shr, (l, r) =>
                     {
-                        if (l.GetType() is double || r.GetType() is double)
+                        if (l is double || r is double)
                         {
                             throw new EvaluatorException("Illegal operation");
                         }
@@ -298,7 +298,14 @@ namespace PascalCompiler
         private SimpleConstant ParseConstExpr(SymTable symTable)
         {
             var e = ParseExpression(symTable);
-            return new SimpleConstant() {Value = EvaluateConstExpr(e, symTable), Type = null};
+            try
+            {
+                return new SimpleConstant() { Value = EvaluateConstExpr(e, symTable), Type = null };
+            }
+            catch(EvaluatorException ex)
+            {
+                throw new ParserException(ex.Message, Current.Line, Current.Position);
+            }
         }
 
         private ArrayConstant ParseArrayConstant(SymTable symTable, ArrayTypeSymbol arrayType)
@@ -402,7 +409,7 @@ namespace PascalCompiler
             while (Current.SubType == Tokenizer.TokenSubType.Identifier)
             {
                 ParseTypeDecl(symTable);
-//                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Tokenizer.TokenSubType.Semicolon);
             }
         }
 
@@ -545,6 +552,10 @@ namespace PascalCompiler
             Require(Tokenizer.TokenSubType.Semicolon);
             var b = ParseBlock(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
+            if (symTable.ContainsKey(h.Name))
+            {
+                throw new ParserException("Duplicate identifier {h.Name}", c.Line, c.Position);
+            }
             symTable.Add(h.Name, new ProcedureSymbol() {Name = h.Name, Block = b, Parameters = h.Parameters});
         }
 
@@ -714,6 +725,10 @@ namespace PascalCompiler
             Require(Tokenizer.TokenSubType.Semicolon);
             var b = ParseBlock(procSymTable);
             Require(Tokenizer.TokenSubType.Semicolon);
+            if (symTable.ContainsKey(h.Name))
+            {
+                throw new ParserException("Duplicate identifier {h.Name}", c.Line, c.Position);
+            }
             symTable.Add(h.Name,
                 new FunctionSymbol() {Name = h.Name, Block = b, Parameters = h.Parameters, ReturnType = h.ReturnType});
         }

@@ -1,0 +1,5 @@
+type
+    t = Integer;
+    g = Real;
+begin
+end.

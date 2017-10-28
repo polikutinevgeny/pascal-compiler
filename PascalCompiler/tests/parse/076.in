@@ -3,7 +3,7 @@ type
      i: Integer;
      j: Real;
    end;
-   testa = array[3..4] of integer
+   testa = array[3..4] of integer;
 var
    a: integer;
    b: array[1..2] of integer = (0, 1);

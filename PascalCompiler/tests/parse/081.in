@@ -1,0 +1,7 @@
+const
+    a = 'c' < 'd';
+    b = 'c' < 100;
+    c = 12.5 xor 3;
+begin
+
+end.

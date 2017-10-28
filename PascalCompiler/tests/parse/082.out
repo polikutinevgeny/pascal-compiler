@@ -1,0 +1,14 @@
+program 
+  integer: (integer = (built-in));
+  real: (real = (built-in));
+  char: (char = (built-in));
+  e: e : (real = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure hello(a : (integer = (built-in))  modifier: Var, b : (integer = (built-in))  modifier: Var, c : (real = (built-in))  modifier: Const, d : (real = (built-in))  modifier: Const, f : (integer = (built-in)) = 10 modifier: Const)
+      a: a : (integer = (built-in))  modifier: Var;
+      b: b : (integer = (built-in))  modifier: Var;
+      c: c : (real = (built-in))  modifier: Const;
+      d: d : (real = (built-in))  modifier: Const;
+      f: f : (integer = (built-in)) = 10 modifier: Const;
+      e: e : (integer = (built-in)) ;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
