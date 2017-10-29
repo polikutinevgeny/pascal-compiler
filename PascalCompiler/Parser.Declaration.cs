@@ -521,16 +521,19 @@ namespace PascalCompiler
         private Parameters ParseVarParameter(SymTable symTable)
         {
             Require(Var);
-            var c = Current;
-            Require(Identifier);
-            List<string> idents = new List<string> {c.Value.ToString()};
-            while (Current.SubType == Comma)
+            List<string> idents = new List<string>();
+            while (Current.SubType == Identifier)
             {
+                idents.Add(Current.Value.ToString());
                 Next();
-                var tmp = Current;
-                Require(Identifier);
-                idents.Add(tmp.Value.ToString());
+                if (Current.SubType != Comma)
+                {
+                    break;
+                }
+                Next();
             }
+            if (idents.Count == 0)
+                throw new ParserException("Empty parameter list", Current.Line, Current.Position);
             Require(Colon);
             var t = Current;
             Require(Identifier);
