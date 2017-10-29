@@ -72,7 +72,7 @@ namespace PascalCompiler
         {
             uint line = 1;
             uint pos = 0;
-            State state = State.Start;
+            var state = State.Start;
             string lexeme = "";
             while (true)
             {
@@ -89,225 +89,227 @@ namespace PascalCompiler
                     throw new TokenizerException($"Unknown character: '{c}'(#{(uint) c})", line, pos);
                 }
                 lexeme += c;
-                if (newState == State.UnexpectedChar)
+                switch (newState)
                 {
-                    if (c != '\0')
-                    {
-                        throw new TokenizerException($"Unexpected character: '{c}'(#{(uint) c})", line, pos);
-                    }
-                    throw new TokenizerException("Unexpected end of file", line, pos);
-                }
-                if (newState == State.Start)
-                {
-                    switch (state)
-                    {
-                        case State.Comment:
-                        case State.MultilineCommentEnd:
-                            PushBack(c);
-                            --pos;
-                            lexeme = "";
-                            break;
-                        case State.Start:
-                            lexeme = "";
-                            break;
-                        case State.NewLine:
-                            ++line;
-                            pos = 0;
-                            lexeme = "";
-                            PushBack(c);
-                            break;
-                        case State.Identifier:
-                            if (TokenSubTypeDict.ContainsKey(lexeme.Substring(0, lexeme.Length - 1).ToLower()))
-                            {
-                                yield return new Token(
-                                    TokenType.ReservedWord,
-                                    TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1).ToLower()],
-                                    lexeme.Substring(0, lexeme.Length - 1),
-                                    line, pos - (uint) lexeme.Length + 1,
-                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
-                            }
-                            else
-                            {
-                                yield return new Token(
-                                    TokenType.Identifier,
-                                    TokenSubType.Identifier,
-                                    lexeme.Substring(0, lexeme.Length - 1),
-                                    line, pos - (uint) lexeme.Length + 1,
-                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
-                            }
-                            lexeme = "";
-                            PushBack(c);
-                            --pos;
-                            break;
-                        case State.FloatDot:
-                            yield return new Token(
-                                TokenType.Constant,
-                                TokenSubType.IntegerConstant,
-                                lexeme.Substring(0, lexeme.Length - 2),
-                                line, pos + 1 - (uint) lexeme.Length,
-                                Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 2)));
-                            pos -= 2;
-                            PushBack(c);
-                            PushBack(lexeme[lexeme.Length - 2]);
-                            lexeme = "";
-                            break;
-                        case State.FloatFrac:
-                        case State.FloatExpValue:
-                            NumberFormatInfo provider = new NumberFormatInfo();
-                            provider.NumberDecimalSeparator = ".";
-                            yield return new Token(
-                                TokenType.Constant,
-                                TokenSubType.FloatConstant,
-                                lexeme.Substring(0, lexeme.Length - 1),
-                                line, pos - (uint) lexeme.Length + 1,
-                                Convert.ToDouble(lexeme.Substring(0, lexeme.Length - 1), provider));
-                            PushBack(c);
-                            lexeme = "";
-                            --pos;
-                            break;
-                        case State.Integer:
+                    case State.UnexpectedChar:
+                        if (c != '\0')
                         {
-                            Token temp;
-                            try
-                            {
-                                temp = new Token(
-                                    TokenType.Constant,
-                                    TokenSubType.IntegerConstant,
-                                    lexeme.Substring(0, lexeme.Length - 1),
-                                    line, pos - (uint) lexeme.Length + 1,
-                                    Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 1)));
-                            }
-                            catch (OverflowException)
-                            {
-                                throw new TokenizerException(
-                                    "Integer is too big", line, pos - (uint) lexeme.Length + 1);
-                            }
-                            yield return temp;
+                            throw new TokenizerException($"Unexpected character: '{c}'(#{(uint) c})", line, pos);
                         }
-                            PushBack(c);
-                            lexeme = "";
-                            --pos;
-                            break;
-                        case State.PlusOperator:
-                        case State.MinusOperator:
-                        case State.AsteriskOperator:
-                        case State.SlashOperator:
-                        case State.DotOperator:
-                        case State.Less:
-                        case State.More:
-                        case State.Operator:
-                            yield return new Token(
-                                TokenType.Operator,
-                                TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
-                                lexeme.Substring(0, lexeme.Length - 1),
-                                line, pos - (uint) lexeme.Length + 1,
-                                lexeme.Substring(0, lexeme.Length - 1).ToLower());
-                            lexeme = "";
-                            PushBack(c);
-                            --pos;
-                            break;
-                        case State.Colon:
-                        case State.Parenthesis:
-                        case State.Separator:
-                            yield return new Token(
-                                TokenType.Separator,
-                                TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
-                                lexeme.Substring(0, lexeme.Length - 1),
-                                line, pos - (uint) lexeme.Length + 1,
-                                lexeme.Substring(0, lexeme.Length - 1).ToLower());
-                            lexeme = "";
-                            PushBack(c);
-                            --pos;
-                            break;
-                        case State.StringLiteralClosed:
-                        case State.StringLiteralCharBinValue:
-                        case State.StringLiteralCharHexValue:
-                        case State.StringLiteralCharOctValue:
-                        case State.StringLiteralCharDec:
+                        throw new TokenizerException("Unexpected end of file", line, pos);
+                    case State.Start:
+                        switch (state)
                         {
-                            Token temp;
-                            try
-                            {
-                                var s = DecodeChars(lexeme.Substring(0, lexeme.Length - 1));
-                                if (s.Length == 1)
+                            case State.Comment:
+                            case State.MultilineCommentEnd:
+                                PushBack(c);
+                                --pos;
+                                lexeme = "";
+                                break;
+                            case State.Start:
+                                lexeme = "";
+                                break;
+                            case State.NewLine:
+                                ++line;
+                                pos = 0;
+                                lexeme = "";
+                                PushBack(c);
+                                break;
+                            case State.Identifier:
+                                if (TokenSubTypeDict.ContainsKey(lexeme.Substring(0, lexeme.Length - 1).ToLower()))
                                 {
-                                    temp = new Token(
-                                        TokenType.Constant,
-                                        TokenSubType.CharConstant,
+                                    yield return new Token(
+                                        TokenType.ReservedWord,
+                                        TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1).ToLower()],
                                         lexeme.Substring(0, lexeme.Length - 1),
                                         line, pos - (uint) lexeme.Length + 1,
-                                        s[0]);
+                                        lexeme.Substring(0, lexeme.Length - 1).ToLower());
                                 }
                                 else
                                 {
-                                    temp = new Token(
-                                        TokenType.Constant,
-                                        TokenSubType.StringConstant,
+                                    yield return new Token(
+                                        TokenType.Identifier,
+                                        TokenSubType.Identifier,
                                         lexeme.Substring(0, lexeme.Length - 1),
                                         line, pos - (uint) lexeme.Length + 1,
-                                        s);
+                                        lexeme.Substring(0, lexeme.Length - 1).ToLower());
                                 }
-                            }
-                            catch (ConvertException e)
-                            {
-                                throw new TokenizerException(
-                                    "Invalid char base (This means the FSM has failed)",
-                                    line, pos - (uint) lexeme.Length + e.Position + 1);
-                            }
-                            catch (ConvertOverflowException e)
-                            {
-                                throw new TokenizerException(
-                                    "Char value is too big",
-                                    line, pos - (uint) lexeme.Length + e.Position + 1);
-                            }
-                            yield return temp;
-                        }
-                            lexeme = "";
-                            PushBack(c);
-                            --pos;
-                            break;
-                        case State.BinNumberValue:
-                        case State.OctNumber:
-                        case State.HexNumberValue:
-                        {
-                            Token temp;
-                            try
-                            {
-                                temp = new Token(
+                                lexeme = "";
+                                PushBack(c);
+                                --pos;
+                                break;
+                            case State.FloatDot:
+                                yield return new Token(
                                     TokenType.Constant,
                                     TokenSubType.IntegerConstant,
+                                    lexeme.Substring(0, lexeme.Length - 2),
+                                    line, pos + 1 - (uint) lexeme.Length,
+                                    Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 2)));
+                                pos -= 2;
+                                PushBack(c);
+                                PushBack(lexeme[lexeme.Length - 2]);
+                                lexeme = "";
+                                break;
+                            case State.FloatFrac:
+                            case State.FloatExpValue:
+                                var provider = new NumberFormatInfo();
+                                provider.NumberDecimalSeparator = ".";
+                                yield return new Token(
+                                    TokenType.Constant,
+                                    TokenSubType.FloatConstant,
                                     lexeme.Substring(0, lexeme.Length - 1),
                                     line, pos - (uint) lexeme.Length + 1,
-                                    DecodeNumber(lexeme.Substring(0, lexeme.Length - 1)));
-                            }
-                            catch (ConvertException e)
+                                    Convert.ToDouble(lexeme.Substring(0, lexeme.Length - 1), provider));
+                                PushBack(c);
+                                lexeme = "";
+                                --pos;
+                                break;
+                            case State.Integer:
                             {
-                                throw new TokenizerException(
-                                    "Invalid integer base (This means the FSM has failed)",
-                                    line, pos - (uint) lexeme.Length + e.Position);
+                                Token temp;
+                                try
+                                {
+                                    temp = new Token(
+                                        TokenType.Constant,
+                                        TokenSubType.IntegerConstant,
+                                        lexeme.Substring(0, lexeme.Length - 1),
+                                        line, pos - (uint) lexeme.Length + 1,
+                                        Convert.ToInt32(lexeme.Substring(0, lexeme.Length - 1)));
+                                }
+                                catch (OverflowException)
+                                {
+                                    throw new TokenizerException(
+                                        "Integer is too big", line, pos - (uint) lexeme.Length + 1);
+                                }
+                                yield return temp;
                             }
-                            catch (OverflowException)
+                                PushBack(c);
+                                lexeme = "";
+                                --pos;
+                                break;
+                            case State.PlusOperator:
+                            case State.MinusOperator:
+                            case State.AsteriskOperator:
+                            case State.SlashOperator:
+                            case State.DotOperator:
+                            case State.Less:
+                            case State.More:
+                            case State.Operator:
+                                yield return new Token(
+                                    TokenType.Operator,
+                                    TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
+                                    lexeme.Substring(0, lexeme.Length - 1),
+                                    line, pos - (uint) lexeme.Length + 1,
+                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                                lexeme = "";
+                                PushBack(c);
+                                --pos;
+                                break;
+                            case State.Colon:
+                            case State.Parenthesis:
+                            case State.Separator:
+                                yield return new Token(
+                                    TokenType.Separator,
+                                    TokenSubTypeDict[lexeme.Substring(0, lexeme.Length - 1)],
+                                    lexeme.Substring(0, lexeme.Length - 1),
+                                    line, pos - (uint) lexeme.Length + 1,
+                                    lexeme.Substring(0, lexeme.Length - 1).ToLower());
+                                lexeme = "";
+                                PushBack(c);
+                                --pos;
+                                break;
+                            case State.StringLiteralClosed:
+                            case State.StringLiteralCharBinValue:
+                            case State.StringLiteralCharHexValue:
+                            case State.StringLiteralCharOctValue:
+                            case State.StringLiteralCharDec:
                             {
-                                throw new TokenizerException(
-                                    "Integer is too big",
-                                    line, pos - (uint) lexeme.Length);
+                                Token temp;
+                                try
+                                {
+                                    var s = DecodeChars(lexeme.Substring(0, lexeme.Length - 1));
+                                    if (s.Length == 1)
+                                    {
+                                        temp = new Token(
+                                            TokenType.Constant,
+                                            TokenSubType.CharConstant,
+                                            lexeme.Substring(0, lexeme.Length - 1),
+                                            line, pos - (uint) lexeme.Length + 1,
+                                            s[0]);
+                                    }
+                                    else
+                                    {
+                                        temp = new Token(
+                                            TokenType.Constant,
+                                            TokenSubType.StringConstant,
+                                            lexeme.Substring(0, lexeme.Length - 1),
+                                            line, pos - (uint) lexeme.Length + 1,
+                                            s);
+                                    }
+                                }
+                                catch (ConvertException e)
+                                {
+                                    throw new TokenizerException(
+                                        "Invalid char base (This means the FSM has failed)",
+                                        line, pos - (uint) lexeme.Length + e.Position + 1);
+                                }
+                                catch (ConvertOverflowException e)
+                                {
+                                    throw new TokenizerException(
+                                        "Char value is too big",
+                                        line, pos - (uint) lexeme.Length + e.Position + 1);
+                                }
+                                yield return temp;
                             }
-                            yield return temp;
+                                lexeme = "";
+                                PushBack(c);
+                                --pos;
+                                break;
+                            case State.BinNumberValue:
+                            case State.OctNumber:
+                            case State.HexNumberValue:
+                            {
+                                Token temp;
+                                try
+                                {
+                                    temp = new Token(
+                                        TokenType.Constant,
+                                        TokenSubType.IntegerConstant,
+                                        lexeme.Substring(0, lexeme.Length - 1),
+                                        line, pos - (uint) lexeme.Length + 1,
+                                        DecodeNumber(lexeme.Substring(0, lexeme.Length - 1)));
+                                }
+                                catch (ConvertException e)
+                                {
+                                    throw new TokenizerException(
+                                        "Invalid integer base (This means the FSM has failed)",
+                                        line, pos - (uint) lexeme.Length + e.Position);
+                                }
+                                catch (OverflowException)
+                                {
+                                    throw new TokenizerException(
+                                        "Integer is too big",
+                                        line, pos - (uint) lexeme.Length);
+                                }
+                                yield return temp;
+                            }
+                                lexeme = "";
+                                PushBack(c);
+                                --pos;
+                                break;
                         }
-                            lexeme = "";
-                            PushBack(c);
-                            --pos;
-                            break;
-                    }
-                }
-                else if (
-                    state == State.MultilineCommentNewLine &&
-                    (newState == State.MultilineComment ||
-                     newState == State.MultilineCommentAsterisk ||
-                     newState == State.MultilineCommentEnd))
-                {
-                    ++line;
-                    pos = 0;
+                        break;
+                    default:
+                        if (
+                            state == State.MultilineCommentNewLine &&
+                            (newState == State.MultilineComment ||
+                             newState == State.MultilineCommentAsterisk ||
+                             newState == State.MultilineCommentEnd))
+                        {
+                            ++line;
+                            pos = 0;
+                        }
+                        break;
                 }
                 state = newState;
                 if (c != '\0') continue;
@@ -344,65 +346,65 @@ namespace PascalCompiler
         {
             string output = "";
             bool quoted = false;
-            for (int i = 0; i < input.Length; ++i)
+            for (var i = 0; i < input.Length; ++i)
             {
-                if (input[i] == '\'')
+                switch (input[i])
                 {
-                    if (quoted)
-                    {
-                        if (i < input.Length - 1 && input[i + 1] == '\'')
+                    case '\'':
+                        if (quoted)
                         {
-                            output += '\'';
-                            ++i;
+                            if (i < input.Length - 1 && input[i + 1] == '\'')
+                            {
+                                output += '\'';
+                                ++i;
+                            }
+                            else
+                            {
+                                quoted = false;
+                            }
                         }
                         else
                         {
-                            quoted = false;
+                            quoted = true;
                         }
-                    }
-                    else
-                    {
-                        quoted = true;
-                    }
-                }
-                else if (input[i] == '#' && !quoted)
-                {
-                    char type = input[++i];
-                    int pos = i++;
-                    string temp = char.IsDigit(type) ? type.ToString() : "";
-                    for (; i < input.Length && input[i] != '\'' && input[i] != '#'; ++i)
-                    {
-                        temp += input[i];
-                    }
-                    try
-                    {
-                        switch (type)
+                        break;
+                    case '#' when !quoted:
+                        char type = input[++i];
+                        int pos = i++;
+                        string temp = char.IsDigit(type) ? type.ToString() : "";
+                        for (; i < input.Length && input[i] != '\'' && input[i] != '#'; ++i)
                         {
-                            case '%':
-                                output += (char) Convert.ToInt32(temp, 2);
-                                break;
-                            case '&':
-                                output += (char) Convert.ToInt32(temp, 8);
-                                break;
-                            case '$':
-                                output += (char) Convert.ToInt32(temp, 16);
-                                break;
-                            case char c when char.IsDigit(c):
-                                output += (char) Convert.ToInt32(temp);
-                                break;
-                            default:
-                                throw new ConvertException("Illegal base of char constant", (uint) pos);
+                            temp += input[i];
                         }
-                    }
-                    catch (OverflowException)
-                    {
-                        throw new ConvertOverflowException("Char value is too big", (uint) i);
-                    }
-                    --i;
-                }
-                else
-                {
-                    output += input[i];
+                        try
+                        {
+                            switch (type)
+                            {
+                                case '%':
+                                    output += (char) Convert.ToInt32(temp, 2);
+                                    break;
+                                case '&':
+                                    output += (char) Convert.ToInt32(temp, 8);
+                                    break;
+                                case '$':
+                                    output += (char) Convert.ToInt32(temp, 16);
+                                    break;
+                                case char c when char.IsDigit(c):
+                                    output += (char) Convert.ToInt32(temp);
+                                    break;
+                                default:
+                                    throw new ConvertException("Illegal base of char constant", (uint) pos);
+                            }
+                        }
+                        catch (OverflowException)
+                        {
+                            throw new ConvertOverflowException("Char value is too big", (uint) i);
+                        }
+                        --i;
+                        break;
+                    default:
+                        output += input[i];
+                        break;
                 }
             }
             return output;

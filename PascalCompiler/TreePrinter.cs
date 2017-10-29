@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace PascalCompiler
@@ -16,21 +15,20 @@ namespace PascalCompiler
         {
             foreach (var key in block.SymTable.Keys)
             {
-                if (block.SymTable[key] is ProcedureSymbol pc)
+                switch (block.SymTable[key])
                 {
-                    writer.WriteLine(indent + new string('━', 40));
-                    writer.WriteLine(indent + indent + $"  {pc}");
-                    PrintBlock(writer, pc.Block, indent + "  ");
-                    writer.WriteLine(indent + new string('━', 40));
-                    continue;
-                }
-                if (block.SymTable[key] is FunctionSymbol fc)
-                {
-                    writer.WriteLine(indent + new string('━', 40));
-                    writer.WriteLine(indent + indent + $"  {fc}");
-                    PrintBlock(writer, fc.Block, indent + "  ");
-                    writer.WriteLine(indent + new string('━', 40));
-                    continue;
+                    case ProcedureSymbol pc:
+                        writer.WriteLine(indent + new string('━', 40));
+                        writer.WriteLine(indent + indent + $"  {pc}");
+                        PrintBlock(writer, pc.Block, indent + "  ");
+                        writer.WriteLine(indent + new string('━', 40));
+                        continue;
+                    case FunctionSymbol fc:
+                        writer.WriteLine(indent + new string('━', 40));
+                        writer.WriteLine(indent + indent + $"  {fc}");
+                        PrintBlock(writer, fc.Block, indent + "  ");
+                        writer.WriteLine(indent + new string('━', 40));
+                        continue;
                 }
                 writer.WriteLine(indent + indent + $"  {key} = {block.SymTable[key]};");
             }

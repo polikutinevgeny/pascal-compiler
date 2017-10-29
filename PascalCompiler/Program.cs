@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -15,12 +14,12 @@ namespace PascalCompiler
         private static void Main(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-            Options options = new Options();
+            var options = new Options();
             if (!CommandLine.Parser.Default.ParseArguments(args, options)) return;
             try
             {
-                using (StreamReader reader = new StreamReader(options.InputFile))
-                using (StreamWriter writer = new StreamWriter(options.OutputFile))
+                using (var reader = new StreamReader(options.InputFile))
+                using (var writer = new StreamWriter(options.OutputFile))
                 {
                     switch (options.Mode)
                     {
@@ -30,7 +29,7 @@ namespace PascalCompiler
                             writer.WriteLine(new string('-', 142));
                             try
                             {
-                                foreach (Tokenizer.Token t in new Tokenizer(reader))
+                                foreach (var t in new Tokenizer(reader))
                                 {
                                     if (t.Type == Tokenizer.TokenType.EndOfFile)
                                     {
@@ -56,9 +55,9 @@ namespace PascalCompiler
                         case "parse":
                             try
                             {
-                                using (Tokenizer tokenizer = new Tokenizer(reader))
+                                using (var tokenizer = new Tokenizer(reader))
                                 using (var tokenStream = tokenizer.GetEnumerator())
-                                using (Parser parser = new Parser(tokenStream))
+                                using (var parser = new Parser(tokenStream))
                                 {
                                     var p = parser.Parse();
                                     TreePrinter.PrintProgram(writer, p);

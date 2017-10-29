@@ -94,7 +94,7 @@ namespace PascalCompiler
                         }
                         return l >> r;
                     }
-                },
+                }
             };
 
         private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; set; } =
@@ -111,32 +111,27 @@ namespace PascalCompiler
                         }
                         return ~i;
                     }
-                },
+                }
             };
 
         private dynamic EvaluateConstExpr(Node expr, SymTable symTable)
         {
-            if (expr is ConstNode)
+            switch (expr)
             {
-                return expr.Value;
-            }
-            if (expr is DesignatorNode)
-            {
-                var temp = symTable.LookUp(expr.Value.ToString());
-                if (temp is ConstSymbol)
-                {
-                    return ((SimpleConstant) (temp as ConstSymbol).Value).Value;
-                }
-                throw new EvaluatorException("Illegal operation");
-            }
-            if (expr is BinOpNode)
-            {
-                return BinaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable),
-                    EvaluateConstExpr(expr.Childs[1], symTable));
-            }
-            if (expr is UnOpNode)
-            {
-                return UnaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
+                case ConstNode _:
+                    return expr.Value;
+                case DesignatorNode _:
+                    var temp = symTable.LookUp(expr.Value.ToString());
+                    if (temp is ConstSymbol)
+                    {
+                        return ((SimpleConstant) (temp as ConstSymbol).Value).Value;
+                    }
+                    throw new EvaluatorException("Illegal operation");
+                case BinOpNode _:
+                    return BinaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable),
+                        EvaluateConstExpr(expr.Childs[1], symTable));
+                case UnOpNode _:
+                    return UnaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
             }
             throw new InvalidOperationException($"Node of type {expr.GetType()} met in expression");
         }

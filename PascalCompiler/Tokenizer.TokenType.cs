@@ -137,10 +137,10 @@ namespace PascalCompiler
             // Flow control
             Break,
             Continue,
-            Exit,
+            Exit
         }
 
-        private readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
+        private Dictionary<string, TokenSubType> TokenSubTypeDict { get; } = new Dictionary<string, TokenSubType>
         {
             {"+", TokenSubType.Plus },
             {"-", TokenSubType.Minus },

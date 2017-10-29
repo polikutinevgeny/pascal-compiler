@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PascalCompiler
 {
     public class SymTable : OrderedDictionary
     {
-        public SymTable Parent { get; set; }
+        public SymTable Parent { private get; set; }
 
         public Symbol LookUp(string name)
         {
@@ -28,24 +25,20 @@ namespace PascalCompiler
 
     public class TypeSymbol : Symbol
     {
-        public static readonly TypeSymbol IntTypeSymbol = new TypeSymbol()
+        public static readonly TypeSymbol IntTypeSymbol = new TypeSymbol
         {
             Name = "integer"
         };
 
-        public static readonly TypeSymbol RealTypeSymbol = new TypeSymbol()
+        public static readonly TypeSymbol RealTypeSymbol = new TypeSymbol
         {
             Name = "real"
         };
 
-        public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol()
+        public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol
         {
             Name = "char"
         };
-
-        public TypeSymbol()
-        {
-        }
 
         public override string ToString()
         {
@@ -59,10 +52,6 @@ namespace PascalCompiler
         public (int Begin, int End) Range { get; set; }
         public int Length => Range.End - Range.Begin + 1;
 
-        public ArrayTypeSymbol()
-        {
-        }
-
         public override string ToString()
         {
             return $"[{Range.Begin}..{Range.End}]: array of {ElementType}";
@@ -72,10 +61,6 @@ namespace PascalCompiler
     public class RecordTypeSymbol : TypeSymbol
     {
         public SymTable Fields;
-
-        public RecordTypeSymbol()
-        {
-        }
 
         public override string ToString()
         {
@@ -135,7 +120,7 @@ namespace PascalCompiler
         public override string ToString()
         {
             return
-                $"procedure {Name}({String.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))})";
+                $"procedure {Name}({string.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))})";
         }
     }
 
@@ -146,7 +131,7 @@ namespace PascalCompiler
         public override string ToString()
         {
             return
-                $"function {Name}({String.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))}): {ReturnType.Name}";
+                $"function {Name}({string.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))}): {ReturnType.Name}";
         }
     }
 }

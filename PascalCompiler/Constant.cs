@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PascalCompiler
 {
@@ -27,13 +24,13 @@ namespace PascalCompiler
     {
         public List<Constant> Elements { get; set; }
 
-        public override string ToString() => $"({String.Join(", ", Elements)})";
+        public override string ToString() => $"({string.Join(", ", Elements)})";
     }
 
     public class RecordConstant : StructConstant
     {
         public Dictionary<VarSymbol, Constant> Values;
 
-        public override string ToString() => $"({String.Join(", ", Values)})";
+        public override string ToString() => $"({string.Join(", ", Values)})";
     }
 }

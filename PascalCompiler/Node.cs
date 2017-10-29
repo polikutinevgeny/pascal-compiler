@@ -4,11 +4,7 @@ namespace PascalCompiler
 {
     public abstract class Node
     {
-        public Node()
-        {
-        }
-
-        public Node(List<Node> childs, object value, uint line, uint position)
+        protected Node(List<Node> childs, object value, uint line, uint position)
         {
             Childs = childs;
             Value = value;
@@ -16,7 +12,7 @@ namespace PascalCompiler
             Position = position;
         }
 
-        public Node(List<Node> childs, Tokenizer.Token token) : this(childs, token.Value, token.Line, token.Position)
+        protected Node(List<Node> childs, Tokenizer.Token token) : this(childs, token.Value, token.Line, token.Position)
         {
         }
 
@@ -27,7 +23,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return Value?.ToString() ?? this.GetType().Name;
+            return Value?.ToString() ?? GetType().Name;
         }
     }
 
@@ -228,7 +224,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"Call statement wrapper";
+            return "Call statement wrapper";
         }
     }
 
@@ -255,7 +251,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"Index";
+            return "Index";
         }
     }
 
@@ -269,7 +265,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"Member access";
+            return "Member access";
         }
     }
 }
