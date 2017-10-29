@@ -449,11 +449,16 @@ namespace PascalCompiler
                     case Identifier:
                         parameters.AddRange(ParseValueParameter(symTable));
                         break;
+                    case RParenthesis:
+                        Next();
+                        return parameters;
+                    default:
+                        throw new ParserException($"Unexpected token {Current.SubType}", Current.Line,
+                            Current.Position);
                 }
                 if (Current.SubType == RParenthesis)
                 {
-                    Next();
-                    return parameters;
+                    continue;
                 }
                 Require(Semicolon);
             }
@@ -461,15 +466,16 @@ namespace PascalCompiler
 
         private Parameters ParseValueParameter(SymTable symTable)
         {
-            var c = Current;
-            Require(Identifier);
-            List<string> idents = new List<string> {c.Value.ToString()};
-            while (Current.SubType == Comma)
+            List<string> idents = new List<string>();
+            while (Current.SubType == Identifier)
             {
+                idents.Add(Current.Value.ToString());
                 Next();
-                var tmp = Current;
-                Require(Identifier);
-                idents.Add(tmp.Value.ToString());
+                if (Current.SubType != Comma)
+                {
+                    break;
+                }
+                Next();
             }
             Require(Colon);
             var t = Current;
@@ -479,23 +485,22 @@ namespace PascalCompiler
             {
                 throw new ParserException("Illegal type declaration", t.Line, t.Position);
             }
-            if (idents.Count == 1 && Current.SubType == Equal)
+            if (Current.SubType == Equal)
             {
+                if (idents.Count != 1)
+                    throw new ParserException("Only one parameter can have default value", Current.Line,
+                        Current.Position);
                 Require(Equal);
                 var v = ParseConstExpr(symTable);
                 var s = new ParameterSymbol
                 {
                     Name = idents[0],
                     ParameterModifier = ParameterModifier.Value,
-                    Type = (TypeSymbol) tp,
+                    Type = (TypeSymbol)tp,
                     Value = v
                 };
                 symTable.Add(idents[0], s);
-                return new Parameters {s};
-            }
-            if (Current.SubType == Equal)
-            {
-                throw new ParserException("Only one parameter can have default value", Current.Line, Current.Position);
+                return new Parameters { s };
             }
             var p = new Parameters();
             foreach (var i in idents)
