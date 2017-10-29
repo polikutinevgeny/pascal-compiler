@@ -1,11 +1,11 @@
 program 
-  integer;
-  real;
-  char;
-  i: integer ;
-  j: integer ;
-  k: integer ;
-  a: real ;
+  integer = integer;
+  real = real;
+  char = char;
+  i = integer;
+  j = integer;
+  k = integer;
+  a = real;
 └─For
   ├─i
   ├─0

@@ -1,9 +1,9 @@
 program 
-  integer;
-  real;
-  char;
-  a: integer ;
-  b: #array ;
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer;
+  b = #array;
 └─Write
   └─Expression list
     ├─a

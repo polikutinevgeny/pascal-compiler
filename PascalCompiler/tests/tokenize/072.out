@@ -1,0 +1,8 @@
+Line |Pos  |Type        |Subtype                  |Value                              |Source                                            
+----------------------------------------------------------------------------------------------------------------------------------------------
+1    |1    |ReservedWord|Begin                    |begin                              |begin                                             
+3    |1    |Identifier  |Identifier               |test                               |test                                              
+7    |1    |ReservedWord|Begin                    |begin                              |begin                                             
+11   |1    |Identifier  |Identifier               |test                               |test                                              
+13   |1    |ReservedWord|End                      |end                                |end                                               
+13   |4    |Operator    |Dot                      |.                                  |.                                                 

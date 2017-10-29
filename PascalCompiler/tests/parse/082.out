@@ -1,14 +1,14 @@
 program 
-  integer;
-  real;
-  char;
-  e: real ;
+  integer = integer;
+  real = real;
+  char = char;
+  e = real;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure hello((Var, a, integer), (Var, b, integer), (Const, c, real), (Const, d, real), (Const, f, integer))
-      Var a: integer ;
-      Var b: integer ;
-      Const c: real ;
-      Const d: real ;
-      Const f: integer = 10;
-      e: integer ;
+      a = Var integer;
+      b = Var integer;
+      c = Const real;
+      d = Const real;
+      f = Const integer = 10;
+      e = integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

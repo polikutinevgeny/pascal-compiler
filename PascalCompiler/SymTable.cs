@@ -53,27 +53,6 @@ namespace PascalCompiler
         }
     }
 
-    public class Alias : TypeSymbol
-    {
-        public Alias(TypeSymbol parent) => this.Parent = parent;
-
-        public TypeSymbol Parent { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Name} as {Parent.Name}";
-        }
-
-        public Symbol GetOriginalSymbol()
-        {
-            if (Parent is Alias a)
-            {
-                return a.GetOriginalSymbol();
-            }
-            return Parent;
-        }
-    }
-
     public class ArrayTypeSymbol : TypeSymbol
     {
         public TypeSymbol ElementType { get; set; }
@@ -86,7 +65,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"{Name}[{Range.Begin}..{Range.End}]: array of {ElementType}";
+            return $"[{Range.Begin}..{Range.End}]: array of {ElementType}";
         }
     }
 
@@ -100,7 +79,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"{Name}: record";
+            return "record";
         }
     }
 
@@ -111,7 +90,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"{Name}: {Type.Name} {(Value != null ? $"= {Value}" : "")}";
+            return $"{Type.Name}{(Value != null ? $" = {Value}" : "")}";
         }
     }
 

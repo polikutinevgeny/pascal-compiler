@@ -197,6 +197,13 @@ namespace PascalCompiler
         }
     }
 
+    public class ExitNode : Statement
+    {
+        public ExitNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+    }
+
     public class CallOperator : DesignatorNode
     {
         public SubprogramSymbol Subprogram { get; set; }
@@ -234,7 +241,7 @@ namespace PascalCompiler
 
         public override string ToString()
         {
-            return $"{Type} cast";
+            return $"{Type.Name} cast";
         }
     }
 

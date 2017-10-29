@@ -1,10 +1,10 @@
 program p
-  integer;
-  real;
-  char;
-  program p;
-  c: char = ";
-  d: integer = 3;
+  integer = integer;
+  real = real;
+  char = char;
+  p = program p;
+  c = char = ";
+  d = integer = 3;
 ├─Write
 │ └─Expression list
 │   └─NEqual

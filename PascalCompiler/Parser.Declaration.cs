@@ -6,6 +6,8 @@ namespace PascalCompiler
 {
     public partial class Parser
     {
+        private TypeSymbol CurrentReturnType { get; set; } = null;
+
         private PascalProgram ParseProgram()
         {
             var c = Current;
@@ -436,7 +438,10 @@ namespace PascalCompiler
             }
             var p = new ProcedureSymbol() {Name = h.Name, Parameters = h.Parameters};
             symTable.Add(h.Name, p);
+            var backup = CurrentReturnType;
+            CurrentReturnType = null;
             var b = ParseBlock(procSymTable);
+            CurrentReturnType = backup;
             p.Block = b;
             Require(Tokenizer.TokenSubType.Semicolon);
         }
@@ -622,7 +627,10 @@ namespace PascalCompiler
                 ReturnType = h.ReturnType
             };
             symTable.Add(h.Name, f);
+            var backup = CurrentReturnType;
+            CurrentReturnType = f.ReturnType;
             var b = ParseBlock(procSymTable);
+            CurrentReturnType = backup;
             Require(Tokenizer.TokenSubType.Semicolon);
             f.Block = b;
         }

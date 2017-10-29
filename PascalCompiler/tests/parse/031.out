@@ -1,13 +1,13 @@
 program read_
-  integer;
-  real;
-  char;
-  program read_;
-  flag: integer ;
-  n: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  read_ = program read_;
+  flag = integer;
+  n = integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure readln((Var, n, integer))
-      Var n: integer ;
+      n = Var integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ├─Assignment statement
 │ ├─flag

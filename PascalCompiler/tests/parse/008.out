@@ -1,9 +1,9 @@
 program 
-  integer;
-  real;
-  char;
-  a: integer ;
-  b: integer = 30;
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer;
+  b = integer = 30;
 ├─Assignment statement
 │ ├─a
 │ └─3

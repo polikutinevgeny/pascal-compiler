@@ -1,9 +1,9 @@
 program 
-  integer;
-  real;
-  char;
-  i: integer ;
-  j: #record ;
+  integer = integer;
+  real = real;
+  char = char;
+  i = integer;
+  j = #record;
 └─For
   ├─i
   ├─0

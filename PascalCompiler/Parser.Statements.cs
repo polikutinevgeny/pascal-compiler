@@ -19,6 +19,8 @@ namespace PascalCompiler
             }
         }
 
+        private int CycleCounter { get; set; } = 0;
+
         private readonly IEnumerator<Tokenizer.Token> _tokenizer;
 
         private void Next() => _tokenizer.MoveNext();
@@ -86,13 +88,47 @@ namespace PascalCompiler
                 case Tokenizer.TokenSubType.Begin:
                     return ParseStructStatement(symTable);
                 case Tokenizer.TokenSubType.Break:
+                    if (CycleCounter == 0)
+                    {
+                        throw new ParserException("Break outside of cycle", c.Line, c.Position);
+                    }
                     Next();
                     return new BreakNode(null, c);
                 case Tokenizer.TokenSubType.Continue:
+                    if (CycleCounter == 0)
+                    {
+                        throw new ParserException("Continue outside of cycle", c.Line, c.Position);
+                    }
                     Next();
                     return new ContinueNode(null, c);
+                case Tokenizer.TokenSubType.Exit:
+                    return ParseExitStatement(symTable);
             }
             return null;
+        }
+
+        private Statement ParseExitStatement(SymTable symTable)
+        {
+            var c = Current;
+            Require(Tokenizer.TokenSubType.Exit);
+            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            {
+                return new ExitNode(null, c.Value, c.Line, c.Position);
+            }
+            Next();
+            if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+            {
+                Next();
+                return new ExitNode(null, c.Value, c.Line, c.Position);
+            }
+            if (CurrentReturnType == null)
+            {
+                throw new ParserException("Procedures cannot return a value", Current.Line, Current.Position);
+            }
+            var e = ParseExpression(symTable);
+            Require(Tokenizer.TokenSubType.RParenthesis);
+            CheckImplicitTypeCompatibility((TypeSymbol)e.Type, CurrentReturnType);
+            return new ExitNode(new List<Node> {e}, c.Value, c.Line, c.Position);
         }
 
         private SimpleStatementNode ParseSimpleStatement(SymTable symTable)
@@ -262,7 +298,9 @@ namespace PascalCompiler
             Require(Tokenizer.TokenSubType.To);
             var u = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.Do);
+            ++CycleCounter;
             var s = ParseStatement(symTable);
+            --CycleCounter;
             return new ForStatementNode(new List<Node> {new IdentNode(null, i), e, u, s}, "For", c.Line, c.Position);
         }
 
@@ -272,7 +310,9 @@ namespace PascalCompiler
             Require(Tokenizer.TokenSubType.While);
             var e = ParseExpression(symTable);
             Require(Tokenizer.TokenSubType.Do);
+            ++CycleCounter;
             var s = ParseStatement(symTable);
+            --CycleCounter;
             return new WhileStatementNode(new List<Node> {s}, "While", c.Line, c.Position)
             {
                 Condition = e
@@ -283,7 +323,9 @@ namespace PascalCompiler
         {
             var c = Current;
             Require(Tokenizer.TokenSubType.Repeat);
+            ++CycleCounter;
             var s = ParseStatementList(symTable);
+            --CycleCounter;
             Require(Tokenizer.TokenSubType.Until);
             var e = ParseExpression(symTable);
             return new RepeatStatementNode(new List<Node>(s), "Repeat", c.Line, c.Position)
@@ -519,7 +561,7 @@ namespace PascalCompiler
         {
             var ts = (TypeSymbol) type.Type;
             var p = ParseCastParam(symTable);
-            CheckImplicitTypeCompatibility((TypeSymbol) p.Type, ts);
+            CheckExplicitTypeCompatibility((TypeSymbol) p.Type, ts);
             var c = new CastOperator(new List<Node> {p}, "Cast", p.Line, p.Position)
             {
                 Type = ts
@@ -634,6 +676,20 @@ namespace PascalCompiler
         }
 
         private void CheckImplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
+        {
+            if (
+                from == to ||
+                from == TypeSymbol.IntTypeSymbol && to == TypeSymbol.RealTypeSymbol ||
+                from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att && atf.ElementType == att.ElementType &&
+                atf.Range.Begin == att.Range.Begin && atf.Range.End == att.Range.End
+            )
+            {
+                return;
+            }
+            throw new ParserException("Incompatible types", Current.Line, Current.Position);
+        }
+
+        private void CheckExplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
         {
             if (
                 from == to ||

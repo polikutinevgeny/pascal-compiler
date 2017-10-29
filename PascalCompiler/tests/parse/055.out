@@ -1,1 +1,21 @@
-Illegal identifier at 4:4
+program 
+  integer = integer;
+  real = real;
+  char = char;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  procedure foo((Value, a, integer))
+      a = Value integer;
+  ├─Assignment statement
+  │ ├─a
+  │ └─4
+  └─exit
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function bar(): real
+  └─exit
+    └─5.3
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Call statement wrapper
+│ └─foo call
+│   └─3
+└─exit

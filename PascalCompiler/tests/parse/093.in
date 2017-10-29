@@ -1,0 +1,26 @@
+program HelloWorld;
+
+type a1 = array[1..2] of Integer;
+a2 = array[2..3] of Integer;
+t = Integer;
+d = t;
+e = a1;
+r = real;
+
+var a: a1 = (0,1);
+b: a2;
+
+function bar(): r;
+begin
+    exit(4);
+end;
+
+function foo(): t;
+begin
+    exit(4.5);
+end;
+
+begin
+    write('Hello, world!');
+    b := a2(a);
+end.

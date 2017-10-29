@@ -1,5 +1,1 @@
-program 
-  integer;
-  real;
-  char;
-└─break
+Break outside of cycle at 2:4

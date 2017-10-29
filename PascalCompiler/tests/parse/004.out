@@ -1,8 +1,8 @@
 program 
-  integer;
-  real;
-  char;
-  a: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer;
 └─Assignment statement
   ├─a
   └─3

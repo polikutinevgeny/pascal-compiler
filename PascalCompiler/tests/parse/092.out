@@ -1,13 +1,22 @@
-program 
+program helloworld
   integer = integer;
   real = real;
   char = char;
-  c = integer;
+  helloworld = program helloworld;
+  a1 = [1..2]: array of integer;
+  a2 = [2..3]: array of integer;
+  t = integer;
+  d = integer;
+  e = [1..2]: array of integer;
+  a = e = (0, 1);
+  b = a2;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function foo(): integer
+  └─exit
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Write
+│ └─Hello, world!
 └─Assignment statement
-  ├─c
-  └─Div
-    ├─foo call
-    └─50
+  ├─b
+  └─a2 cast
+    └─a

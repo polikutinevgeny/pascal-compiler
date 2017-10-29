@@ -1,13 +1,13 @@
 program read_
-  integer;
-  real;
-  char;
-  program read_;
-  a: integer ;
-  n: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  read_ = program read_;
+  a = integer;
+  n = integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure readln((Value, x, integer))
-      Value x: integer ;
+      x = Value integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 └─while
   ├─Less

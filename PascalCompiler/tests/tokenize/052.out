@@ -20,7 +20,7 @@ Line |Pos  |Type        |Subtype                  |Value                        
 9    |9    |Operator    |Greater                  |>                                  |>                                                 
 9    |11   |Constant    |IntegerConstant          |1                                  |1                                                 
 9    |13   |ReservedWord|Then                     |then                               |then                                              
-9    |18   |Identifier  |Identifier               |exit                               |exit                                              
+9    |18   |ReservedWord|Exit                     |exit                               |exit                                              
 9    |22   |Separator   |Semicolon                |;                                  |;                                                 
 10   |1    |ReservedWord|End                      |end                                |end                                               
 10   |4    |Separator   |Semicolon                |;                                  |;                                                 

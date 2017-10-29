@@ -1,13 +1,13 @@
 program 
-  integer;
-  real;
-  char;
-  aaa: integer = 30;
-  bbb: integer = -40;
-  n: integer ;
-  i: integer ;
-  j: integer ;
-  a: #array ;
+  integer = integer;
+  real = real;
+  char = char;
+  aaa = integer = 30;
+  bbb = integer = -40;
+  n = integer;
+  i = integer;
+  j = integer;
+  a = #array;
 └─For
   ├─i
   ├─0

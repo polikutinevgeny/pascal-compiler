@@ -1,7 +1,7 @@
 program 
-  integer;
-  real;
-  char;
+  integer = integer;
+  real = real;
+  char = char;
 └─while
   ├─1
   └─compound statement

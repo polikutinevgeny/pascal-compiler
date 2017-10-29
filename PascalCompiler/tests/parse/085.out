@@ -1,13 +1,13 @@
 program 
-  integer;
-  real;
-  char;
-  r: record;
+  integer = integer;
+  real = real;
+  char = char;
+  r = record;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function test((Value, t, real)): r
-      Value t: real ;
+      t = Value real;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  i: #record ;
+  i = #record;
 └─Assignment statement
   ├─Member access
   │ ├─i

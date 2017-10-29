@@ -1,10 +1,10 @@
 program 
-  integer;
-  real;
-  char;
-  a1: integer = 30;
-  b: integer = 600;
-  a: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  a1 = integer = 30;
+  b = integer = 600;
+  a = integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function foo(): integer
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

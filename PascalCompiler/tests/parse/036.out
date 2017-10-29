@@ -1,10 +1,10 @@
 program 
-  integer;
-  real;
-  char;
-  a: integer = 2500;
-  i: integer ;
-  n: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer = 2500;
+  i = integer;
+  n = integer;
 └─For
   ├─i
   ├─0

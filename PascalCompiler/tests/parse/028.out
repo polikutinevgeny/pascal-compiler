@@ -1,20 +1,20 @@
 program factorial
-  integer;
-  real;
-  char;
-  program factorial;
-  n: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  factorial = program factorial;
+  n = integer;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure readln((Var, n, integer))
-      Var n: integer ;
+      n = Var integer;
   └─Assignment statement
     ├─n
     └─30
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function fac((Value, n, integer)): integer
-      Value n: integer ;
-      res: integer ;
+      n = Value integer;
+      res = integer;
   └─If
     ├─Equal
     │ ├─n

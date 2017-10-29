@@ -1,5 +1,1 @@
-program 
-  integer;
-  real;
-  char;
-  a: #record = ([a: integer , 10], [b: #record , ([c: real , c])]);
+Incompatible types at 7:26

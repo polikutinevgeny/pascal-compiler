@@ -1,6 +1,6 @@
 program 
-  integer;
-  real;
-  char;
-  integer;
-  real;
+  integer = integer;
+  real = real;
+  char = char;
+  t = integer;
+  g = real;

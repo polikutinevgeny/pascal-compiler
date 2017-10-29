@@ -4,6 +4,11 @@ begin
    exit;
 end;
 
+function bar(): real;
+begin
+   exit(5.3);
+end;
+
 begin
    foo(3);
    exit;

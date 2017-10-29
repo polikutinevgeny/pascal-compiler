@@ -1,11 +1,11 @@
 program 
-  integer;
-  real;
-  char;
-  a: integer ;
-  b: integer ;
-  i: integer ;
-  n: integer ;
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer;
+  b = integer;
+  i = integer;
+  n = integer;
 └─repeat
   ├─Greater
   │ ├─a

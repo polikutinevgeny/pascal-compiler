@@ -1,5 +1,5 @@
 program test
-  integer;
-  real;
-  char;
-  program test;
+  integer = integer;
+  real = real;
+  char = char;
+  test = program test;

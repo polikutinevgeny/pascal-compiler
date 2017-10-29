@@ -1,5 +1,5 @@
 program 
-  integer;
-  real;
-  char;
-  a: #record = ([a: integer , 10], [b: #record , ([c: real , 10.2])]);
+  integer = integer;
+  real = real;
+  char = char;
+  a = #record = ([integer, 10], [#record, ([real, 10.2])]);

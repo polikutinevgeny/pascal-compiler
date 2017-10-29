@@ -1,13 +1,13 @@
 program 
-  integer;
-  real;
-  char;
+  integer = integer;
+  real = real;
+  char = char;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure foo()
-      a: integer ;
+      a = integer;
   └─Call statement wrapper
     └─foo call
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  a: char ;
+  a = char;
 └─Call statement wrapper
   └─foo call

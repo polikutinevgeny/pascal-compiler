@@ -137,6 +137,7 @@ namespace PascalCompiler
             // Flow control
             Break,
             Continue,
+            Exit,
         }
 
         private readonly Dictionary<string, TokenSubType> TokenSubTypeDict = new Dictionary<string, TokenSubType>
@@ -250,7 +251,8 @@ namespace PascalCompiler
             {"read", TokenSubType.Read },
             {"write", TokenSubType.Write },
             {"break", TokenSubType.Break },
-            {"continue", TokenSubType.Continue }
+            {"continue", TokenSubType.Continue },
+            {"exit", TokenSubType.Exit }
         };
     }
 }

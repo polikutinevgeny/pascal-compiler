@@ -1,11 +1,11 @@
 program 
-  integer;
-  real;
-  char;
-  n: integer ;
-  i: integer ;
-  a: #array ;
-  b: #array ;
+  integer = integer;
+  real = real;
+  char = char;
+  n = integer;
+  i = integer;
+  a = #array;
+  b = #array;
 └─For
   ├─i
   ├─0

@@ -1,14 +1,14 @@
 program 
-  integer;
-  real;
-  char;
+  integer = integer;
+  real = real;
+  char = char;
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function foo(): integer
-      a: integer ;
+      a = integer;
   └─Call statement wrapper
     └─foo call
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  a: integer ;
+  a = integer;
 └─If
   ├─foo call
   └─Assignment statement

@@ -14,9 +14,9 @@ namespace PascalCompiler
 
         public static void PrintBlock(StreamWriter writer, Block block, string indent)
         {
-            foreach (var el in block.SymTable.Values)
+            foreach (var key in block.SymTable.Keys)
             {
-                if (el is ProcedureSymbol pc)
+                if (block.SymTable[key] is ProcedureSymbol pc)
                 {
                     writer.WriteLine(indent + new string('━', 40));
                     writer.WriteLine(indent + indent + $"  {pc}");
@@ -24,7 +24,7 @@ namespace PascalCompiler
                     writer.WriteLine(indent + new string('━', 40));
                     continue;
                 }
-                if (el is FunctionSymbol fc)
+                if (block.SymTable[key] is FunctionSymbol fc)
                 {
                     writer.WriteLine(indent + new string('━', 40));
                     writer.WriteLine(indent + indent + $"  {fc}");
@@ -32,7 +32,7 @@ namespace PascalCompiler
                     writer.WriteLine(indent + new string('━', 40));
                     continue;
                 }
-                writer.WriteLine(indent + indent + $"  {el};");
+                writer.WriteLine(indent + indent + $"  {key} = {block.SymTable[key]};");
             }
             foreach (var st in block.StatementList.Take(block.StatementList.Count - 1))
             {

@@ -1,10 +1,10 @@
 program 
-  integer;
-  real;
-  char;
-  h: integer = 20;
-  a: integer ;
-  b: #array ;
+  integer = integer;
+  real = real;
+  char = char;
+  h = integer = 20;
+  a = integer;
+  b = #array;
 └─Write
   └─Expression list
     ├─Plus

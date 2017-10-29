@@ -1,19 +1,19 @@
 program 
-  integer;
-  real;
-  char;
-  testr: record;
-  testa[3..4]: array of integer;
-  a: integer ;
-  b: #array = (0, 1);
-  r: #record = ([i: integer , 1], [j: integer , 2]);
-  c: testr = ([i: integer , 1], [j: real , 2]);
-  d: testa = (1, 2);
+  integer = integer;
+  real = real;
+  char = char;
+  testr = record;
+  testa = [3..4]: array of integer;
+  a = integer;
+  b = #array = (0, 1);
+  r = #record = ([integer, 1], [integer, 2]);
+  c = testr = ([integer, 1], [real, 2]);
+  d = testa = (1, 2);
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   procedure hello((Value, a, testr), (Value, b, testa), (Value, c, integer))
-      Value a: testr ;
-      Value b: testa ;
-      Value c: integer = 10;
+      a = Value testr;
+      b = Value testa;
+      c = Value integer = 10;
   ├─Assignment statement
   │ ├─Member access
   │ │ ├─a
@@ -27,7 +27,7 @@ program
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   function hell((Value, c, real)): char
-      Value c: real = 1.66666666666667;
+      c = Value real = 1.66666666666667;
   └─Assignment statement
     ├─c
     └─3
