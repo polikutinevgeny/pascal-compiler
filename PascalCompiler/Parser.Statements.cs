@@ -614,29 +614,32 @@ namespace PascalCompiler
 
         private DesignatorNode ParseMemberAccess(SymTable symTable, DesignatorNode record)
         {
-            if (Current.SubType != Dot)
+            while (true)
             {
-                return record;
+                if (Current.SubType != Dot)
+                {
+                    return record;
+                }
+                Next();
+                var rt = (RecordTypeSymbol) record.Type;
+                var c = Current;
+                Require(Identifier);
+                if (!rt.Fields.Contains(c.Value.ToString()))
+                    throw new ParserException("Illegal identifier", c.Line, c.Position);
+                var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access", c.Line, c.Position)
+                {
+                    Type = ((VarSymbol) rt.Fields[c.Value.ToString()]).Type
+                };
+                switch (f.Type)
+                {
+                    case RecordTypeSymbol _:
+                        record = f;
+                        continue;
+                    case ArrayTypeSymbol _:
+                        return ParseIndex(symTable, f);
+                }
+                return f;
             }
-            Next();
-            var rt = (RecordTypeSymbol) record.Type;
-            var c = Current;
-            Require(Identifier);
-            if (!rt.Fields.Contains(c.Value.ToString()))
-                throw new ParserException("Illegal identifier", c.Line, c.Position);
-            var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access", c.Line,
-                c.Position)
-            {
-                Type = ((VarSymbol) rt.Fields[c.Value.ToString()]).Type
-            };
-            switch (f.Type)
-            {
-                case RecordTypeSymbol _:
-                    return ParseMemberAccess(symTable, f);
-                case ArrayTypeSymbol _:
-                    return ParseIndex(symTable, f);
-            }
-            return f;
         }
 
         private void Require(Tokenizer.TokenSubType type)

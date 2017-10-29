@@ -1,0 +1,6 @@
+var
+    i: Integer;
+    j: Real = 10.1;
+begin
+    i := j;
+end.
