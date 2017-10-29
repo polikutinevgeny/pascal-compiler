@@ -436,24 +436,20 @@ namespace PascalCompiler
         {
             Require(LParenthesis);
             Parameters parameters = new Parameters();
-            if (Current.SubType == Identifier ||
-                Current.SubType == Var ||
-                Current.SubType == Const)
+            while (true)
             {
-                parameters.AddRange(ParseFormalParameter(symTable));
-            }
-            if (Current.SubType == RParenthesis)
-            {
-                Next();
-                return parameters;
-            }
-            Require(Semicolon);
-            while (
-                Current.SubType == Identifier ||
-                Current.SubType == Var ||
-                Current.SubType == Const)
-            {
-                parameters.AddRange(ParseFormalParameter(symTable));
+                switch (Current.SubType)
+                {
+                    case Var:
+                        parameters.AddRange(ParseVarParameter(symTable));
+                        break;
+                    case Const:
+                        parameters.AddRange(ParseConstParameter(symTable));
+                        break;
+                    case Identifier:
+                        parameters.AddRange(ParseValueParameter(symTable));
+                        break;
+                }
                 if (Current.SubType == RParenthesis)
                 {
                     Next();
@@ -461,23 +457,6 @@ namespace PascalCompiler
                 }
                 Require(Semicolon);
             }
-            Require(RParenthesis);
-            return parameters;
-        }
-
-        private Parameters ParseFormalParameter(SymTable symTable)
-        {
-            var c = Current;
-            switch (c.SubType)
-            {
-                case Var:
-                    return ParseVarParameter(symTable);
-                case Const:
-                    return ParseConstParameter(symTable);
-                case Identifier:
-                    return ParseValueParameter(symTable);
-            }
-            throw new ParserException($"Expected var, const or identifier, got {c.SubType}", c.Line, c.Position);
         }
 
         private Parameters ParseValueParameter(SymTable symTable)
