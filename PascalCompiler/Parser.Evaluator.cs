@@ -7,14 +7,14 @@ namespace PascalCompiler
 {
     public partial class Parser
     {
-        public class EvaluatorException : Exception
+        private class EvaluatorException : Exception
         {
             public EvaluatorException(string message) : base(message)
             {
             }
         }
 
-        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; set; } =
+        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>>
             {
                 {Plus, (l, r) => l + r},
@@ -27,37 +27,21 @@ namespace PascalCompiler
                 {LEqual, (l, r) => Convert.ToInt32(l <= r)},
                 {NEqual, (l, r) => Convert.ToInt32(l != r)},
                 {Equal, (l, r) => Convert.ToInt32(l == r)},
-                {
-                    Or, (l, r) => l | r
-                },
-                {
-                    Xor, (l, r) => l ^ r
-                },
-                {
-                    Div, (l, r) => l / r
-                },
-                {
-                    Mod, (l, r) => l % r
-                },
-                {
-                    And, (l, r) => l & r
-                },
-                {
-                    Shl, (l, r) => l << r
-                },
-                {
-                    Shr, (l, r) => l >> r
-                }
+                {Or, (l, r) => l | r},
+                {Xor, (l, r) => l ^ r},
+                {Div, (l, r) => l / r},
+                {Mod, (l, r) => l % r},
+                {And, (l, r) => l & r},
+                {Shl, (l, r) => l << r},
+                {Shr, (l, r) => l >> r}
             };
 
-        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; set; } =
+        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>>
             {
                 {Plus, i => i},
                 {Minus, i => -i},
-                {
-                    Not, i => ~i
-                }
+                {Not, i => ~i}
             };
 
         private dynamic EvaluateConstExpr(Node expr, SymTable symTable)
@@ -82,7 +66,7 @@ namespace PascalCompiler
                         return UnaryOps[(Tokenizer.TokenSubType)expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
                 }
             }
-            catch (RuntimeBinderException e)
+            catch (RuntimeBinderException)
             {
                 throw new ParserException("Invalid operation in constant expression", expr.Line, expr.Position);
             }
