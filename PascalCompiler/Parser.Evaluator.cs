@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.CSharp.RuntimeBinder;
+using static PascalCompiler.Tokenizer.TokenSubType;
 
 namespace PascalCompiler
 {
@@ -15,123 +17,74 @@ namespace PascalCompiler
         private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; set; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>>
             {
-                {Tokenizer.TokenSubType.Plus, (l, r) => l + r},
-                {Tokenizer.TokenSubType.Minus, (l, r) => l - r},
-                {Tokenizer.TokenSubType.Asterisk, (l, r) => l * r},
-                {Tokenizer.TokenSubType.Slash, (l, r) => (double) l / (double) r},
-                {Tokenizer.TokenSubType.Greater, (l, r) => Convert.ToInt32(l > r)},
-                {Tokenizer.TokenSubType.Less, (l, r) => Convert.ToInt32(l < r)},
-                {Tokenizer.TokenSubType.GEqual, (l, r) => Convert.ToInt32(l >= r)},
-                {Tokenizer.TokenSubType.LEqual, (l, r) => Convert.ToInt32(l <= r)},
-                {Tokenizer.TokenSubType.NEqual, (l, r) => Convert.ToInt32(l != r)},
-                {Tokenizer.TokenSubType.Equal, (l, r) => Convert.ToInt32(l == r)},
+                {Plus, (l, r) => l + r},
+                {Minus, (l, r) => l - r},
+                {Asterisk, (l, r) => l * r},
+                {Slash, (l, r) => (double) l / (double) r},
+                {Greater, (l, r) => Convert.ToInt32(l > r)},
+                {Less, (l, r) => Convert.ToInt32(l < r)},
+                {GEqual, (l, r) => Convert.ToInt32(l >= r)},
+                {LEqual, (l, r) => Convert.ToInt32(l <= r)},
+                {NEqual, (l, r) => Convert.ToInt32(l != r)},
+                {Equal, (l, r) => Convert.ToInt32(l == r)},
                 {
-                    Tokenizer.TokenSubType.Or, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l | r;
-                    }
+                    Or, (l, r) => l | r
                 },
                 {
-                    Tokenizer.TokenSubType.Xor, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l ^ r;
-                    }
+                    Xor, (l, r) => l ^ r
                 },
                 {
-                    Tokenizer.TokenSubType.Div, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l / r;
-                    }
+                    Div, (l, r) => l / r
                 },
                 {
-                    Tokenizer.TokenSubType.Mod, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l % r;
-                    }
+                    Mod, (l, r) => l % r
                 },
                 {
-                    Tokenizer.TokenSubType.And, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l & r;
-                    }
+                    And, (l, r) => l & r
                 },
                 {
-                    Tokenizer.TokenSubType.Shl, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l << r;
-                    }
+                    Shl, (l, r) => l << r
                 },
                 {
-                    Tokenizer.TokenSubType.Shr, (l, r) =>
-                    {
-                        if (l is double || r is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return l >> r;
-                    }
+                    Shr, (l, r) => l >> r
                 }
             };
 
         private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; set; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>>
             {
-                {Tokenizer.TokenSubType.Plus, i => i},
-                {Tokenizer.TokenSubType.Minus, i => -i},
+                {Plus, i => i},
+                {Minus, i => -i},
                 {
-                    Tokenizer.TokenSubType.Not, i =>
-                    {
-                        if (i.GetType() is double)
-                        {
-                            throw new EvaluatorException("Illegal operation");
-                        }
-                        return ~i;
-                    }
+                    Not, i => ~i
                 }
             };
 
         private dynamic EvaluateConstExpr(Node expr, SymTable symTable)
         {
-            switch (expr)
+            try
             {
-                case ConstNode _:
-                    return expr.Value;
-                case DesignatorNode _:
-                    var temp = symTable.LookUp(expr.Value.ToString());
-                    if (temp is ConstSymbol)
-                    {
-                        return ((SimpleConstant) (temp as ConstSymbol).Value).Value;
-                    }
-                    throw new EvaluatorException("Illegal operation");
-                case BinOpNode _:
-                    return BinaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable),
-                        EvaluateConstExpr(expr.Childs[1], symTable));
-                case UnOpNode _:
-                    return UnaryOps[(Tokenizer.TokenSubType) expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
+                switch (expr)
+                {
+                    case ConstNode _:
+                        return expr.Value;
+                    case DesignatorNode _:
+                        var temp = symTable.LookUp(expr.Value.ToString());
+                        if (temp is ConstSymbol)
+                        {
+                            return ((SimpleConstant)(temp as ConstSymbol).Value).Value;
+                        }
+                        throw new EvaluatorException("Illegal operation");
+                    case BinOpNode _:
+                        return BinaryOps[(Tokenizer.TokenSubType)expr.Value](EvaluateConstExpr(expr.Childs[0], symTable),
+                            EvaluateConstExpr(expr.Childs[1], symTable));
+                    case UnOpNode _:
+                        return UnaryOps[(Tokenizer.TokenSubType)expr.Value](EvaluateConstExpr(expr.Childs[0], symTable));
+                }
+            }
+            catch (RuntimeBinderException e)
+            {
+                throw new ParserException("Invalid operation in constant expression", expr.Line, expr.Position);
             }
             throw new InvalidOperationException($"Node of type {expr.GetType()} met in expression");
         }

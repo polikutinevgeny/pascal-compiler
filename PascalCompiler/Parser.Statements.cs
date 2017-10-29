@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static PascalCompiler.Tokenizer.TokenSubType;
 
 namespace PascalCompiler
 {
@@ -35,16 +36,16 @@ namespace PascalCompiler
         {
             Next();
             var p = ParseProgram();
-            Require(Tokenizer.TokenSubType.EndOfFile);
+            Require(EndOfFile);
             return p;
         }
 
         private CompoundStatementNode ParseCompoundStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Begin);
+            Require(Begin);
             var l = ParseStatementList(symTable);
-            Require(Tokenizer.TokenSubType.End);
+            Require(End);
             return new CompoundStatementNode(null, "Compound statement", c.Line, c.Position)
             {
                 Statements = l
@@ -53,12 +54,12 @@ namespace PascalCompiler
 
         private List<Statement> ParseStatementList(SymTable symTable)
         {
-            if (Current.SubType == Tokenizer.TokenSubType.End)
+            if (Current.SubType == End)
             {
                 return new List<Statement>();
             }
             var statementList = new List<Statement> {ParseStatement(symTable)};
-            while (Current.SubType == Tokenizer.TokenSubType.Semicolon)
+            while (Current.SubType == Semicolon)
             {
                 Next();
                 var t = ParseStatement(symTable);
@@ -75,31 +76,31 @@ namespace PascalCompiler
             var c = Current;
             switch (c.SubType)
             {
-                case Tokenizer.TokenSubType.Identifier:
-                case Tokenizer.TokenSubType.Read:
-                case Tokenizer.TokenSubType.Write:
+                case Identifier:
+                case Read:
+                case Write:
                     return ParseSimpleStatement(symTable);
-                case Tokenizer.TokenSubType.While:
-                case Tokenizer.TokenSubType.If:
-                case Tokenizer.TokenSubType.For:
-                case Tokenizer.TokenSubType.Repeat:
-                case Tokenizer.TokenSubType.Begin:
+                case While:
+                case If:
+                case For:
+                case Repeat:
+                case Begin:
                     return ParseStructStatement(symTable);
-                case Tokenizer.TokenSubType.Break:
+                case Break:
                     if (CycleCounter == 0)
                     {
                         throw new ParserException("Break outside of cycle", c.Line, c.Position);
                     }
                     Next();
                     return new BreakNode(null, c);
-                case Tokenizer.TokenSubType.Continue:
+                case Continue:
                     if (CycleCounter == 0)
                     {
                         throw new ParserException("Continue outside of cycle", c.Line, c.Position);
                     }
                     Next();
                     return new ContinueNode(null, c);
-                case Tokenizer.TokenSubType.Exit:
+                case Exit:
                     return ParseExitStatement(symTable);
             }
             return null;
@@ -108,13 +109,13 @@ namespace PascalCompiler
         private Statement ParseExitStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Exit);
-            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            Require(Exit);
+            if (Current.SubType != LParenthesis)
             {
                 return new ExitNode(null, c.Value, c.Line, c.Position);
             }
             Next();
-            if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+            if (Current.SubType == RParenthesis)
             {
                 Next();
                 return new ExitNode(null, c.Value, c.Line, c.Position);
@@ -124,8 +125,8 @@ namespace PascalCompiler
                 throw new ParserException("Procedures cannot return a value", Current.Line, Current.Position);
             }
             var e = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.RParenthesis);
-            CheckImplicitTypeCompatibility((TypeSymbol)e.Type, CurrentReturnType);
+            Require(RParenthesis);
+            CheckImplicitTypeCompatibility((TypeSymbol) e.Type, CurrentReturnType);
             return new ExitNode(new List<Node> {e}, c.Value, c.Line, c.Position);
         }
 
@@ -134,9 +135,9 @@ namespace PascalCompiler
             var c = Current;
             switch (Current.SubType)
             {
-                case Tokenizer.TokenSubType.Read:
+                case Read:
                     return ParseReadStatement(symTable);
-                case Tokenizer.TokenSubType.Write:
+                case Write:
                     return ParseWriteStatement(symTable);
             }
             var d = ParseDesignator(symTable);
@@ -146,15 +147,15 @@ namespace PascalCompiler
             }
             switch (Current.SubType)
             {
-                case Tokenizer.TokenSubType.Assign:
-                case Tokenizer.TokenSubType.AsteriskAssign:
-                case Tokenizer.TokenSubType.SlashAssign:
-                case Tokenizer.TokenSubType.PlusAssign:
-                case Tokenizer.TokenSubType.MinusAssign:
+                case Assign:
+                case AsteriskAssign:
+                case SlashAssign:
+                case PlusAssign:
+                case MinusAssign:
                 {
                     Next();
                     var e = ParseExpression(symTable);
-                    CheckImplicitTypeCompatibility((TypeSymbol)e.Type, (TypeSymbol)d.Type);
+                    CheckImplicitTypeCompatibility((TypeSymbol) e.Type, (TypeSymbol) d.Type);
                     return new SimpleStatementNode(new List<Node> {d, e}, "Assignment statement", c.Line, c.Position);
                 }
             }
@@ -164,7 +165,7 @@ namespace PascalCompiler
         private DesignatorNode ParseDesignator(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             var t = symTable.LookUp(c.Value.ToString());
             switch (t)
             {
@@ -173,7 +174,7 @@ namespace PascalCompiler
                 case ProcedureSymbol ps:
                     return ParseProcedureCall(symTable, new IdentNode(null, c) {Type = ps});
                 case FunctionSymbol fs:
-                    return ParseFunctionCall(symTable, new IdentNode(null, c) { Type = fs});
+                    return ParseFunctionCall(symTable, new IdentNode(null, c) {Type = fs});
                 case ValueSymbol vs:
                     DesignatorNode v = new IdentNode(null, c)
                     {
@@ -194,7 +195,7 @@ namespace PascalCompiler
 
         private DesignatorNode ParseProcedureCall(SymTable symTable, DesignatorNode procedure)
         {
-            var ps = (ProcedureSymbol)procedure.Type;
+            var ps = (ProcedureSymbol) procedure.Type;
             var p = ParseActualParameters(symTable);
             CheckParameters(ps.Parameters, p);
             return new CallOperator(p.Childs, "Call", p.Line, p.Position)
@@ -207,7 +208,7 @@ namespace PascalCompiler
         {
             var c = Current;
             var childs = new List<ExpressionNode> {ParseExpression(symTable)};
-            while (Current.SubType == Tokenizer.TokenSubType.Comma)
+            while (Current.SubType == Comma)
             {
                 Next();
                 childs.Add(ParseExpression(symTable));
@@ -218,32 +219,32 @@ namespace PascalCompiler
         private ReadStatementNode ParseReadStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Read);
-            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            Require(Read);
+            if (Current.SubType != LParenthesis)
                 return new ReadStatementNode(null, "Read", c.Line, c.Position);
             Next();
             var e = ParseExpressionList(symTable);
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return new ReadStatementNode(new List<Node> {e}, "Read", c.Line, c.Position);
         }
 
         private WriteStatementNode ParseWriteStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Write);
-            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            Require(Write);
+            if (Current.SubType != LParenthesis)
                 return new WriteStatementNode(null, "Write", c.Line, c.Position);
             Next();
-            if (Current.SubType == Tokenizer.TokenSubType.StringConstant)
+            if (Current.SubType == StringConstant)
             {
                 var s = Current;
                 Next();
-                Require(Tokenizer.TokenSubType.RParenthesis);
+                Require(RParenthesis);
                 return new WriteStatementNode(new List<Node> {new StringNode(null, s)}, "Write", c.Line,
                     c.Position);
             }
             var e = ParseExpressionList(symTable);
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return new WriteStatementNode(new List<Node> {e}, "Write", c.Line, c.Position);
         }
 
@@ -251,15 +252,15 @@ namespace PascalCompiler
         {
             switch (Current.SubType)
             {
-                case Tokenizer.TokenSubType.Begin:
+                case Begin:
                     return ParseCompoundStatement(symTable);
-                case Tokenizer.TokenSubType.If:
+                case If:
                     return ParseIfStatement(symTable);
-                case Tokenizer.TokenSubType.For:
+                case For:
                     return ParseForStatement(symTable);
-                case Tokenizer.TokenSubType.While:
+                case While:
                     return ParseWhileStatement(symTable);
-                case Tokenizer.TokenSubType.Repeat:
+                case Repeat:
                     return ParseRepeatStatement(symTable);
             }
             throw new InvalidOperationException($"Current.Subtype was equal to {Current.SubType}");
@@ -268,11 +269,11 @@ namespace PascalCompiler
         private IfStatementNode ParseIfStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.If);
+            Require(If);
             var i = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.Then);
+            Require(Then);
             var t = ParseStatement(symTable);
-            if (Current.SubType != Tokenizer.TokenSubType.Else)
+            if (Current.SubType != Else)
                 return new IfStatementNode(new List<Node> {i, t}, "If", c.Line, c.Position);
             Next();
             var e = ParseStatement(symTable);
@@ -282,14 +283,14 @@ namespace PascalCompiler
         private ForStatementNode ParseForStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.For);
+            Require(For);
             var i = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            Require(Tokenizer.TokenSubType.Assign);
+            Require(Identifier);
+            Require(Assign);
             var e = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.To);
+            Require(To);
             var u = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.Do);
+            Require(Do);
             ++CycleCounter;
             var s = ParseStatement(symTable);
             --CycleCounter;
@@ -299,9 +300,9 @@ namespace PascalCompiler
         private WhileStatementNode ParseWhileStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.While);
+            Require(While);
             var e = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.Do);
+            Require(Do);
             ++CycleCounter;
             var s = ParseStatement(symTable);
             --CycleCounter;
@@ -314,11 +315,11 @@ namespace PascalCompiler
         private RepeatStatementNode ParseRepeatStatement(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Repeat);
+            Require(Repeat);
             ++CycleCounter;
             var s = ParseStatementList(symTable);
             --CycleCounter;
-            Require(Tokenizer.TokenSubType.Until);
+            Require(Until);
             var e = ParseExpression(symTable);
             return new RepeatStatementNode(new List<Node>(s), "Repeat", c.Line, c.Position)
             {
@@ -328,31 +329,31 @@ namespace PascalCompiler
 
         private static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
         {
-            Tokenizer.TokenSubType.Less,
-            Tokenizer.TokenSubType.Greater,
-            Tokenizer.TokenSubType.LEqual,
-            Tokenizer.TokenSubType.GEqual,
-            Tokenizer.TokenSubType.NEqual,
-            Tokenizer.TokenSubType.Equal
+            Less,
+            Greater,
+            LEqual,
+            GEqual,
+            NEqual,
+            Equal
         };
 
         private static HashSet<Tokenizer.TokenSubType> AddOps { get; } = new HashSet<Tokenizer.TokenSubType>
         {
-            Tokenizer.TokenSubType.Plus,
-            Tokenizer.TokenSubType.Minus,
-            Tokenizer.TokenSubType.Or,
-            Tokenizer.TokenSubType.Xor
+            Plus,
+            Minus,
+            Or,
+            Xor
         };
 
         private static HashSet<Tokenizer.TokenSubType> MulOps { get; } = new HashSet<Tokenizer.TokenSubType>
         {
-            Tokenizer.TokenSubType.Asterisk,
-            Tokenizer.TokenSubType.Slash,
-            Tokenizer.TokenSubType.Div,
-            Tokenizer.TokenSubType.Mod,
-            Tokenizer.TokenSubType.And,
-            Tokenizer.TokenSubType.Shl,
-            Tokenizer.TokenSubType.Shr
+            Asterisk,
+            Slash,
+            Div,
+            Mod,
+            And,
+            Shl,
+            Shr
         };
 
         private ExpressionNode ParseExpression(SymTable symTable)
@@ -381,7 +382,7 @@ namespace PascalCompiler
 
         private ExpressionNode ParseSimpleExpression(SymTable symTable)
         {
-            if (Current.SubType == Tokenizer.TokenSubType.CharConstant)
+            if (Current.SubType == CharConstant)
             {
                 var tmp = Current;
                 Next();
@@ -396,7 +397,7 @@ namespace PascalCompiler
             {
                 Next();
                 var temp = ParseTerm(symTable);
-                var type = (TypeSymbol)temp.Type;
+                var type = (TypeSymbol) temp.Type;
                 if (
                     t.Type is ArrayTypeSymbol || t.Type is RecordTypeSymbol ||
                     temp.Type is ArrayTypeSymbol || temp.Type is RecordTypeSymbol
@@ -404,7 +405,7 @@ namespace PascalCompiler
                 {
                     throw new ParserException("Incompatible types", c.Line, c.Position);
                 }
-                if ((TypeSymbol)t.Type == TypeSymbol.RealTypeSymbol)
+                if ((TypeSymbol) t.Type == TypeSymbol.RealTypeSymbol)
                 {
                     type = TypeSymbol.RealTypeSymbol;
                 }
@@ -451,7 +452,7 @@ namespace PascalCompiler
             var c = Current;
             switch (c.SubType)
             {
-                case Tokenizer.TokenSubType.Identifier:
+                case Identifier:
                     Next();
                     var t = symTable.LookUp(c.Value.ToString());
                     switch (t)
@@ -476,26 +477,26 @@ namespace PascalCompiler
                         default:
                             throw new ParserException("Illegal identifier", c.Line, c.Position);
                     }
-                case Tokenizer.TokenSubType.IntegerConstant:
+                case IntegerConstant:
                     Next();
                     return new ConstNode(null, c.Value, c.Line, c.Position)
                     {
                         Type = TypeSymbol.IntTypeSymbol
                     };
-                case Tokenizer.TokenSubType.FloatConstant:
+                case FloatConstant:
                     Next();
                     return new ConstNode(null, c.Value, c.Line, c.Position)
                     {
                         Type = TypeSymbol.RealTypeSymbol
                     };
-                case Tokenizer.TokenSubType.LParenthesis:
+                case LParenthesis:
                     Next();
                     var e = ParseExpression(symTable);
-                    Require(Tokenizer.TokenSubType.RParenthesis);
+                    Require(RParenthesis);
                     return e;
-                case Tokenizer.TokenSubType.Plus:
-                case Tokenizer.TokenSubType.Minus:
-                case Tokenizer.TokenSubType.Not:
+                case Plus:
+                case Minus:
+                case Not:
                     Next();
                     var tmp = ParseFactor(symTable);
                     if (tmp.Type == TypeSymbol.IntTypeSymbol)
@@ -532,20 +533,20 @@ namespace PascalCompiler
 
         private ExpressionListNode ParseActualParameters(SymTable symTable)
         {
-            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            if (Current.SubType != LParenthesis)
             {
                 return new ExpressionListNode(new List<ExpressionNode>(), "Expression list", Current.Line,
                     Current.Position);
             }
             Next();
-            if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+            if (Current.SubType == RParenthesis)
             {
                 Next();
                 return new ExpressionListNode(new List<ExpressionNode>(), "Expression list", Current.Line,
                     Current.Position);
             }
             var t = ParseExpressionList(symTable);
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return t;
         }
 
@@ -570,9 +571,9 @@ namespace PascalCompiler
 
         private ExpressionNode ParseCastParam(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.LParenthesis);
+            Require(LParenthesis);
             var t = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return t;
         }
 
@@ -580,7 +581,7 @@ namespace PascalCompiler
         {
             while (true)
             {
-                if (Current.SubType != Tokenizer.TokenSubType.LBracket)
+                if (Current.SubType != LBracket)
                 {
                     return array;
                 }
@@ -605,25 +606,26 @@ namespace PascalCompiler
 
         private ExpressionNode ParseIndexParam(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.LBracket);
+            Require(LBracket);
             var t = ParseExpression(symTable);
-            Require(Tokenizer.TokenSubType.RBracket);
+            Require(RBracket);
             return t;
         }
 
         private DesignatorNode ParseMemberAccess(SymTable symTable, DesignatorNode record)
         {
-            if (Current.SubType != Tokenizer.TokenSubType.Dot)
+            if (Current.SubType != Dot)
             {
                 return record;
             }
             Next();
             var rt = (RecordTypeSymbol) record.Type;
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             if (!rt.Fields.Contains(c.Value.ToString()))
                 throw new ParserException("Illegal identifier", c.Line, c.Position);
-            var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access", c.Line, c.Position)
+            var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access", c.Line,
+                c.Position)
             {
                 Type = ((VarSymbol) rt.Fields[c.Value.ToString()]).Type
             };

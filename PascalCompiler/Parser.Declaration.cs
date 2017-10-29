@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static PascalCompiler.Tokenizer.TokenSubType;
 
 namespace PascalCompiler
 {
@@ -15,9 +16,9 @@ namespace PascalCompiler
             {
                 Next();
                 var n = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
+                Require(Identifier);
                 name = n.Value.ToString();
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Semicolon);
             }
             SymTable st = new SymTable
             {
@@ -40,23 +41,17 @@ namespace PascalCompiler
                 pn = new ProgramSymbol {Name = ""};
             }
             var b = ParseBlock(st);
-            Require(Tokenizer.TokenSubType.Dot);
+            Require(Dot);
             return new PascalProgram {Block = b, Name = pn};
         }
 
         private Block ParseBlock(SymTable symTable)
         {
-            if (Current.SubType != Tokenizer.TokenSubType.Begin)
+            if (Current.SubType != Begin)
             {
                 ParseDeclSection(symTable);
-                var c = ParseCompoundStatement(symTable);
-                return new Block {StatementList = c.Statements, SymTable = symTable};
             }
-            else
-            {
-                var c = ParseCompoundStatement(symTable);
-                return new Block {StatementList = c.Statements, SymTable = symTable};
-            }
+            return new Block {StatementList = ParseCompoundStatement(symTable).Statements, SymTable = symTable};
         }
 
         private void ParseDeclSection(SymTable symTable)
@@ -65,19 +60,19 @@ namespace PascalCompiler
             {
                 switch (Current.SubType)
                 {
-                    case Tokenizer.TokenSubType.Const:
+                    case Const:
                         ParseConstSection(symTable);
                         break;
-                    case Tokenizer.TokenSubType.Var:
+                    case Var:
                         ParseVarSection(symTable);
                         break;
                     case Tokenizer.TokenSubType.Type:
                         ParseTypeSection(symTable);
                         break;
-                    case Tokenizer.TokenSubType.Procedure:
+                    case Procedure:
                         ParseProcedureDecl(symTable);
                         break;
-                    case Tokenizer.TokenSubType.Function:
+                    case Function:
                         ParseFunctionDecl(symTable);
                         break;
                     default:
@@ -88,18 +83,13 @@ namespace PascalCompiler
 
         private void ParseConstSection(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Const);
-            var c = Current;
-            bool f = true;
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            Require(Const);
+            ParseConstantDecl(symTable);
+            Require(Semicolon);
+            while (Current.SubType == Identifier)
             {
                 ParseConstantDecl(symTable);
-                Require(Tokenizer.TokenSubType.Semicolon);
-                f = false;
-            }
-            if (f)
-            {
-                throw new ParserException("Empty constant section", c.Line, c.Position);
+                Require(Semicolon);
             }
         }
 
@@ -107,7 +97,7 @@ namespace PascalCompiler
         {
             var c = Current;
             Next();
-            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (Current.SubType == Equal)
             {
                 Next();
                 var ce = ParseConstExpr(symTable);
@@ -124,12 +114,12 @@ namespace PascalCompiler
                     });
                 return;
             }
-            if (Current.SubType != Tokenizer.TokenSubType.Colon)
+            if (Current.SubType != Colon)
                 throw new ParserException($"Expected '=' or ':', got {Current.SubType}.", Current.Line,
                     Current.Position);
             Next();
             var t = ParseType(symTable);
-            Require(Tokenizer.TokenSubType.Equal);
+            Require(Equal);
             var tc = ParseTypedConstant(symTable, t);
             CheckImplicitTypeCompatibility(tc.Type, t);
             symTable.Add(c.Value.ToString(),
@@ -185,12 +175,12 @@ namespace PascalCompiler
 
         private ArrayConstant ParseArrayConstant(SymTable symTable, ArrayTypeSymbol arrayType)
         {
-            Require(Tokenizer.TokenSubType.LParenthesis);
+            Require(LParenthesis);
             List<Constant> arrayElem =
                 new List<Constant> {ParseTypedConstant(symTable, arrayType.ElementType)};
-            while (Current.SubType != Tokenizer.TokenSubType.RParenthesis)
+            while (Current.SubType != RParenthesis)
             {
-                Require(Tokenizer.TokenSubType.Comma);
+                Require(Comma);
                 arrayElem.Add(ParseTypedConstant(symTable, arrayType.ElementType));
             }
             foreach (var el in arrayElem)
@@ -201,68 +191,67 @@ namespace PascalCompiler
             {
                 throw new ParserException("Invalid array length", Current.Line, Current.Position);
             }
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return new ArrayConstant {Elements = arrayElem, Type = arrayType};
         }
 
         private RecordConstant ParseRecordConstant(SymTable symTable, RecordTypeSymbol recordType)
         {
-            Require(Tokenizer.TokenSubType.LParenthesis);
+            Require(LParenthesis);
             Dictionary<VarSymbol, Constant> recordElem = new Dictionary<VarSymbol, Constant>();
-            for (var index = 0; Current.SubType == Tokenizer.TokenSubType.Identifier && index < recordType.Fields.Count; ++index)
+            for (var index = 0;
+                Current.SubType == Identifier && index < recordType.Fields.Count;
+                ++index)
             {
                 var i = Current;
-                if (((VarSymbol) recordType.Fields[index]).Name == i.Value.ToString())
-                {
-                    Next();
-                    Require(Tokenizer.TokenSubType.Colon);
-                    var v = ParseTypedConstant(symTable, ((VarSymbol)recordType.Fields[index]).Type);
-                    CheckImplicitTypeCompatibility(v.Type, ((VarSymbol)recordType.Fields[index]).Type);
-                    recordElem.Add((VarSymbol)recordType.Fields[index], v);
-                    if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
-                    {
-                        break;
-                    }
-                    Require(Tokenizer.TokenSubType.Semicolon);
-                }
-                else
+                if (((VarSymbol) recordType.Fields[index]).Name != i.Value.ToString())
                 {
                     throw new ParserException("Invalid identifier", Current.Line, Current.Position);
                 }
+                Next();
+                Require(Colon);
+                var v = ParseTypedConstant(symTable, ((VarSymbol) recordType.Fields[index]).Type);
+                CheckImplicitTypeCompatibility(v.Type, ((VarSymbol) recordType.Fields[index]).Type);
+                recordElem.Add((VarSymbol) recordType.Fields[index], v);
+                if (Current.SubType == RParenthesis)
+                {
+                    break;
+                }
+                Require(Semicolon);
             }
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return new RecordConstant {Type = recordType, Values = recordElem};
         }
 
         private void ParseVarSection(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Var);
+            Require(Var);
             ParseVarDecl(symTable);
-            Require(Tokenizer.TokenSubType.Semicolon);
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            Require(Semicolon);
+            while (Current.SubType == Identifier)
             {
                 ParseVarDecl(symTable);
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Semicolon);
             }
         }
 
         private void ParseVarDecl(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             var tmp = Current;
             List<string> idents = new List<string> {c.Value.ToString()};
-            while (tmp.SubType == Tokenizer.TokenSubType.Comma)
+            while (tmp.SubType == Comma)
             {
                 Next();
                 tmp = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
+                Require(Identifier);
                 idents.Add(tmp.Value.ToString());
                 tmp = Current;
             }
-            Require(Tokenizer.TokenSubType.Colon);
+            Require(Colon);
             var t = ParseType(symTable);
-            if (idents.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (idents.Count == 1 && Current.SubType == Equal)
             {
                 Next();
                 var v = ParseTypedConstant(symTable, t);
@@ -270,7 +259,7 @@ namespace PascalCompiler
                 symTable.Add(idents[0], new VarSymbol {Name = idents[0], Type = t, Value = v});
                 return;
             }
-            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (Current.SubType == Equal)
             {
                 throw new ParserException("Only 1 variable can be initialized", Current.Line, Current.Position);
             }
@@ -284,19 +273,19 @@ namespace PascalCompiler
         {
             Require(Tokenizer.TokenSubType.Type);
             ParseTypeDecl(symTable);
-            Require(Tokenizer.TokenSubType.Semicolon);
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            Require(Semicolon);
+            while (Current.SubType == Identifier)
             {
                 ParseTypeDecl(symTable);
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Semicolon);
             }
         }
 
         private void ParseTypeDecl(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            Require(Tokenizer.TokenSubType.Equal);
+            Require(Identifier);
+            Require(Equal);
             var t = ParseType(symTable);
             switch (t)
             {
@@ -319,7 +308,7 @@ namespace PascalCompiler
             var c = Current;
             switch (c.SubType)
             {
-                case Tokenizer.TokenSubType.Identifier:
+                case Identifier:
                     Next();
                     var t = symTable.LookUp(c.Value.ToString());
                     if (!(t is TypeSymbol))
@@ -329,7 +318,7 @@ namespace PascalCompiler
                     return (TypeSymbol) t;
                 case Tokenizer.TokenSubType.Array:
                     return ParseArrayType(symTable);
-                case Tokenizer.TokenSubType.Record:
+                case Record:
                     return ParseRecordType(symTable);
             }
             throw new ParserException($"Expected type, found '{c.SubType}'", c.Line, c.Position);
@@ -338,10 +327,10 @@ namespace PascalCompiler
         private ArrayTypeSymbol ParseArrayType(SymTable symTable)
         {
             Require(Tokenizer.TokenSubType.Array);
-            Require(Tokenizer.TokenSubType.LBracket);
+            Require(LBracket);
             var range = ParseSubrange(symTable);
-            Require(Tokenizer.TokenSubType.RBracket);
-            Require(Tokenizer.TokenSubType.Of);
+            Require(RBracket);
+            Require(Of);
             var t = ParseType(symTable);
             return new ArrayTypeSymbol {Name = "#array", ElementType = t, Range = range};
         }
@@ -350,7 +339,7 @@ namespace PascalCompiler
         {
             var c = Current;
             var l = ParseConstExpr(symTable).Value;
-            Require(Tokenizer.TokenSubType.Range);
+            Require(Range);
             var r = ParseConstExpr(symTable).Value;
             if (!(l is int && r is int))
             {
@@ -361,46 +350,46 @@ namespace PascalCompiler
 
         private RecordTypeSymbol ParseRecordType(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Record);
+            Require(Record);
             SymTable recSymTable = new SymTable {Parent = null};
             ParseRecordFieldList(symTable, recSymTable);
-            Require(Tokenizer.TokenSubType.End);
+            Require(End);
             return new RecordTypeSymbol {Name = "#record", Fields = recSymTable};
         }
 
         private void ParseRecordFieldList(SymTable parentSymTable, SymTable recSymTable)
         {
             ParseFieldDecl(parentSymTable, recSymTable);
-            if (Current.SubType == Tokenizer.TokenSubType.End)
+            if (Current.SubType == End)
             {
                 return;
             }
-            Require(Tokenizer.TokenSubType.Semicolon);
-            while (Current.SubType == Tokenizer.TokenSubType.Identifier)
+            Require(Semicolon);
+            while (Current.SubType == Identifier)
             {
                 ParseFieldDecl(parentSymTable, recSymTable);
-                if (Current.SubType == Tokenizer.TokenSubType.End)
+                if (Current.SubType == End)
                 {
                     break;
                 }
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Semicolon);
             }
         }
 
         private void ParseFieldDecl(SymTable parentSymTable, SymTable recSymTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             List<string> idents = new List<string> {c.Value.ToString()};
             var t = Current;
-            while (t.SubType == Tokenizer.TokenSubType.Comma)
+            while (t.SubType == Comma)
             {
                 Next();
                 t = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
+                Require(Identifier);
                 idents.Add(t.Value.ToString());
             }
-            Require(Tokenizer.TokenSubType.Colon);
+            Require(Colon);
             var tp = ParseType(parentSymTable);
             foreach (var i in idents)
             {
@@ -417,7 +406,7 @@ namespace PascalCompiler
             var c = Current;
             SymTable procSymTable = new SymTable {Parent = symTable};
             var h = ParseProcedureHeading(procSymTable);
-            Require(Tokenizer.TokenSubType.Semicolon);
+            Require(Semicolon);
             if (symTable.Contains(h.Name))
             {
                 throw new ParserException($"Duplicate identifier {h.Name}", c.Line, c.Position);
@@ -429,15 +418,15 @@ namespace PascalCompiler
             var b = ParseBlock(procSymTable);
             CurrentReturnType = backup;
             p.Block = b;
-            Require(Tokenizer.TokenSubType.Semicolon);
+            Require(Semicolon);
         }
 
         private (string Name, Parameters Parameters) ParseProcedureHeading(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Procedure);
+            Require(Procedure);
             var i = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            if (Current.SubType != Tokenizer.TokenSubType.LParenthesis)
+            Require(Identifier);
+            if (Current.SubType != LParenthesis)
                 return (Name: i.Value.ToString(), Parameters: new Parameters());
             var p = ParseFormalParameters(symTable);
             return (Name: i.Value.ToString(), Parameters: p);
@@ -445,75 +434,75 @@ namespace PascalCompiler
 
         private Parameters ParseFormalParameters(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.LParenthesis);
+            Require(LParenthesis);
             Parameters parameters = new Parameters();
-            if (Current.SubType == Tokenizer.TokenSubType.Identifier ||
-                Current.SubType == Tokenizer.TokenSubType.Var ||
-                Current.SubType == Tokenizer.TokenSubType.Const)
+            if (Current.SubType == Identifier ||
+                Current.SubType == Var ||
+                Current.SubType == Const)
             {
-                parameters.AddRange(ParseFormalParam(symTable));
+                parameters.AddRange(ParseFormalParameter(symTable));
             }
-            if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+            if (Current.SubType == RParenthesis)
             {
                 Next();
-                    return parameters;
+                return parameters;
             }
-            Require(Tokenizer.TokenSubType.Semicolon);
+            Require(Semicolon);
             while (
-                Current.SubType == Tokenizer.TokenSubType.Identifier ||
-                Current.SubType == Tokenizer.TokenSubType.Var ||
-                Current.SubType == Tokenizer.TokenSubType.Const)
+                Current.SubType == Identifier ||
+                Current.SubType == Var ||
+                Current.SubType == Const)
             {
-                parameters.AddRange(ParseFormalParam(symTable));
-                if (Current.SubType == Tokenizer.TokenSubType.RParenthesis)
+                parameters.AddRange(ParseFormalParameter(symTable));
+                if (Current.SubType == RParenthesis)
                 {
                     Next();
                     return parameters;
                 }
-                Require(Tokenizer.TokenSubType.Semicolon);
+                Require(Semicolon);
             }
-            Require(Tokenizer.TokenSubType.RParenthesis);
+            Require(RParenthesis);
             return parameters;
         }
 
-        private Parameters ParseFormalParam(SymTable symTable)
+        private Parameters ParseFormalParameter(SymTable symTable)
         {
             var c = Current;
             switch (c.SubType)
             {
-                case Tokenizer.TokenSubType.Var:
+                case Var:
                     return ParseVarParameter(symTable);
-                case Tokenizer.TokenSubType.Const:
+                case Const:
                     return ParseConstParameter(symTable);
-                case Tokenizer.TokenSubType.Identifier:
-                    return ParseParameter(symTable);
+                case Identifier:
+                    return ParseValueParameter(symTable);
             }
             throw new ParserException($"Expected var, const or identifier, got {c.SubType}", c.Line, c.Position);
         }
 
-        private Parameters ParseParameter(SymTable symTable)
+        private Parameters ParseValueParameter(SymTable symTable)
         {
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             List<string> idents = new List<string> {c.Value.ToString()};
-            while (Current.SubType == Tokenizer.TokenSubType.Comma)
+            while (Current.SubType == Comma)
             {
                 Next();
                 var tmp = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
+                Require(Identifier);
                 idents.Add(tmp.Value.ToString());
             }
-            Require(Tokenizer.TokenSubType.Colon);
+            Require(Colon);
             var t = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             var tp = symTable.LookUp(t.Value.ToString());
             if (!(tp is TypeSymbol))
             {
                 throw new ParserException("Illegal type declaration", t.Line, t.Position);
             }
-            if (idents.Count == 1 && Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (idents.Count == 1 && Current.SubType == Equal)
             {
-                Require(Tokenizer.TokenSubType.Equal);
+                Require(Equal);
                 var v = ParseConstExpr(symTable);
                 var s = new ParameterSymbol
                 {
@@ -525,7 +514,7 @@ namespace PascalCompiler
                 symTable.Add(idents[0], s);
                 return new Parameters {s};
             }
-            if (Current.SubType == Tokenizer.TokenSubType.Equal)
+            if (Current.SubType == Equal)
             {
                 throw new ParserException("Only one parameter can have default value", Current.Line, Current.Position);
             }
@@ -547,20 +536,20 @@ namespace PascalCompiler
 
         private Parameters ParseVarParameter(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Var);
+            Require(Var);
             var c = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             List<string> idents = new List<string> {c.Value.ToString()};
-            while (Current.SubType == Tokenizer.TokenSubType.Comma)
+            while (Current.SubType == Comma)
             {
                 Next();
                 var tmp = Current;
-                Require(Tokenizer.TokenSubType.Identifier);
+                Require(Identifier);
                 idents.Add(tmp.Value.ToString());
             }
-            Require(Tokenizer.TokenSubType.Colon);
+            Require(Colon);
             var t = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
+            Require(Identifier);
             var tp = symTable.LookUp(t.Value.ToString());
             if (!(tp is TypeSymbol))
             {
@@ -583,8 +572,8 @@ namespace PascalCompiler
 
         private Parameters ParseConstParameter(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Const);
-            var p = ParseParameter(symTable);
+            Require(Const);
+            var p = ParseValueParameter(symTable);
             foreach (ParameterSymbol ps in p)
             {
                 ps.ParameterModifier = ParameterModifier.Const;
@@ -597,7 +586,7 @@ namespace PascalCompiler
             var c = Current;
             SymTable procSymTable = new SymTable {Parent = symTable};
             var h = ParseFunctionHeading(procSymTable);
-            Require(Tokenizer.TokenSubType.Semicolon);
+            Require(Semicolon);
             if (symTable.Contains(h.Name))
             {
                 throw new ParserException("Duplicate identifier {h.Name}", c.Line, c.Position);
@@ -613,23 +602,23 @@ namespace PascalCompiler
             CurrentReturnType = f.ReturnType;
             var b = ParseBlock(procSymTable);
             CurrentReturnType = backup;
-            Require(Tokenizer.TokenSubType.Semicolon);
+            Require(Semicolon);
             f.Block = b;
         }
 
         private (string Name, Parameters Parameters, TypeSymbol ReturnType) ParseFunctionHeading(SymTable symTable)
         {
-            Require(Tokenizer.TokenSubType.Function);
+            Require(Function);
             var i = Current;
-            Require(Tokenizer.TokenSubType.Identifier);
-            if (Current.SubType == Tokenizer.TokenSubType.LParenthesis)
+            Require(Identifier);
+            if (Current.SubType == LParenthesis)
             {
                 var p = ParseFormalParameters(symTable);
-                Require(Tokenizer.TokenSubType.Colon);
+                Require(Colon);
                 var rt = ParseType(symTable);
                 return (Name: i.Value.ToString(), Parameters: p, ReturnType: rt);
             }
-            Require(Tokenizer.TokenSubType.Colon);
+            Require(Colon);
             var ret = ParseType(symTable);
             return (Name: i.Value.ToString(), Parameters: new Parameters(), ReturnType: ret);
         }
