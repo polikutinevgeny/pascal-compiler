@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PascalCompiler
 {
@@ -25,9 +26,11 @@ namespace PascalCompiler
         {
             return Value?.ToString() ?? GetType().Name;
         }
+
+        public abstract void Generate(AsmCode asmCode, SymTable symTable);
     }
 
-    public class ExpressionNode : Node
+    public abstract class ExpressionNode : Node
     {
         public Symbol Type { get; set; }
 
@@ -45,14 +48,20 @@ namespace PascalCompiler
             line, position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
-    public class Statement : Node
+    public abstract class Statement : Node
     {
         public Statement(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
         }
+        
     }
 
     public class SimpleStatementNode : Statement
@@ -60,6 +69,23 @@ namespace PascalCompiler
         public SimpleStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value,
             line, position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            var left = (DesignatorNode) Childs[0];
+            var right = (ExpressionNode) Childs[1];
+            if (left is IdentNode id)
+            {
+                var v = (VarSymbol) symTable[id.Value];
+                right.Generate(asmCode, symTable);
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+                asmCode.Add(new AsmCmd2(AsmCmd.Cmd.Mov, new AsmMem(v.Offset, v.Type.Size), new AsmReg(AsmReg.Reg.Eax))); //Should work for ints (maybe)
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 
@@ -69,6 +95,8 @@ namespace PascalCompiler
             line, position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable) => throw new System.NotImplementedException();
     }
 
     public class ReadStatementNode : SimpleStatementNode
@@ -76,6 +104,11 @@ namespace PascalCompiler
         public ReadStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -85,6 +118,19 @@ namespace PascalCompiler
             position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            ExpressionListNode el = (ExpressionListNode) Childs[0];
+            if (el.Childs.Count == 1)
+            {
+                el.Childs[0].Generate(asmCode, symTable);
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+                asmCode.Add(new AsmPrintf((TypeSymbol)(el.Childs[0] as ExpressionNode).Type, new AsmReg(AsmReg.Reg.Eax)));
+                return;
+            }
+            throw new NotImplementedException();
+        }
     }
 
     public class IfStatementNode : StructStatementNode
@@ -93,6 +139,11 @@ namespace PascalCompiler
             position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class ForStatementNode : StructStatementNode
@@ -100,6 +151,11 @@ namespace PascalCompiler
         public ForStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -121,6 +177,11 @@ namespace PascalCompiler
             line, position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class DesignatorNode : ExpressionNode
@@ -128,6 +189,11 @@ namespace PascalCompiler
         public DesignatorNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -137,6 +203,12 @@ namespace PascalCompiler
             token.Position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            var v = (VarSymbol)symTable[Value];
+            asmCode.Add(new AsmCmd1(AsmCmd.Cmd.Push, new AsmMem(v.Offset, v.Type.Size)));
+        }
     }
 
     public class ExpressionListNode : Node
@@ -145,12 +217,22 @@ namespace PascalCompiler
             new List<Node>(childs), value, line, position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class StringNode : Node
     {
         public StringNode(List<Node> childs, Tokenizer.Token token) : base(childs, token)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -160,12 +242,36 @@ namespace PascalCompiler
             position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            Childs[0].Generate(asmCode, symTable);
+            Childs[1].Generate(asmCode, symTable);
+            var op = AsmCmd.TokenBinIntOps[(Tokenizer.TokenSubType) Value];
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+            asmCode.Add(op, AsmReg.Reg.Eax, AsmReg.Reg.Ebx);
+            asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
+        }
     }
 
     public class UnOpNode : ExpressionNode
     {
         public UnOpNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            Childs[0].Generate(asmCode, symTable);
+            var op = AsmCmd.TokenUnIntOps[(Tokenizer.TokenSubType)Value];
+            if (op == AsmCmd.Cmd.None)
+            {
+                return;
+            }
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(op, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
         }
     }
 
@@ -175,6 +281,11 @@ namespace PascalCompiler
             position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            asmCode.Add(AsmCmd.Cmd.Push, Value.ToString());
+        }
     }
 
     public class BreakNode : Statement
@@ -182,6 +293,11 @@ namespace PascalCompiler
         public BreakNode(List<Node> childs, Tokenizer.Token token) : base(childs, token.Value, token.Line,
             token.Position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -191,12 +307,22 @@ namespace PascalCompiler
             token.Position)
         {
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class ExitNode : Statement
     {
         public ExitNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -213,6 +339,11 @@ namespace PascalCompiler
         {
             return $"{Subprogram.Name} call";
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class CallStatementWrapper : SimpleStatementNode
@@ -226,6 +357,11 @@ namespace PascalCompiler
         {
             return "Call statement wrapper";
         }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class CastOperator : DesignatorNode
@@ -238,6 +374,11 @@ namespace PascalCompiler
         public override string ToString()
         {
             return $"{Type.Name} cast";
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

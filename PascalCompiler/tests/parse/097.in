@@ -1,0 +1,7 @@
+type
+    arr = array[0..3] of integer;
+function sum(a: arr = (1, 2, 3, 4)): integer;
+begin
+end;
+begin
+end.

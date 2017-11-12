@@ -1,0 +1,14 @@
+.686p
+.mmx
+.xmm
+include \masm32\include\masm32rt.inc
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 4
+Mov Esp, Ebp
+Pop Ebp
+EXIT
+main ENDP
+END main

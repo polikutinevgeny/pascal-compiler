@@ -72,6 +72,27 @@ namespace PascalCompiler
                                 writer.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
                             }
                             break;
+                        case "generate":
+                            try
+                            {
+                                using (var tokenizer = new Tokenizer(reader))
+                                using (var tokenStream = tokenizer.GetEnumerator())
+                                using (var parser = new Parser(tokenStream))
+                                {
+                                    var p = parser.Parse();
+                                    var asm = new AsmCode(p);
+                                    writer.WriteLine(asm);
+                                }
+                            }
+                            catch (Tokenizer.TokenizerException e)
+                            {
+                                writer.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
+                            }
+                            catch (Parser.ParserException e)
+                            {
+                                writer.WriteLine($"{e.Message} at {e.Line}:{e.Position}");
+                            }
+                            break;
                         default:
                             Console.WriteLine($"Mode {options.Mode} not found.");
                             break;

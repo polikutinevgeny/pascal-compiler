@@ -1,0 +1,4 @@
+var a: Integer;
+begin
+    a := 5;
+end.

@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace PascalCompiler
@@ -13,6 +14,11 @@ namespace PascalCompiler
                 return (Symbol) this[name];
             return Parent?.LookUp(name);
         }
+
+        public void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public abstract class Symbol
@@ -20,29 +26,43 @@ namespace PascalCompiler
         public string Name { get; set; }
 
         public override string ToString() => Name;
+
+        public abstract void Generate(AsmCode code);
     }
 
     public class TypeSymbol : Symbol
     {
         public static readonly TypeSymbol IntTypeSymbol = new TypeSymbol
         {
-            Name = "integer"
+            Name = "integer",
+            _size = 4,
         };
 
         public static readonly TypeSymbol RealTypeSymbol = new TypeSymbol
         {
-            Name = "real"
+            Name = "real",
+            _size = 4,
         };
 
         public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol
         {
-            Name = "char"
+            Name = "char",
+            _size = 1,
         };
+
+        private int _size;
 
         public override string ToString()
         {
             return $"{Name}";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual int Size => _size;
     }
 
     public class ArrayTypeSymbol : TypeSymbol
@@ -55,6 +75,13 @@ namespace PascalCompiler
         {
             return $"[{Range.Begin}..{Range.End}]: array of {ElementType}";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int Size => ElementType.Size * Length;
     }
 
     public class RecordTypeSymbol : TypeSymbol
@@ -65,6 +92,13 @@ namespace PascalCompiler
         {
             return "record";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int Size => throw new NotImplementedException();
     }
 
     public abstract class ValueSymbol : Symbol
@@ -76,18 +110,32 @@ namespace PascalCompiler
         {
             return $"{Type.Name}{(Value != null ? $" = {Value}" : "")}";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class ConstSymbol : ValueSymbol
     {
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TypedConstSymbol : ValueSymbol
     {
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class VarSymbol : ValueSymbol
     {
+        public int Offset { get; set; }
     }
 
     public class ParameterSymbol : VarSymbol
@@ -98,6 +146,11 @@ namespace PascalCompiler
         {
             return $"{ParameterModifier} {base.ToString()}";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class ProgramSymbol : Symbol
@@ -106,12 +159,21 @@ namespace PascalCompiler
         {
             return $"program {Name}";
         }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public abstract class SubprogramSymbol : Symbol
     {
         public Parameters Parameters { get; set; }
         public Block Block { get; set; }
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class ProcedureSymbol : SubprogramSymbol
@@ -120,6 +182,11 @@ namespace PascalCompiler
         {
             return
                 $"procedure {Name}({string.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))})";
+        }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -131,6 +198,11 @@ namespace PascalCompiler
         {
             return
                 $"function {Name}({string.Join(", ", Parameters.Select(t => (t.ParameterModifier, t.Name, t.Type.Name)))}): {ReturnType.Name}";
+        }
+
+        public override void Generate(AsmCode code)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,0 +1,20 @@
+.686p
+.mmx
+.xmm
+include \masm32\include\masm32rt.inc
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 4
+Push 5
+Pop Eax
+Mov dword ptr [Ebp-4], Eax
+Push dword ptr [Ebp-4]
+Pop Eax
+printf("%d", Eax)
+Mov Esp, Ebp
+Pop Ebp
+EXIT
+main ENDP
+END main

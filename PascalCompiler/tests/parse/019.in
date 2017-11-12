@@ -5,7 +5,7 @@ var
    c: integer;
    function foo(): integer;
    var
-      c: double;
+      c: real;
    begin
       c := 13.1e-1;
       begin

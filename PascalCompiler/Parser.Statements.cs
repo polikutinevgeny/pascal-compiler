@@ -666,32 +666,34 @@ namespace PascalCompiler
             }
         }
 
-        private void CheckImplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
+        private bool CheckImplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
         {
             if (
                 from == to ||
                 from == TypeSymbol.IntTypeSymbol && to == TypeSymbol.RealTypeSymbol ||
-                from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att && atf.ElementType == att.ElementType &&
+                from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att &&
+                CheckImplicitTypeCompatibility(atf.ElementType, att.ElementType) &&
                 atf.Range.Begin == att.Range.Begin && atf.Range.End == att.Range.End
             )
             {
-                return;
+                return true;
             }
             throw new ParserException("Incompatible types", Current.Line, Current.Position);
         }
 
-        private void CheckExplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
+        private bool CheckExplicitTypeCompatibility(TypeSymbol from, TypeSymbol to)
         {
             if (
                 from == to ||
                 from == TypeSymbol.CharTypeSymbol &&
                 (to == TypeSymbol.IntTypeSymbol || to == TypeSymbol.RealTypeSymbol) ||
                 from == TypeSymbol.IntTypeSymbol && to == TypeSymbol.RealTypeSymbol ||
-                from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att && atf.ElementType == att.ElementType &&
+                from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att &&
+                CheckExplicitTypeCompatibility(atf.ElementType, att.ElementType) &&
                 atf.Length == att.Length
             )
             {
-                return;
+                return true;
             }
             throw new ParserException("Incompatible types", Current.Line, Current.Position);
         }

@@ -1,0 +1,10 @@
+program 
+  integer = integer;
+  real = real;
+  char = char;
+  i = integer = 10;
+  j = char = c;
+└─Assignment statement
+  ├─i
+  └─integer cast
+    └─j

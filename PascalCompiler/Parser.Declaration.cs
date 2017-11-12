@@ -510,7 +510,6 @@ namespace PascalCompiler
                     Name = i,
                     ParameterModifier = ParameterModifier.Value,
                     Type = (TypeSymbol) tp,
-                    Value = null
                 };
                 p.Add(s);
                 symTable.Add(i, s);

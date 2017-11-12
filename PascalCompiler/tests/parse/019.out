@@ -1,1 +1,27 @@
-Error in type definition at 8:10
+program 
+  integer = integer;
+  real = real;
+  char = char;
+  a = integer = 30;
+  b = integer = 600;
+  c = integer;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  function foo(): integer
+      c = real;
+  ├─Assignment statement
+  │ ├─c
+  │ └─1.31
+  └─compound statement
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─Assignment statement
+│ ├─c
+│ └─foo call
+└─compound statement
+  └─If
+    ├─Greater
+    │ ├─a
+    │ └─20
+    └─Assignment statement
+      ├─c
+      └─Minus
+        └─a
