@@ -30,7 +30,8 @@ program
       c = Value real = 1.66666666666667;
   └─Assignment statement
     ├─c
-    └─3
+    └─real cast
+      └─3
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 └─Write
   └─Expression list

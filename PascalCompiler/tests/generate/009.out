@@ -20,6 +20,12 @@ Pop Eax
 Imul Ebx
 Push Eax
 Push dword ptr [Ebp-8]
+Push dword ptr [Ebp-4]
+Pop Ebx
+Pop Eax
+Cdq
+Idiv Ebx
+Push Eax
 Pop Ebx
 Pop Eax
 Add Eax, Ebx

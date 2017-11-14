@@ -1,0 +1,210 @@
+.686p
+include \masm32\include\masm32rt.inc
+.mmx
+.xmm
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 0
+Push 40100000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpnlesd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40080000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpnlesd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40100000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpltsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40080000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpltsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40100000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpnltsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40100000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpnltsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40080000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpnltsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40100000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmplesd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40100000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmplesd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40080000h
+Push 00000000h
+Push 40100000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmplesd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40000000h
+Push 00000000h
+Push 40000000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpeqsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40000000h
+Push 00000000h
+Push 40000000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpneqsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40000000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpeqsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 40000000h
+Push 00000000h
+Push 40080000h
+Push 00000000h
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Add Esp, 8
+Cmpneqsd Xmm0, Xmm1
+Sub Esp, 4
+Movd dword ptr [Esp], Xmm0
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Mov Esp, Ebp
+Pop Ebp
+exit
+main ENDP
+END main

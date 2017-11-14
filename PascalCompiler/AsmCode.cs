@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PascalCompiler
@@ -13,7 +14,7 @@ namespace PascalCompiler
             //Generate subprograms here
             Add(new AsmSpecial("main PROC"));
             program.Block.Generate(this);
-            Add(new AsmSpecial("EXIT"));
+            Add(new AsmSpecial("exit"));
             Add(new AsmSpecial("main ENDP"));
             Add(new AsmSpecial("END main"));
         }
@@ -33,7 +34,7 @@ namespace PascalCompiler
             Add(new AsmCmd2(cmd, new AsmReg(reg1), new AsmReg(reg2)));
         }
 
-        public void Add(AsmCmd.Cmd cmd, AsmReg.Reg reg, string arg)
+        public void Add(AsmCmd.Cmd cmd, AsmReg.Reg reg, object arg)
         {
             Add(new AsmCmd2(cmd, new AsmReg(reg), new AsmImm(arg)));
         }
@@ -50,14 +51,34 @@ namespace PascalCompiler
 
         private readonly string _preamble =
             ".686p\n" +
+            "include \\masm32\\include\\masm32rt.inc\n" +
             ".mmx\n" +
             ".xmm\n" +
-            "include \\masm32\\include\\masm32rt.inc\n" +
             ".code\n";
 
         public override string ToString()
         {
             return _preamble + string.Join("\n", Commands.Select(x => x.ToString()));
+        }
+
+        public void Add(AsmCmd.Cmd cmd, string arg, AsmReg.Reg reg)
+        {
+            Add(new AsmCmd2(cmd, new AsmImm(arg), new AsmReg(reg)));
+        }
+
+        public void Add(AsmCmd.Cmd cmd, AsmReg.Reg reg, AsmMem arg)
+        {
+            Add(new AsmCmd2(cmd, new AsmReg(reg), arg));
+        }
+
+        public void Add(AsmCmd.Cmd cmd, AsmMem arg, AsmReg.Reg reg)
+        {
+            Add(new AsmCmd2(cmd, arg, new AsmReg(reg)));
+        }
+
+        public void Add(AsmCmd.Cmd cmd, AsmMem arg)
+        {
+            Add(new AsmCmd1(cmd, arg));
         }
     }
 
@@ -70,9 +91,7 @@ namespace PascalCompiler
             Push,
             Invoke,
             Call,
-            Iadd,
             Add,
-            Isub,
             Sub,
             Imul,
             Mul,
@@ -86,6 +105,32 @@ namespace PascalCompiler
             Mov,
             Ret,
             Neg,
+            Pxor,
+            Cvtsi2sd,
+            Cvttsd2si,
+            Not,
+            Movsx,
+            Cdq,
+            Shl,
+            Shr,
+            Cmp,
+            And,
+            Or,
+            Xor,
+            Sete,
+            Setge,
+            Setg,
+            Setle,
+            Setl,
+            Setne,
+            Cmpsd,
+            Cmpeqsd,
+            Cmpltsd,
+            Cmplesd,
+            Cmpneqsd,
+            Cmpnltsd,
+            Cmpnlesd,
+            Movd
         }
 
         public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenBinIntOps= new Dictionary<Tokenizer.TokenSubType, Cmd>
@@ -93,14 +138,63 @@ namespace PascalCompiler
             {Tokenizer.TokenSubType.Plus, Cmd.Add},
             {Tokenizer.TokenSubType.Minus, Cmd.Sub },
             {Tokenizer.TokenSubType.Asterisk, Cmd.Imul },
-            {Tokenizer.TokenSubType.Slash, Cmd.Idiv },
+            {Tokenizer.TokenSubType.Div, Cmd.Idiv },
+            {Tokenizer.TokenSubType.Mod, Cmd.Idiv },
+            {Tokenizer.TokenSubType.Shl, Cmd.Shl },
+            {Tokenizer.TokenSubType.Shr, Cmd.Shr },
+            {Tokenizer.TokenSubType.Less, Cmd.Cmp },
+            {Tokenizer.TokenSubType.Greater, Cmd.Cmp },
+            {Tokenizer.TokenSubType.LEqual, Cmd.Cmp },
+            {Tokenizer.TokenSubType.GEqual, Cmd.Cmp },
+            {Tokenizer.TokenSubType.Equal, Cmd.Cmp },
+            {Tokenizer.TokenSubType.NEqual, Cmd.Cmp },
+            {Tokenizer.TokenSubType.Xor, Cmd.Xor },
+            {Tokenizer.TokenSubType.And, Cmd.And },
+            {Tokenizer.TokenSubType.Or, Cmd.Or }
         };
+
+        public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenCmpIntOps =
+            new Dictionary<Tokenizer.TokenSubType, Cmd>
+            {
+                {Tokenizer.TokenSubType.Less, Cmd.Setge},
+                {Tokenizer.TokenSubType.Greater, Cmd.Setle},
+                {Tokenizer.TokenSubType.LEqual, Cmd.Setg},
+                {Tokenizer.TokenSubType.GEqual, Cmd.Setl},
+                {Tokenizer.TokenSubType.Equal, Cmd.Setne},
+                {Tokenizer.TokenSubType.NEqual, Cmd.Sete},
+            };
 
         public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenUnIntOps = new Dictionary<Tokenizer.TokenSubType, Cmd>
         {
             {Tokenizer.TokenSubType.Plus, Cmd.None},
+            {Tokenizer.TokenSubType.Not,  Cmd.Not},
             {Tokenizer.TokenSubType.Minus, Cmd.Neg },
         };
+
+        public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenBinRealOps = new Dictionary<Tokenizer.TokenSubType, Cmd>
+        {
+            {Tokenizer.TokenSubType.Plus, Cmd.Addsd},
+            {Tokenizer.TokenSubType.Minus, Cmd.Subsd },
+            {Tokenizer.TokenSubType.Asterisk, Cmd.Mulsd },
+            {Tokenizer.TokenSubType.Slash, Cmd.Divsd },
+            {Tokenizer.TokenSubType.Less, Cmd.Cmpltsd },
+            {Tokenizer.TokenSubType.Greater, Cmd.Cmpnlesd },
+            {Tokenizer.TokenSubType.LEqual, Cmd.Cmplesd },
+            {Tokenizer.TokenSubType.GEqual, Cmd.Cmpnltsd },
+            {Tokenizer.TokenSubType.Equal, Cmd.Cmpeqsd },
+            {Tokenizer.TokenSubType.NEqual, Cmd.Cmpneqsd }
+        };
+
+//        public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenCmpRealOps =
+//            new Dictionary<Tokenizer.TokenSubType, Cmd>
+//            {
+//                {Tokenizer.TokenSubType.Less, Cmd.Setl},
+//                {Tokenizer.TokenSubType.Greater, Cmd.Setg},
+//                {Tokenizer.TokenSubType.LEqual, Cmd.Setle},
+//                {Tokenizer.TokenSubType.GEqual, Cmd.Setge},
+//                {Tokenizer.TokenSubType.Equal, Cmd.Sete},
+//                {Tokenizer.TokenSubType.NEqual, Cmd.Setne},
+//            };
 
         public Cmd Command { get; set; }
 
@@ -168,7 +262,7 @@ namespace PascalCompiler
         {
             {TypeSymbol.IntTypeSymbol, "%d" },
             {TypeSymbol.RealTypeSymbol, "%f" },
-            {TypeSymbol.CharTypeSymbol, "$c" }
+            {TypeSymbol.CharTypeSymbol, "%c" }
         };
 
         public AsmPrintf(TypeSymbol type, AsmArg arg)
@@ -206,7 +300,10 @@ namespace PascalCompiler
             Xmm4,
             Xmm5,
             Xmm6,
-            Xmm7
+            Xmm7,
+            Al,
+            Bl,
+            Cl,
         }
 
         public Reg Value { get; set; }
@@ -235,6 +332,7 @@ namespace PascalCompiler
     {
         public int Offset { get; set; }
         public int Size { get; set; }
+        public AsmArg Start { get; set; } = new AsmReg(AsmReg.Reg.Ebp);
 
         public static Dictionary<int, string> SizeType { get; } = new Dictionary<int, string>
         {
@@ -250,9 +348,13 @@ namespace PascalCompiler
             Size = size;
         }
 
+        public AsmMem(int offset, int size, AsmArg start) : this(offset, size) => this.Start = start;
+
+        public AsmMem(int offset, int size, AsmReg.Reg start) : this(offset, size) => this.Start = new AsmReg(start);
+
         public override string ToString()
         {
-            return $"{SizeType[Size]} ptr [Ebp{-Offset}]";
+            return $"{SizeType[Size]} ptr [{Start}{(Offset != 0 ? (-Offset).ToString() : "")}]";
         }
     }
 }

@@ -52,6 +52,8 @@ namespace PascalCompiler
                 {
                     case ConstNode _:
                         return expr.Value;
+                    case CastOperator _:
+                        return EvaluateConstExpr(expr.Childs[0], symTable);
                     case DesignatorNode _:
                         var temp = symTable.LookUp(expr.Value.ToString());
                         if (temp is ConstSymbol)

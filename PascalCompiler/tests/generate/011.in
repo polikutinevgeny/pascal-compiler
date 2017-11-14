@@ -1,0 +1,5 @@
+var b: Real;
+begin
+    b := -2.2e2;
+    write(b);
+end.

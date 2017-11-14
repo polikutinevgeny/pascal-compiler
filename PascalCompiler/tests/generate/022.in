@@ -1,0 +1,6 @@
+begin
+    write(integer(5.5));
+    write(real(3));
+    write(char(33));
+    write(integer('!'));
+end.

@@ -1,0 +1,6 @@
+begin
+    write((2 > 1) and (3 > 2));
+    write((2 > 1) or (3 < 2));
+    write((2 > 1) xor (3 > 2));
+    write(not (2 > 1))
+end.

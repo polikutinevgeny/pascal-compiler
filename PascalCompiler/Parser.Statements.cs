@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using static PascalCompiler.Tokenizer.TokenSubType;
 
 namespace PascalCompiler
@@ -147,15 +148,17 @@ namespace PascalCompiler
             }
             switch (Current.SubType)
             {
-                case Assign:
                 case AsteriskAssign:
                 case SlashAssign:
                 case PlusAssign:
                 case MinusAssign:
+                    throw new NotImplementedException();
+                case Assign:
                 {
                     Next();
                     var e = ParseExpression(symTable);
                     CheckImplicitTypeCompatibility((TypeSymbol) e.Type, (TypeSymbol) d.Type);
+                    e = ToType(e, (TypeSymbol) d.Type);
                     return new SimpleStatementNode(new List<Node> {d, e}, "Assignment statement", c.Line, c.Position);
                 }
             }
@@ -327,7 +330,7 @@ namespace PascalCompiler
             };
         }
 
-        private static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
+        public static HashSet<Tokenizer.TokenSubType> RelOps { get; } = new HashSet<Tokenizer.TokenSubType>
         {
             Less,
             Greater,
@@ -371,6 +374,7 @@ namespace PascalCompiler
                 {
                     throw new ParserException("Incompatible types", c.Line, c.Position);
                 }
+                (e, t) = SelectType(e, t);
                 e = new BinOpNode(new List<Node> {e, t}, c.SubType, c.Line, c.Position)
                 {
                     Type = TypeSymbol.IntTypeSymbol
@@ -378,6 +382,23 @@ namespace PascalCompiler
                 c = Current;
             }
             return e;
+        }
+
+        private ExpressionNode ToType(ExpressionNode node, TypeSymbol type)
+        {
+            return node.Type != type
+                ? new CastOperator(new List<Node> {node}, "Cast", node.Line, node.Position) {Type = type}
+                : node;
+        }
+
+        private (ExpressionNode, ExpressionNode) SelectType(ExpressionNode left, ExpressionNode right)
+        {
+            if (left.Type == TypeSymbol.RealTypeSymbol || right.Type == TypeSymbol.RealTypeSymbol)
+            {
+                left = ToType(left, TypeSymbol.RealTypeSymbol);
+                right = ToType(right, TypeSymbol.RealTypeSymbol);
+            }
+            return (left, right);
         }
 
         private ExpressionNode ParseSimpleExpression(SymTable symTable)
@@ -397,7 +418,6 @@ namespace PascalCompiler
             {
                 Next();
                 var temp = ParseTerm(symTable);
-                var type = (TypeSymbol) temp.Type;
                 if (
                     t.Type is ArrayTypeSymbol || t.Type is RecordTypeSymbol ||
                     temp.Type is ArrayTypeSymbol || temp.Type is RecordTypeSymbol
@@ -405,13 +425,10 @@ namespace PascalCompiler
                 {
                     throw new ParserException("Incompatible types", c.Line, c.Position);
                 }
-                if ((TypeSymbol) t.Type == TypeSymbol.RealTypeSymbol)
-                {
-                    type = TypeSymbol.RealTypeSymbol;
-                }
+                (t, temp) = SelectType(t, temp);
                 t = new BinOpNode(new List<Node> {t, temp}, c.SubType, c.Line, c.Position)
                 {
-                    Type = type
+                    Type = t.Type
                 };
                 c = Current;
             }
@@ -426,7 +443,6 @@ namespace PascalCompiler
             {
                 Next();
                 var t = ParseFactor(symTable);
-                var type = (TypeSymbol) f.Type;
                 if (
                     t.Type is ArrayTypeSymbol || t.Type is RecordTypeSymbol ||
                     f.Type is ArrayTypeSymbol || f.Type is RecordTypeSymbol
@@ -434,13 +450,14 @@ namespace PascalCompiler
                 {
                     throw new ParserException("Incompatible types", c.Line, c.Position);
                 }
-                if ((TypeSymbol) t.Type == TypeSymbol.RealTypeSymbol)
+                if (c.SubType == Slash)
                 {
-                    type = TypeSymbol.RealTypeSymbol;
+                    f = ToType(f, TypeSymbol.RealTypeSymbol);
                 }
+                (f, t) = SelectType(f, t);
                 f = new BinOpNode(new List<Node> {f, t}, c.SubType, c.Line, c.Position)
                 {
-                    Type = type
+                    Type = f.Type
                 };
                 c = Current;
             }
@@ -496,7 +513,16 @@ namespace PascalCompiler
                     return e;
                 case Plus:
                 case Minus:
+                {
+                    Next();
+                    var tmp = ParseFactor(symTable);
+                    return new UnOpNode(new List<Node> {tmp}, c.SubType, c.Line, c.Position)
+                    {
+                        Type = tmp.Type
+                    };
+                }
                 case Not:
+                {
                     Next();
                     var tmp = ParseFactor(symTable);
                     if (tmp.Type == TypeSymbol.IntTypeSymbol)
@@ -507,6 +533,7 @@ namespace PascalCompiler
                         };
                     }
                     throw new ParserException("Illegal operation", c.Line, c.Position);
+                }
             }
             throw new ParserException($"Unexpected token {c.SubType}", c.Line, c.Position);
         }
@@ -626,7 +653,8 @@ namespace PascalCompiler
                 Require(Identifier);
                 if (!rt.Fields.Contains(c.Value.ToString()))
                     throw new ParserException("Illegal identifier", c.Line, c.Position);
-                var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access", c.Line, c.Position)
+                var f = new MemberAccessOperator(new List<Node> {record, new IdentNode(null, c)}, "Member access",
+                    c.Line, c.Position)
                 {
                     Type = ((VarSymbol) rt.Fields[c.Value.ToString()]).Type
                 };
@@ -685,12 +713,13 @@ namespace PascalCompiler
         {
             if (
                 from == to ||
-                from == TypeSymbol.CharTypeSymbol &&
-                (to == TypeSymbol.IntTypeSymbol || to == TypeSymbol.RealTypeSymbol) ||
+                from == TypeSymbol.CharTypeSymbol && to == TypeSymbol.IntTypeSymbol ||
                 from == TypeSymbol.IntTypeSymbol && to == TypeSymbol.RealTypeSymbol ||
+                from == TypeSymbol.RealTypeSymbol && to == TypeSymbol.IntTypeSymbol ||
                 from is ArrayTypeSymbol atf && to is ArrayTypeSymbol att &&
                 CheckExplicitTypeCompatibility(atf.ElementType, att.ElementType) &&
-                atf.Length == att.Length
+                atf.Length == att.Length ||
+                from == TypeSymbol.IntTypeSymbol && to == TypeSymbol.CharTypeSymbol
             )
             {
                 return true;

@@ -1,0 +1,104 @@
+.686p
+include \masm32\include\masm32rt.inc
+.mmx
+.xmm
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 0
+Push 2
+Push 1
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Push 3
+Push 2
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Pop Ebx
+Pop Eax
+And Eax, Ebx
+Push Eax
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 2
+Push 1
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Push 3
+Push 2
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setge Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Pop Ebx
+Pop Eax
+Or Eax, Ebx
+Push Eax
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 2
+Push 1
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Push 3
+Push 2
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Pop Ebx
+Pop Eax
+Xor Eax, Ebx
+Push Eax
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Push 2
+Push 1
+Pop Ebx
+Pop Eax
+Cmp Eax, Ebx
+Setle Al
+Movsx Eax, Al
+Sub Eax, 1
+Push Eax
+Pop Eax
+Not Eax
+Push Eax
+Mov Eax, Esp
+printf("%d", dword ptr [Eax])
+Sub Esp, 4
+Mov Esp, Ebp
+Pop Ebp
+exit
+main ENDP
+END main

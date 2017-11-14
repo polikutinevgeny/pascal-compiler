@@ -1,0 +1,42 @@
+var 
+    a: Integer;
+    b: Integer;
+    c: Integer;
+    d: Integer;
+begin
+    a := 2;
+    b := 5;
+    c := 64;
+    d := a << b;
+    write(d);
+    write(#13);
+    write(#10);
+    d := c >> b;
+    write(d);
+    write(#13);
+    write(#10);
+    d := a << 5;
+    write(d);
+    write(#13);
+    write(#10);
+    d := c >> 5;
+    write(d);
+    write(#13);
+    write(#10);
+    d := a and b;
+    write(d);
+    write(#13);
+    write(#10);
+    d := a or b;
+    write(d);
+    write(#13);
+    write(#10);
+    d := a xor b;
+    write(d);
+    write(#13);
+    write(#10);
+    d := not a;
+    write(d);
+    write(#13);
+    write(#10);
+end.

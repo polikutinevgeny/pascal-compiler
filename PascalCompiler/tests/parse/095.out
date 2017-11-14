@@ -6,4 +6,5 @@ program
   j = real;
 └─Assignment statement
   ├─j
-  └─i
+  └─real cast
+    └─i

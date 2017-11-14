@@ -1,0 +1,40 @@
+.686p
+include \masm32\include\masm32rt.inc
+.mmx
+.xmm
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 8
+Push 406B8000h
+Push 00000000h
+Push 40013333h
+Push 33333333h
+Push 3
+Cvtsi2sd Xmm0, dword ptr [Esp]
+Sub Esp, 4
+Movsd qword ptr [Esp], Xmm0
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Mulsd Xmm0, Xmm1
+Movsd qword ptr [Esp], Xmm0
+Movsd Xmm1, qword ptr [Esp]
+Add Esp, 8
+Movsd Xmm0, qword ptr [Esp]
+Addsd Xmm0, Xmm1
+Movsd qword ptr [Esp], Xmm0
+Movsd Xmm0, qword ptr [Esp]
+Sub Esp, 8
+Movsd qword ptr [Ebp-8], Xmm0
+Push dword ptr [Ebp-4]
+Push dword ptr [Ebp-8]
+Mov Eax, Esp
+printf("%f", qword ptr [Eax])
+Sub Esp, 8
+Mov Esp, Ebp
+Pop Ebp
+exit
+main ENDP
+END main

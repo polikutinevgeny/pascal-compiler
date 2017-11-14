@@ -1,0 +1,5 @@
+begin
+    write('c' < 'e');
+    write('d' > 'c');
+    write('c' = 'c');
+end.

@@ -1,0 +1,20 @@
+begin
+    write(4 > 3);
+    write(3 > 4);
+
+    write(4 < 3);
+    write(3 < 4);
+
+    write(4 >= 4);
+    write(4 >= 3);
+    write(3 >= 4);
+
+    write(4 <= 4);
+    write(4 <= 3);
+    write(3 <= 4);
+
+    write(2 = 2);
+    write(2 <> 2);
+    write(2 = 3);
+    write(2 <> 3);
+end.

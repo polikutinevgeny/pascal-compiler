@@ -41,14 +41,16 @@ namespace PascalCompiler
         public static readonly TypeSymbol RealTypeSymbol = new TypeSymbol
         {
             Name = "real",
-            _size = 4,
+            _size = 8,
         };
 
         public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol
         {
             Name = "char",
-            _size = 1,
+            _size = 4,
         };
+
+        protected TypeSymbol() { }
 
         private int _size;
 

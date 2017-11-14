@@ -1,7 +1,7 @@
 .686p
+include \masm32\include\masm32rt.inc
 .mmx
 .xmm
-include \masm32\include\masm32rt.inc
 .code
 main PROC
 Push Ebp
@@ -12,6 +12,6 @@ Pop Eax
 Mov dword ptr [Ebp-4], Eax
 Mov Esp, Ebp
 Pop Ebp
-EXIT
+exit
 main ENDP
 END main
