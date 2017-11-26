@@ -1,0 +1,26 @@
+var
+    i: integer;
+    r: record
+        i: integer;
+        j: integer;
+        a: array[1..5] of record
+            k: integer;
+            l: integer;
+        end;
+    end;
+begin
+    r.i := 1;
+    r.j := 2;
+    for i := 3 to 7 do
+    begin
+        r.a[i - 2].l := i;
+        r.a[i - 2].k := i - 1;
+    end;
+    write(r.i);
+    write(r.j);
+    for i := 3 to 7 do
+    begin
+        write(r.a[i - 2].l);
+        write(r.a[i - 2].k);
+    end;
+end.

@@ -10,9 +10,14 @@ namespace PascalCompiler
 
         public Symbol LookUp(string name)
         {
+            return LookUpLevel(name)?.Item1;
+        }
+
+        public (Symbol, int)? LookUpLevel(string name, int level = 0)
+        {
             if (Contains(name))
-                return (Symbol) this[name];
-            return Parent?.LookUp(name);
+                return ((Symbol)this[name], level);
+            return Parent?.LookUpLevel(name, level + 1);
         }
 
         public void Generate(AsmCode code)
@@ -65,6 +70,8 @@ namespace PascalCompiler
         }
 
         public virtual int Size => _size;
+
+        public virtual int AddressSize => _size; // for addressing need (e.g. qword ptr [eax])
     }
 
     public class ArrayTypeSymbol : TypeSymbol
@@ -84,11 +91,22 @@ namespace PascalCompiler
         }
 
         public override int Size => ElementType.Size * Length;
+
+        public override int AddressSize => 0;
     }
 
     public class RecordTypeSymbol : TypeSymbol
     {
-        public SymTable Fields;
+        private SymTable _fields;
+        public SymTable Fields
+        {
+            get => _fields;
+            set
+            {
+                _fields = value;
+                SetOffsets();
+            }
+        }
 
         public override string ToString()
         {
@@ -100,7 +118,19 @@ namespace PascalCompiler
             throw new NotImplementedException();
         }
 
-        public override int Size => throw new NotImplementedException();
+        public override int Size => Fields.Values.Cast<VarSymbol>().Sum(field => field.Type.Size);
+
+        public override int AddressSize => 0; // Doesn't matter, never used as target (can be greater than qword) in this case
+
+        public void SetOffsets()
+        {
+            var recOffset = 0;
+            foreach (VarSymbol field in Fields.Values)
+            {
+                field.Offset = recOffset;
+                recOffset -= field.Type.Size;
+            }
+        }
     }
 
     public abstract class ValueSymbol : Symbol

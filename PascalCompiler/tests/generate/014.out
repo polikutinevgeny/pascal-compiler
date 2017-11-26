@@ -7,10 +7,10 @@ main PROC
 Push Ebp
 Mov Ebp, Esp
 Sub Esp, 0
-Push 40100000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -21,10 +21,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40080000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040080000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -35,10 +35,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40100000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -49,10 +49,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40080000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040080000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -63,10 +63,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40100000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -77,10 +77,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40100000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -91,10 +91,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40080000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040080000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -105,10 +105,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40100000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -119,10 +119,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40100000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040100000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -133,10 +133,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40080000h
-Push 00000000h
-Push 40100000h
-Push 00000000h
+Push 040080000h
+Push 000000000h
+Push 040100000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -147,10 +147,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40000000h
-Push 00000000h
-Push 40000000h
-Push 00000000h
+Push 040000000h
+Push 000000000h
+Push 040000000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -161,10 +161,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40000000h
-Push 00000000h
-Push 40000000h
-Push 00000000h
+Push 040000000h
+Push 000000000h
+Push 040000000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -175,10 +175,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40000000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040000000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]
@@ -189,10 +189,10 @@ Movd dword ptr [Esp], Xmm0
 Mov Eax, Esp
 printf("%d", dword ptr [Eax])
 Sub Esp, 4
-Push 40000000h
-Push 00000000h
-Push 40080000h
-Push 00000000h
+Push 040000000h
+Push 000000000h
+Push 040080000h
+Push 000000000h
 Movsd Xmm1, qword ptr [Esp]
 Add Esp, 8
 Movsd Xmm0, qword ptr [Esp]

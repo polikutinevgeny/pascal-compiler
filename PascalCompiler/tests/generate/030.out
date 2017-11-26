@@ -1,0 +1,235 @@
+.686p
+include \masm32\include\masm32rt.inc
+.mmx
+.xmm
+.code
+main PROC
+Push Ebp
+Mov Ebp, Esp
+Sub Esp, 52
+Push 1
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+0]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Push 2
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+4]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Push 3
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Jmp __@label_Cycle0Start
+__@label_Cycle0Body:
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax,  [Eax+8]
+Push Eax
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Push 2
+Pop Ebx
+Pop Eax
+Sub Eax, Ebx
+Push Eax
+Pop Eax
+Imul Eax, 8
+Pop Ebx
+Lea Eax, byte ptr [Ebx+1*Eax-8]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+4]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Push 1
+Pop Ebx
+Pop Eax
+Sub Eax, Ebx
+Push Eax
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax,  [Eax+8]
+Push Eax
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Push 2
+Pop Ebx
+Pop Eax
+Sub Eax, Ebx
+Push Eax
+Pop Eax
+Imul Eax, 8
+Pop Ebx
+Lea Eax, byte ptr [Ebx+1*Eax-8]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+0]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Inc dword ptr [Eax+0]
+__@label_Cycle0Start:
+Push 7
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Mov Eax, dword ptr [Eax+0]
+Pop Ebx
+Cmp Eax, Ebx
+Jle __@label_Cycle0Body
+__@label_Cycle0End:
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+0]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Mov Eax, Esp
+printf("%d", dword ptr [Eax+0])
+Sub Esp, 4
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Mov Eax, Esp
+printf("%d", dword ptr [Eax+0])
+Sub Esp, 4
+Push 3
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Pop Ebx
+Mov dword ptr [Eax+0], Ebx
+Jmp __@label_Cycle1Start
+__@label_Cycle1Body:
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax,  [Eax+8]
+Push Eax
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Push 2
+Pop Ebx
+Pop Eax
+Sub Eax, Ebx
+Push Eax
+Pop Eax
+Imul Eax, 8
+Pop Ebx
+Lea Eax, byte ptr [Ebx+1*Eax-8]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Mov Eax, Esp
+printf("%d", dword ptr [Eax+0])
+Sub Esp, 4
+Mov Eax, Ebp
+Lea Eax,  [Eax-52]
+Push Eax
+Pop Eax
+Lea Eax,  [Eax+8]
+Push Eax
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Push 2
+Pop Ebx
+Pop Eax
+Sub Eax, Ebx
+Push Eax
+Pop Eax
+Imul Eax, 8
+Pop Ebx
+Lea Eax, byte ptr [Ebx+1*Eax-8]
+Push Eax
+Pop Eax
+Lea Eax, dword ptr [Eax+0]
+Push Eax
+Pop Eax
+Push dword ptr [Eax+0]
+Mov Eax, Esp
+printf("%d", dword ptr [Eax+0])
+Sub Esp, 4
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Inc dword ptr [Eax+0]
+__@label_Cycle1Start:
+Push 7
+Mov Eax, Ebp
+Lea Eax, dword ptr [Eax-4]
+Push Eax
+Pop Eax
+Mov Eax, dword ptr [Eax+0]
+Pop Ebx
+Cmp Eax, Ebx
+Jle __@label_Cycle1Body
+__@label_Cycle1End:
+Mov Esp, Ebp
+Pop Ebp
+exit
+main ENDP
+END main
+.const
+

@@ -52,7 +52,10 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            foreach (var child in Statements)
+            {
+                child.Generate(asmCode, symTable);
+            }
         }
     }
 
@@ -75,37 +78,31 @@ namespace PascalCompiler
         {
             var left = (DesignatorNode) Childs[0];
             var right = (ExpressionNode) Childs[1];
-            if (left is IdentNode id)
+            right.Generate(asmCode, symTable);
+            left.GenerateLValue(asmCode, symTable);
+            if (right.Type == TypeSymbol.IntTypeSymbol || right.Type == TypeSymbol.CharTypeSymbol)
             {
-                var v = (VarSymbol) symTable[id.Value];
-                right.Generate(asmCode, symTable);
-                if (right.Type == TypeSymbol.IntTypeSymbol || right.Type == TypeSymbol.CharTypeSymbol)
-                {
-                    asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
-                    asmCode.Add(AsmCmd.Cmd.Mov, new AsmMem(v.Offset, v.Type.Size), AsmReg.Reg.Eax);
-                }
-                else if (right.Type == TypeSymbol.RealTypeSymbol)
-                {
-                    asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmMem(0, v.Type.Size, AsmReg.Reg.Esp));
-                    asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, v.Type.Size);
-                    asmCode.Add(AsmCmd.Cmd.Movsd, new AsmMem(v.Offset, v.Type.Size), AsmReg.Reg.Xmm0);
-                }
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+                asmCode.Add(AsmCmd.Cmd.Mov, new AsmOffset(0, 4, AsmReg.Reg.Eax), AsmReg.Reg.Ebx);
             }
-            else
+            else if (right.Type == TypeSymbol.RealTypeSymbol)
             {
-                throw new NotImplementedException();
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmOffset(0, 8, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Eax), AsmReg.Reg.Xmm0);
             }
+
         }
     }
 
-    public class StructStatementNode : Statement
+    public abstract class StructStatementNode : Statement
     {
-        public StructStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value,
+        protected StructStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value,
             line, position)
         {
         }
-
-        public override void Generate(AsmCode asmCode, SymTable symTable) => throw new System.NotImplementedException();
     }
 
     public class ReadStatementNode : SimpleStatementNode
@@ -136,7 +133,7 @@ namespace PascalCompiler
                 el.Childs[0].Generate(asmCode, symTable);
                 var type = (TypeSymbol) (el.Childs[0] as ExpressionNode).Type;
                 asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Eax, AsmReg.Reg.Esp);
-                asmCode.Add(new AsmPrintf(type, new AsmMem(0, type.Size, AsmReg.Reg.Eax)));
+                asmCode.Add(new AsmPrintf(type, new AsmOffset(0, type.Size, AsmReg.Reg.Eax)));
                 asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, type.Size);
                 return;
             }
@@ -153,12 +150,34 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            long id = asmCode.CurrentID++;
+            var elseLabel = new AsmLabel($"Condtion{id}Else");
+            var endLabel = new AsmLabel($"Condtion{id}End");
+            Childs[0].Generate(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Cmp, AsmReg.Reg.Eax, 0);
+            asmCode.Add(AsmCmd.Cmd.Jne, elseLabel);
+            Childs[1].Generate(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Jmp, endLabel);
+            asmCode.Add(elseLabel);
+            Childs[2].Generate(asmCode, symTable);
+            asmCode.Add(endLabel);
         }
     }
 
-    public class ForStatementNode : StructStatementNode
+    public abstract class LoopStatement : StructStatementNode
     {
+        protected LoopStatement(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        {
+        }
+
+        public AsmLabel StartLabel { get; protected set; }
+        public AsmLabel EndLabel { get; protected set; }
+    }
+
+    public class ForStatementNode : LoopStatement
+    {
+
         public ForStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
@@ -166,21 +185,71 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            long id = asmCode.CurrentID++;
+            StartLabel = new AsmLabel($"Cycle{id}Start");
+            EndLabel = new AsmLabel($"Cycle{id}End");
+            AsmLabel bodyLabel = new AsmLabel($"Cycle{id}Body");
+            var v = (VarSymbol) symTable.LookUp(Childs[0].Value.ToString());
+            Childs[1].Generate(asmCode, symTable); // Initial value
+            ((IdentNode) Childs[0]).GenerateLValue(asmCode, symTable); // Cycle counter
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+            asmCode.Add(AsmCmd.Cmd.Mov, new AsmOffset(0, v.Type.Size, AsmReg.Reg.Eax), AsmReg.Reg.Ebx);
+            // Value initialized
+            asmCode.Add(AsmCmd.Cmd.Jmp, StartLabel);
+            asmCode.Add(bodyLabel);
+            asmCode.LoopStack.Push(this);
+            Childs[3].Generate(asmCode, symTable); // Cycle body
+            asmCode.LoopStack.Pop();
+
+            ((IdentNode)Childs[0]).GenerateLValue(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Inc, new AsmOffset(0, v.Type.Size, AsmReg.Reg.Eax));
+
+            asmCode.Add(StartLabel);
+            Childs[2].Generate(asmCode, symTable); // Cycle counter target
+
+            ((IdentNode) Childs[0]).GenerateLValue(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+
+            asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Eax, new AsmOffset(0, v.Type.Size, AsmReg.Reg.Eax));
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+            asmCode.Add(AsmCmd.Cmd.Cmp, AsmReg.Reg.Eax, AsmReg.Reg.Ebx);
+            asmCode.Add(AsmCmd.Cmd.Jle, bodyLabel);
+            asmCode.Add(EndLabel);
         }
     }
 
-    public class WhileStatementNode : StructStatementNode
+    public class WhileStatementNode : LoopStatement
     {
         public Node Condition { get; set; }
 
-        public WhileStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
-            position)
+        public WhileStatementNode(List<Node> childs, object value, uint line, uint position) :
+            base(childs, value, line, position)
         {
+        }
+
+        public override void Generate(AsmCode asmCode, SymTable symTable)
+        {
+            long id = asmCode.CurrentID++;
+            StartLabel = new AsmLabel($"Cycle{id}Start");
+            EndLabel = new AsmLabel($"Cycle{id}End");
+            AsmLabel bodyLabel = new AsmLabel($"Cycle{id}Body");
+            asmCode.Add(AsmCmd.Cmd.Jmp, StartLabel);
+            asmCode.Add(bodyLabel);
+            asmCode.LoopStack.Push(this);
+            Childs[0].Generate(asmCode, symTable);
+            asmCode.LoopStack.Pop();
+            asmCode.Add(StartLabel);
+            Condition.Generate(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Cmp, AsmReg.Reg.Eax, 0);
+            asmCode.Add(AsmCmd.Cmd.Jne, bodyLabel);
+            asmCode.Add(EndLabel);
         }
     }
 
-    public class RepeatStatementNode : StructStatementNode
+    public class RepeatStatementNode : LoopStatement
     {
         public Node Condition { get; set; }
 
@@ -191,21 +260,48 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            long id = asmCode.CurrentID++;
+            StartLabel = new AsmLabel($"Cycle{id}Start");
+            EndLabel = new AsmLabel($"Cycle{id}End");
+            asmCode.Add(StartLabel);
+            asmCode.LoopStack.Push(this);
+            foreach (var child in Childs)
+            {
+                child.Generate(asmCode, symTable);
+            }
+            asmCode.LoopStack.Pop();
+            Condition.Generate(asmCode, symTable);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Cmp, AsmReg.Reg.Eax, 0);
+            asmCode.Add(AsmCmd.Cmd.Je, StartLabel);
+            asmCode.Add(EndLabel);
         }
     }
 
-    public class DesignatorNode : ExpressionNode
+    public abstract class DesignatorNode : ExpressionNode
     {
-        public DesignatorNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
+        protected DesignatorNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
         }
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            var v = (TypeSymbol) Type;
+            if (v == TypeSymbol.IntTypeSymbol || v == TypeSymbol.CharTypeSymbol)
+            {
+                asmCode.Add(AsmCmd.Cmd.Push, new AsmOffset(0, 4, AsmReg.Reg.Eax));
+            }
+            else if (v == TypeSymbol.RealTypeSymbol)
+            {
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmOffset(0, 8, AsmReg.Reg.Eax));
+                asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 8);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
+            }
         }
+
+        public abstract void GenerateLValue(AsmCode asmCode, SymTable symTable);
     }
 
     public class IdentNode : DesignatorNode
@@ -217,16 +313,22 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            var v = (VarSymbol) symTable[Value];
-            if (v.Type == TypeSymbol.IntTypeSymbol || v.Type == TypeSymbol.CharTypeSymbol)
+            GenerateLValue(asmCode, symTable);
+            base.Generate(asmCode, symTable);
+        }
+
+        public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            var t = symTable.LookUpLevel(Value.ToString());
+            VarSymbol v = (VarSymbol) t?.Item1;
+            int level = t.Value.Item2;
+            asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Eax, AsmReg.Reg.Ebp);
+            while (level-- > 0)
             {
-                asmCode.Add(AsmCmd.Cmd.Push, new AsmMem(v.Offset, v.Type.Size));
+                asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Eax, new AsmOffset(8, 4, AsmReg.Reg.Eax));
             }
-            else if (v.Type == TypeSymbol.RealTypeSymbol)
-            {
-                asmCode.Add(AsmCmd.Cmd.Push, new AsmMem(v.Offset - v.Type.Size / 2, v.Type.Size / 2));
-                asmCode.Add(AsmCmd.Cmd.Push, new AsmMem(v.Offset, v.Type.Size / 2));
-            }
+            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax, new AsmOffset(v.Offset, v.Type.AddressSize, AsmReg.Reg.Eax));
+            asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
         }
     }
 
@@ -270,7 +372,7 @@ namespace PascalCompiler
             if (Parser.RelOps.Contains(val))
             {
                 var t = (TypeSymbol) ((ExpressionNode) Childs[0]).Type;
-                if (t == TypeSymbol.IntTypeSymbol || t == TypeSymbol.CharTypeSymbol) // Easy mode: char is 4 byte
+                if (t == TypeSymbol.IntTypeSymbol || t == TypeSymbol.CharTypeSymbol) // Easy mode: char is 4 bytes
                 {
                     asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
                     asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
@@ -284,14 +386,14 @@ namespace PascalCompiler
                 }
                 if (t == TypeSymbol.RealTypeSymbol)
                 {
-                    asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                    asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                     asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
-                    asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                    asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                     asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
                     var cmpop = AsmCmd.TokenBinRealOps[val];
                     asmCode.Add(cmpop, AsmReg.Reg.Xmm0, AsmReg.Reg.Xmm1);
                     asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 4);
-                    asmCode.Add(AsmCmd.Cmd.Movd, new AsmMem(0, 4, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
+                    asmCode.Add(AsmCmd.Cmd.Movd, new AsmOffset(0, 4, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
                     return;
                 }
                 throw new InvalidOperationException("Non-scalar compared");
@@ -337,11 +439,11 @@ namespace PascalCompiler
             else if (Type == TypeSymbol.RealTypeSymbol)
             {
                 var op = AsmCmd.TokenBinRealOps[val];
-                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                 asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
-                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                 asmCode.Add(op, AsmReg.Reg.Xmm0, AsmReg.Reg.Xmm1);
-                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmMem(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
                 return;
             }
         }
@@ -374,14 +476,14 @@ namespace PascalCompiler
                 {
                     return;
                 }
-                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                 asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
-                var neg = HexConverter.DoubleToHexString(-0.0);
-                asmCode.Add(AsmCmd.Cmd.Push, neg.Item1 + "h");
-                asmCode.Add(AsmCmd.Cmd.Push, neg.Item2 + "h");
-                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                string neg = $"__@real{HexConverter.DoubleToHexString(-0.0)}";
+                asmCode.ConstDictionary[-0.0] = neg;
+                asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 8);
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm1, neg);
                 asmCode.Add(AsmCmd.Cmd.Pxor, AsmReg.Reg.Xmm0, AsmReg.Reg.Xmm1);
-                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmMem(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
             }
         }
     }
@@ -405,9 +507,11 @@ namespace PascalCompiler
             }
             else if (Type == TypeSymbol.RealTypeSymbol)
             {
-                var r = HexConverter.DoubleToHexString((double) Value);
-                asmCode.Add(AsmCmd.Cmd.Push, r.Item1 + "h");
-                asmCode.Add(AsmCmd.Cmd.Push, r.Item2 + "h");
+                string val = $"__@real{HexConverter.DoubleToHexString((double) Value)}";
+                asmCode.ConstDictionary[Value] = val;
+                asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 8);
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, val);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
             }
         }
     }
@@ -421,7 +525,7 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            asmCode.Add(AsmCmd.Cmd.Jmp, asmCode.LoopStack.Peek().EndLabel);
         }
     }
 
@@ -434,7 +538,7 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new System.NotImplementedException();
+            asmCode.Add(AsmCmd.Cmd.Jmp, asmCode.LoopStack.Peek().StartLabel);
         }
     }
 
@@ -467,6 +571,11 @@ namespace PascalCompiler
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
             throw new System.NotImplementedException();
+        }
+
+        public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -508,15 +617,15 @@ namespace PascalCompiler
             child.Generate(asmCode, symTable);
             if (ct == TypeSymbol.IntTypeSymbol && pt == TypeSymbol.RealTypeSymbol)
             {
-                asmCode.Add(AsmCmd.Cmd.Cvtsi2sd, AsmReg.Reg.Xmm0, new AsmMem(0, 4, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Cvtsi2sd, AsmReg.Reg.Xmm0, new AsmOffset(0, 4, AsmReg.Reg.Esp));
                 asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 4);
-                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmMem(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
+                asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
             }
             if (ct == TypeSymbol.RealTypeSymbol && pt == TypeSymbol.IntTypeSymbol)
             {
-                asmCode.Add(AsmCmd.Cmd.Cvttsd2si, AsmReg.Reg.Eax, new AsmMem(0, 8, AsmReg.Reg.Esp));
+                asmCode.Add(AsmCmd.Cmd.Cvttsd2si, AsmReg.Reg.Eax, new AsmOffset(0, 8, AsmReg.Reg.Esp));
                 asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 4);
-                asmCode.Add(AsmCmd.Cmd.Mov, new AsmMem(0, 4, AsmReg.Reg.Esp), AsmReg.Reg.Eax);
+                asmCode.Add(AsmCmd.Cmd.Mov, new AsmOffset(0, 4, AsmReg.Reg.Esp), AsmReg.Reg.Eax);
             }
             if (ct == TypeSymbol.CharTypeSymbol && pt == TypeSymbol.IntTypeSymbol)
             {
@@ -526,6 +635,11 @@ namespace PascalCompiler
             {
                 // Char is 4 bytes for now
             }
+        }
+
+        public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -543,7 +657,24 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new NotImplementedException();
+            GenerateLValue(asmCode, symTable);
+            base.Generate(asmCode, symTable);
+        }
+
+        public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            ((DesignatorNode)Childs[0]).GenerateLValue(asmCode, symTable);
+            Childs[1].Generate(asmCode, symTable);
+            var t = (ArrayTypeSymbol) ((DesignatorNode) Childs[0]).Type;
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Imul, AsmReg.Reg.Eax,t. ElementType.Size);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax, new AsmArrayAddr(t.Range.Begin * t.ElementType.Size, 1, AsmReg.Reg.Ebx, AsmReg.Reg.Eax));
+//            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+//            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+//            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax,
+//                new AsmArrayAddr(t.Range.Begin * t.ElementType.Size, t.ElementType.AddressSize, AsmReg.Reg.Eax, AsmReg.Reg.Ebx));
+            asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
         }
     }
 
@@ -561,17 +692,28 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            throw new NotImplementedException();
+            GenerateLValue(asmCode, symTable);
+            base.Generate(asmCode, symTable);
+        }
+
+        public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            ((DesignatorNode) Childs[0]).GenerateLValue(asmCode, symTable);
+            var t = (RecordTypeSymbol) ((DesignatorNode) Childs[0]).Type;
+            var f = ((VarSymbol) t.Fields[Childs[1].Value]);
+            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax, new AsmOffset(f.Offset, f.Type.AddressSize, AsmReg.Reg.Eax));
+            asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
         }
     }
 
     public static class HexConverter
     {
-        public static (string, string) DoubleToHexString(double inp)
+        public static string DoubleToHexString(double inp)
         {
             byte[] bytes = BitConverter.GetBytes(inp);
             string res = BitConverter.ToString(bytes.Reverse().ToArray()).Replace("-", "");
-            return (new string(res.Take(8).ToArray()), new string (res.Skip(8).ToArray()));
+            return $"0{res}";
         }
     }
 }

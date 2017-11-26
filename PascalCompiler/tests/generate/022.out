@@ -7,8 +7,8 @@ main PROC
 Push Ebp
 Mov Ebp, Esp
 Sub Esp, 0
-Push 40160000h
-Push 00000000h
+Push 040160000h
+Push 000000000h
 Cvttsd2si Eax, qword ptr [Esp]
 Add Esp, 4
 Mov dword ptr [Esp], Eax

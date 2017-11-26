@@ -1,0 +1,13 @@
+var
+    r: record
+        i: integer;
+        j: integer;
+    end;
+begin
+    r.i := 5;
+    r.j := 10;
+    write(r.i);
+    write(#13);
+    write(#10);
+    write(r.j);
+end.

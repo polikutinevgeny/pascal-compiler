@@ -22,14 +22,37 @@ namespace PascalCompiler
             foreach (string s in SymTable.Keys)
             {
                 var t = SymTable[s];
-                if (t.GetType() == typeof(VarSymbol))
+                if (t.GetType() == typeof(VarSymbol)) // Must be EXACTLY var (cannot be parameters)
                 {
                     var v = (VarSymbol) t;
+//                    if (v.Type is RecordTypeSymbol r)
+//                    {
+//                        r.SetOffsets();
+//                    }
                     curOffset += v.Type.Size;
                     v.Offset = curOffset;
                 }
+//                if (t is RecordTypeSymbol r)
+//                {
+//                    var recOffset = 0;
+//                    foreach (VarSymbol field in r.Fields.Values)
+//                    {
+//                        recOffset -= field.Type.Size;
+//                        field.Offset = recOffset;
+//                    }
+//                }
             }
             asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, curOffset.ToString());
+            // TODO: Generate initial values
+//            foreach (string s in SymTable.Keys)  // Must be EXACTLY var (cannot be parameters)
+//            {
+//                var t = SymTable[s];
+//                if (t.GetType() == typeof(VarSymbol))
+//                {
+//                    var v = (VarSymbol)t;
+//                    
+//                }
+//            }
             foreach (Statement st in StatementList)
             {
                 st.Generate(asmCode, SymTable);

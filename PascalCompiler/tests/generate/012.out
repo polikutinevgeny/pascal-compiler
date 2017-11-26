@@ -7,10 +7,10 @@ main PROC
 Push Ebp
 Mov Ebp, Esp
 Sub Esp, 8
-Push 406B8000h
-Push 00000000h
-Push 40013333h
-Push 33333333h
+Push 0406B8000h
+Push 000000000h
+Push 040013333h
+Push 033333333h
 Push 3
 Cvtsi2sd Xmm0, dword ptr [Esp]
 Sub Esp, 4

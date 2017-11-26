@@ -1,0 +1,22 @@
+var
+    r: record
+        i: integer;
+        j: integer;
+        r2: record
+            k: integer;
+            l: integer;
+            m: integer;
+        end;
+    end;
+begin
+    r.i := 1;
+    r.j := 2;
+    r.r2.k := 3;
+    r.r2.l := 4;
+    r.r2.m := 5;
+    write(r.i);
+    write(r.j);
+    write(r.r2.k);
+    write(r.r2.l);
+    write(r.r2.m);
+end.

@@ -1,0 +1,19 @@
+var
+    i, j: Integer;
+    a: array[1..5] of array[1..5] of Integer;
+begin
+    for i := 1 to 5 do
+        for j := 1 to 5 do
+            a[i][j] := i + j;
+    for i := 1 to 5 do
+    begin
+        for j := 1 to 5 do
+        begin
+            write(a[i][j]);
+            write(#13);
+            write(#10);
+        end;
+        write(#13);
+        write(#10);
+    end;
+end.

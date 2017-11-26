@@ -1,5 +1,9 @@
+var c: char;
 begin
-    write('c' < 'e');
-    write('d' > 'c');
-    write('c' = 'c');
+    c := 'c';
+    write(c < 'e');
+    c := 'd';
+    write(c > 'c');
+    c := 'c';
+    write(c = 'c');
 end.

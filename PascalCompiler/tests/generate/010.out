@@ -7,8 +7,8 @@ main PROC
 Push Ebp
 Mov Ebp, Esp
 Sub Esp, 8
-Push 406B8000h
-Push 00000000h
+Push 0406B8000h
+Push 000000000h
 Movsd Xmm0, qword ptr [Esp]
 Sub Esp, 8
 Movsd qword ptr [Ebp-8], Xmm0

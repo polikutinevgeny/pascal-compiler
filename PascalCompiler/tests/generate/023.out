@@ -7,41 +7,24 @@ main PROC
 Push Ebp
 Mov Ebp, Esp
 Sub Esp, 4
-Push 99
+Push 0
 Pop Eax
 Mov dword ptr [Ebp-4], Eax
+__@label_Cycle0Start:
 Push dword ptr [Ebp-4]
-Push 101
+Push 1
 Pop Ebx
 Pop Eax
-Cmp Eax, Ebx
-Setge Al
-Movsx Eax, Al
-Sub Eax, 1
+Add Eax, Ebx
 Push Eax
-Mov Eax, Esp
-printf("%d", dword ptr [Eax])
-Sub Esp, 4
-Push 100
 Pop Eax
 Mov dword ptr [Ebp-4], Eax
 Push dword ptr [Ebp-4]
-Push 99
-Pop Ebx
-Pop Eax
-Cmp Eax, Ebx
-Setle Al
-Movsx Eax, Al
-Sub Eax, 1
-Push Eax
 Mov Eax, Esp
-printf("%d", dword ptr [Eax])
+printf("%d", dword ptr [Eax+0])
 Sub Esp, 4
-Push 99
-Pop Eax
-Mov dword ptr [Ebp-4], Eax
 Push dword ptr [Ebp-4]
-Push 99
+Push 5
 Pop Ebx
 Pop Eax
 Cmp Eax, Ebx
@@ -49,9 +32,10 @@ Setne Al
 Movsx Eax, Al
 Sub Eax, 1
 Push Eax
-Mov Eax, Esp
-printf("%d", dword ptr [Eax])
-Sub Esp, 4
+Pop Eax
+Cmp Eax, 0
+Je __@label_Cycle0Start
+__@label_Cycle0End:
 Mov Esp, Ebp
 Pop Ebp
 exit
