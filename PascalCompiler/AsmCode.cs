@@ -61,12 +61,11 @@ namespace PascalCompiler
             ".686p\n" +
             "include \\masm32\\include\\masm32rt.inc\n" +
             ".mmx\n" +
-            ".xmm\n" +
-            ".code\n";
+            ".xmm\n";
+
+        private readonly string _codePreamble = ".code\n";
 
         private readonly string _constPreamble = ".const\n";
-
-//        private static readonly Dictionary<Type, int> ConstSize 
 
         public override string ToString()
         {
@@ -77,14 +76,14 @@ namespace PascalCompiler
                 switch (pair.Key)
                 {
                     case double d:
-                        consts += $" dq {d}\n";
+                        consts += $" dq {HexConverter.DoubleToHexString(d)}h\n";
                         break;
                     case string s:
-                        consts += $" db {s.Aggregate("", (current, c) => current + $"{Convert.ToInt32(c)}")}\n";
+                        consts += $" db {string.Join(", ", s.Select(Convert.ToInt32))}, 0\n";
                         break;
                 }
             }
-            return _preamble + string.Join("\n", Commands.Select(x => x.ToString())) + "\n" + consts;
+            return _preamble + consts + _codePreamble + string.Join("\n", Commands.Select(x => x.ToString()));
         }
 
         public void Add(AsmCmd.Cmd cmd, string arg, AsmReg.Reg reg)
@@ -242,17 +241,6 @@ namespace PascalCompiler
                 {Tokenizer.TokenSubType.NEqual, Cmd.Cmpneqsd}
             };
 
-//        public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenCmpRealOps =
-//            new Dictionary<Tokenizer.TokenSubType, Cmd>
-//            {
-//                {Tokenizer.TokenSubType.Less, Cmd.Setl},
-//                {Tokenizer.TokenSubType.Greater, Cmd.Setg},
-//                {Tokenizer.TokenSubType.LEqual, Cmd.Setle},
-//                {Tokenizer.TokenSubType.GEqual, Cmd.Setge},
-//                {Tokenizer.TokenSubType.Equal, Cmd.Sete},
-//                {Tokenizer.TokenSubType.NEqual, Cmd.Setne},
-//            };
-
         public Cmd Command { get; set; }
     }
 
@@ -306,30 +294,6 @@ namespace PascalCompiler
         public override string ToString()
         {
             return $"{Command} {Arg1}, {Arg2}";
-        }
-    }
-
-    public class AsmPrintf : AsmCmd
-    {
-        public TypeSymbol Type { get; set; }
-        public AsmArg Arg { get; set; }
-
-        private static Dictionary<TypeSymbol, string> FormatStrings = new Dictionary<TypeSymbol, string>
-        {
-            {TypeSymbol.IntTypeSymbol, "%d"},
-            {TypeSymbol.RealTypeSymbol, "%f"},
-            {TypeSymbol.CharTypeSymbol, "%c"}
-        };
-
-        public AsmPrintf(TypeSymbol type, AsmArg arg)
-        {
-            Type = type;
-            Arg = arg;
-        }
-
-        public override string ToString()
-        {
-            return $"printf(\"{FormatStrings[Type]}\", {Arg})";
         }
     }
 

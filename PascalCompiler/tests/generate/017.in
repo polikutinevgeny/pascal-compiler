@@ -1,6 +1,5 @@
 begin
     write(10 mod 3);
-    write(#13);
     write(#10);
     write(10 div 3);
 end.

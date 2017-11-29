@@ -1,0 +1,9 @@
+var
+    a, b: array[1..2] of integer;
+begin
+    a[1] := 1;
+    a[2] := 2;
+    b := a;
+    write(b[1]);
+    write(b[2]);
+end.

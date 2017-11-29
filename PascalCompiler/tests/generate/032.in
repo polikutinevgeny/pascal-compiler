@@ -1,0 +1,12 @@
+var
+    a, b: record
+        i: Integer;
+        j: Integer;
+    end;
+begin
+    a.i := 1;
+    a.j := 2;
+    b := a;
+    write(b.i);
+    write(b.j);
+end.

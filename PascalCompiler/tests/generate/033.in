@@ -1,0 +1,19 @@
+var
+    a, b: array[1..2] of record
+        i: Integer;
+        j: Integer;
+    end;
+    i: Integer;
+begin
+    for i := 1 to 2 do
+    begin
+        a[i].i := 2 * i + 1;
+        a[i].j := 2 * i + 2;
+    end;
+    b := a;
+    for i := 1 to 2 do
+    begin
+        write(b[i].i);
+        write(b[i].j);
+    end;
+end.

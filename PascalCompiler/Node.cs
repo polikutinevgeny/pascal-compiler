@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 
 namespace PascalCompiler
 {
@@ -93,7 +94,15 @@ namespace PascalCompiler
                 asmCode.Add(AsmCmd.Cmd.Add, AsmReg.Reg.Esp, 8);
                 asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Eax), AsmReg.Reg.Xmm0);
             }
-
+            else if (right.Type is ArrayTypeSymbol || right.Type is RecordTypeSymbol)
+            {
+                asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
+                for (int i = 0; i < ((TypeSymbol) right.Type).Size; i += 4)
+                {
+                    asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
+                    asmCode.Add(AsmCmd.Cmd.Mov, new AsmOffset(-i, 4, AsmReg.Reg.Eax), AsmReg.Reg.Ebx);
+                }
+            }
         }
     }
 
@@ -125,19 +134,36 @@ namespace PascalCompiler
         {
         }
 
+        private static readonly Dictionary<TypeSymbol, string> _fmtDictionary = new Dictionary<TypeSymbol, string>
+        {
+            {TypeSymbol.CharTypeSymbol, "%c"},
+            {TypeSymbol.IntTypeSymbol, "%d"},
+            {TypeSymbol.RealTypeSymbol, "%f"},
+        };
+
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
-            ExpressionListNode el = (ExpressionListNode) Childs[0];
-            if (el.Childs.Count == 1)
+            if (Childs[0] is ExpressionListNode el)
             {
-                el.Childs[0].Generate(asmCode, symTable);
-                var type = (TypeSymbol) (el.Childs[0] as ExpressionNode).Type;
-                asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Eax, AsmReg.Reg.Esp);
-                asmCode.Add(new AsmPrintf(type, new AsmOffset(0, type.Size, AsmReg.Reg.Eax)));
-                asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, type.Size);
-                return;
+                foreach (var node in el.Childs.AsEnumerable().Reverse())
+                {
+                    var child = (ExpressionNode) node;
+                    child.Generate(asmCode, symTable);
+                }
+                string fmt = string.Join(" ", el.Childs.Cast<ExpressionNode>().Select(i => _fmtDictionary[(TypeSymbol)i.Type]));
+                string val = $"__@string{asmCode.CurrentID++}";
+                if (!asmCode.ConstDictionary.ContainsKey(fmt))
+                {
+                    asmCode.ConstDictionary[fmt] = val;
+                }
+                asmCode.Add(AsmCmd.Cmd.Push, $"offset {asmCode.ConstDictionary[fmt]}");
+                asmCode.Add(AsmCmd.Cmd.Call, "crt_printf");
             }
-            throw new NotImplementedException();
+            else if (Childs[0] is StringNode sn)
+            {
+                sn.GenerateLValue(asmCode, symTable);
+                asmCode.Add(AsmCmd.Cmd.Call, "crt_printf");
+            }
         }
     }
 
@@ -167,7 +193,8 @@ namespace PascalCompiler
 
     public abstract class LoopStatement : StructStatementNode
     {
-        protected LoopStatement(List<Node> childs, object value, uint line, uint position) : base(childs, value, line, position)
+        protected LoopStatement(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
+            position)
         {
         }
 
@@ -177,7 +204,6 @@ namespace PascalCompiler
 
     public class ForStatementNode : LoopStatement
     {
-
         public ForStatementNode(List<Node> childs, object value, uint line, uint position) : base(childs, value, line,
             position)
         {
@@ -202,7 +228,7 @@ namespace PascalCompiler
             Childs[3].Generate(asmCode, symTable); // Cycle body
             asmCode.LoopStack.Pop();
 
-            ((IdentNode)Childs[0]).GenerateLValue(asmCode, symTable);
+            ((IdentNode) Childs[0]).GenerateLValue(asmCode, symTable);
             asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
             asmCode.Add(AsmCmd.Cmd.Inc, new AsmOffset(0, v.Type.Size, AsmReg.Reg.Eax));
 
@@ -299,6 +325,13 @@ namespace PascalCompiler
                 asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 8);
                 asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
             }
+            else if (v is ArrayTypeSymbol || v is RecordTypeSymbol)
+            {
+                for (int i = v.Size - 4; i >= 0; i -= 4)
+                {
+                    asmCode.Add(AsmCmd.Cmd.Push, new AsmOffset(-i, 4, AsmReg.Reg.Eax));
+                }
+            }
         }
 
         public abstract void GenerateLValue(AsmCode asmCode, SymTable symTable);
@@ -354,6 +387,16 @@ namespace PascalCompiler
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void GenerateLValue(AsmCode asmCode, SymTable symTable)
+        {
+            string val = $"__@string{asmCode.CurrentID++}";
+            if (!asmCode.ConstDictionary.ContainsKey(Value))
+            {
+                asmCode.ConstDictionary[Value] = val;
+            }
+            asmCode.Add(AsmCmd.Cmd.Push, $"offset {asmCode.ConstDictionary[Value]}");
         }
     }
 
@@ -508,9 +551,12 @@ namespace PascalCompiler
             else if (Type == TypeSymbol.RealTypeSymbol)
             {
                 string val = $"__@real{HexConverter.DoubleToHexString((double) Value)}";
-                asmCode.ConstDictionary[Value] = val;
+                if (!asmCode.ConstDictionary.ContainsKey(Value))
+                {
+                    asmCode.ConstDictionary[Value] = val;
+                }
                 asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, 8);
-                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, val);
+                asmCode.Add(AsmCmd.Cmd.Movsd, AsmReg.Reg.Xmm0, asmCode.ConstDictionary[Value]);
                 asmCode.Add(AsmCmd.Cmd.Movsd, new AsmOffset(0, 8, AsmReg.Reg.Esp), AsmReg.Reg.Xmm0);
             }
         }
@@ -663,13 +709,14 @@ namespace PascalCompiler
 
         public override void GenerateLValue(AsmCode asmCode, SymTable symTable)
         {
-            ((DesignatorNode)Childs[0]).GenerateLValue(asmCode, symTable);
+            ((DesignatorNode) Childs[0]).GenerateLValue(asmCode, symTable);
             Childs[1].Generate(asmCode, symTable);
             var t = (ArrayTypeSymbol) ((DesignatorNode) Childs[0]).Type;
             asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
-            asmCode.Add(AsmCmd.Cmd.Imul, AsmReg.Reg.Eax,t. ElementType.Size);
+            asmCode.Add(AsmCmd.Cmd.Imul, AsmReg.Reg.Eax, t.ElementType.Size);
             asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
-            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax, new AsmArrayAddr(t.Range.Begin * t.ElementType.Size, 1, AsmReg.Reg.Ebx, AsmReg.Reg.Eax));
+            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax,
+                new AsmArrayAddr(t.Range.Begin * t.ElementType.Size, 1, AsmReg.Reg.Ebx, AsmReg.Reg.Eax));
 //            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
 //            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
 //            asmCode.Add(AsmCmd.Cmd.Lea, AsmReg.Reg.Eax,
