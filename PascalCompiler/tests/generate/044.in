@@ -1,0 +1,16 @@
+var c: Real;
+procedure moretest;
+
+procedure test(a: Integer; b: Real);
+begin
+    write(a + b * c);
+end;
+
+begin
+    test(5, 5.0);
+end;
+
+begin
+    c := 2.0;
+    moretest;
+end.

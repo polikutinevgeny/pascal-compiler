@@ -1,0 +1,13 @@
+var base: Real;
+
+function pow(exp: Integer): Real;
+begin
+    if exp = 1 then
+        exit(base);
+    exit(pow(exp - 1) * base);
+end;
+
+begin
+    base := 0.5;
+    write(pow(3));
+end.

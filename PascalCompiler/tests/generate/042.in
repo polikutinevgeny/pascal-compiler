@@ -1,0 +1,8 @@
+procedure test(a: Integer; b: Real);
+begin
+    write(a + b);
+end;
+
+begin
+    test(13, 17.5);
+end.

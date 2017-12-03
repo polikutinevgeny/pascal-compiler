@@ -1,0 +1,8 @@
+procedure test;
+begin
+    write('Test passed');
+end;
+
+begin
+    test;
+end.

@@ -7,19 +7,57 @@ namespace PascalCompiler
     public class AsmCode
     {
         public List<AsmCmd> Commands { get; } = new List<AsmCmd>();
-        public Dictionary<object, string> ConstDictionary = new Dictionary<object, string>();
-        public Stack<LoopStatement> LoopStack = new Stack<LoopStatement>();
+        public Dictionary<object, string> ConstDictionary { get; } = new Dictionary<object, string>();
+        public Stack<LoopStatement> LoopStack { get; } = new Stack<LoopStatement>();
+        public Stack<SubprogramSymbol> SubprogramStack { get; } = new Stack<SubprogramSymbol>();
 
         public long CurrentID = 0;
 
         public AsmCode(PascalProgram program)
         {
-            //Generate subprograms here
-            Add(new AsmSpecial("main PROC"));
+            GenerateSubprogramHeader(program.Block);
+            var mainLabel = new AsmLabel("main");
+            Add(mainLabel);
             program.Block.Generate(this);
             Add(new AsmSpecial("exit"));
-            Add(new AsmSpecial("main ENDP"));
-            Add(new AsmSpecial("END main"));
+            GenerateSubprograms(program.Block);
+            Add(new AsmSpecial($"END {mainLabel.ToArgString()}"));
+        }
+
+        private void GenerateSubprogramHeader(Block block, string prefix = "")
+        {
+            foreach (var symbol in block.SymTable.Values)
+            {
+                if (symbol is SubprogramSymbol subprogram)
+                {
+                    subprogram.Label = new AsmLabel($"{prefix}@{subprogram.Name}");
+                    subprogram.ParameterOffset = -12; // [ebp+8] - parent frame pointer
+                    foreach (var parameter in subprogram.Parameters.AsEnumerable())
+                    {
+                        parameter.Offset = subprogram.ParameterOffset;
+                        subprogram.ParameterOffset -= parameter.Type.Size;
+                    }
+                    subprogram.ParameterOffset +=
+                        subprogram.Parameters.Count == 0 ? 4 : subprogram.Parameters.Last().Type.Size;
+                    GenerateSubprogramHeader(subprogram.Block, $"{prefix}@{subprogram.Name}");
+                }
+            }
+        }
+
+        private void GenerateSubprograms(Block block)
+        {
+            foreach (var symbol in block.SymTable.Values)
+            {
+                if (symbol is SubprogramSymbol subprogram)
+                {
+                    Add(subprogram.Label);
+                    SubprogramStack.Push(subprogram);
+                    subprogram.Block.Generate(this);
+                    Add(AsmCmd.Cmd.Ret, $"{-subprogram.ParameterOffset - 4}");
+                    GenerateSubprograms(subprogram.Block);
+                    SubprogramStack.Pop();
+                }
+            }
         }
 
         public void Add(AsmCmd.Cmd cmd)
@@ -183,7 +221,9 @@ namespace PascalCompiler
             Jnge,
             Jnz,
             Je,
-            Jle
+            Jle,
+            Exit,
+            Leave
         }
 
         public static readonly Dictionary<Tokenizer.TokenSubType, Cmd> TokenBinIntOps =

@@ -1,0 +1,6 @@
+begin
+    if 2 > 3 then
+        write('Wrong')
+    else
+        write('Right');
+end.

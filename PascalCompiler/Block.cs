@@ -25,22 +25,9 @@ namespace PascalCompiler
                 if (t.GetType() == typeof(VarSymbol)) // Must be EXACTLY var (cannot be parameters)
                 {
                     var v = (VarSymbol) t;
-//                    if (v.Type is RecordTypeSymbol r)
-//                    {
-//                        r.SetOffsets();
-//                    }
                     curOffset += v.Type.Size;
                     v.Offset = curOffset;
                 }
-//                if (t is RecordTypeSymbol r)
-//                {
-//                    var recOffset = 0;
-//                    foreach (VarSymbol field in r.Fields.Values)
-//                    {
-//                        recOffset -= field.Type.Size;
-//                        field.Offset = recOffset;
-//                    }
-//                }
             }
             asmCode.Add(AsmCmd.Cmd.Sub, AsmReg.Reg.Esp, curOffset.ToString());
             // TODO: Generate initial values
@@ -57,8 +44,7 @@ namespace PascalCompiler
             {
                 st.Generate(asmCode, SymTable);
             }
-            asmCode.Add(AsmCmd.Cmd.Mov, AsmReg.Reg.Esp, AsmReg.Reg.Ebp);
-            asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebp);
+            asmCode.Add(AsmCmd.Cmd.Leave);
         }
     }
 

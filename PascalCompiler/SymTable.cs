@@ -15,9 +15,7 @@ namespace PascalCompiler
 
         public (Symbol, int)? LookUpLevel(string name, int level = 0)
         {
-            if (Contains(name))
-                return ((Symbol)this[name], level);
-            return Parent?.LookUpLevel(name, level + 1);
+            return Contains(name) ? ((Symbol)this[name], level) : Parent?.LookUpLevel(name, level + 1);
         }
 
         public void Generate(AsmCode code)
@@ -52,7 +50,7 @@ namespace PascalCompiler
         public static readonly TypeSymbol CharTypeSymbol = new TypeSymbol
         {
             Name = "char",
-            _size = 4,
+            _size = 1,
         };
 
         protected TypeSymbol() { }
@@ -70,8 +68,6 @@ namespace PascalCompiler
         }
 
         public virtual int Size => _size;
-
-        public virtual int AddressSize => _size; // for addressing need (e.g. qword ptr [eax])
     }
 
     public class ArrayTypeSymbol : TypeSymbol
@@ -91,8 +87,6 @@ namespace PascalCompiler
         }
 
         public override int Size => ElementType.Size * Length;
-
-        public override int AddressSize => 0;
     }
 
     public class RecordTypeSymbol : TypeSymbol
@@ -119,8 +113,6 @@ namespace PascalCompiler
         }
 
         public override int Size => Fields.Values.Cast<VarSymbol>().Sum(field => field.Type.Size);
-
-        public override int AddressSize => 0; // Doesn't matter, never used as target (can be greater than qword) in this case
 
         public void SetOffsets()
         {
@@ -202,6 +194,8 @@ namespace PascalCompiler
     {
         public Parameters Parameters { get; set; }
         public Block Block { get; set; }
+        public AsmLabel Label { get; set; }
+        public int ParameterOffset { get; set; }
         public override void Generate(AsmCode code)
         {
             throw new NotImplementedException();

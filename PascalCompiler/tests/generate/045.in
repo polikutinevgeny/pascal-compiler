@@ -1,0 +1,8 @@
+function test(a, b: Integer): Integer;
+begin
+    exit(a+b);
+end;
+
+begin
+    write(test(13, 17));
+end.

@@ -1,0 +1,8 @@
+function test(a, b: Real): Real;
+begin
+    exit(a+b);
+end;
+
+begin
+    write(test(13.5, 17.5));
+end.
