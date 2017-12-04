@@ -1,0 +1,22 @@
+type rec = record
+    i: Real;
+    j: Real;
+    k: Real;
+end;
+var b: rec;
+procedure test(a: rec);
+begin
+    write(a.i);
+    write(#10);
+    write(a.j);
+    write(#10);
+    write(a.k);
+    write(#10);
+end;
+
+begin
+    b.i := 1.5;
+    b.j := 2.5;
+    b.k := 3.5;
+    test(b);
+end.

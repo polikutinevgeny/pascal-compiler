@@ -1,0 +1,14 @@
+var b: Integer;
+procedure test(var a: Integer);
+var c: Integer;
+begin
+    a := 5;
+    c := a;
+    write(c);
+    write(a);
+end;
+
+begin
+    test(b);
+    write(b);
+end.

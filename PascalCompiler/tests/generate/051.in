@@ -1,0 +1,24 @@
+type arr = array[1..3] of Integer;
+var b: arr;
+    i: Integer;
+procedure test(var a: arr);
+var i: Integer;
+begin
+    a[1] := 5;
+    a[2] := 6;
+    a[3] := 7;
+    for i := 1 to 3 do
+    begin
+        write(b[i]);
+        write(#10);
+    end;
+end;
+
+begin
+    test(b);
+    for i := 1 to 3 do
+    begin
+        write(b[i]);
+        write(#10);
+    end;
+end.
