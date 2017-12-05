@@ -86,7 +86,14 @@ namespace PascalCompiler
             throw new NotImplementedException();
         }
 
-        public override int Size => ElementType.Size * Length;
+        public override int Size
+        {
+            get
+            {
+                int size = ElementType.Size * Length;
+                return size + size % 4;
+            }
+        }
     }
 
     public class RecordTypeSymbol : TypeSymbol
@@ -112,7 +119,14 @@ namespace PascalCompiler
             throw new NotImplementedException();
         }
 
-        public override int Size => Fields.Values.Cast<VarSymbol>().Sum(field => field.Type.Size);
+        public override int Size
+        {
+            get
+            {
+                int size = Fields.Values.Cast<VarSymbol>().Sum(field => field.Type.Size);
+                return size + size % 4;
+            }
+        }
 
         public void SetOffsets()
         {
