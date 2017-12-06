@@ -117,7 +117,7 @@ namespace PascalCompiler
                         consts += $" dq {HexConverter.DoubleToHexString(d)}h\n";
                         break;
                     case string s:
-                        consts += $" db {string.Join(", ", s.Select(Convert.ToInt32))}, 0\n";
+                        consts += $" db {string.Join("\ndb ", s.Select(Convert.ToInt32))}, 0\n";
                         break;
                 }
             }

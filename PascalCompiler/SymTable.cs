@@ -91,7 +91,7 @@ namespace PascalCompiler
             get
             {
                 int size = ElementType.Size * Length;
-                return size + size % 4;
+                return size + (size % 4 != 0 ? 4 - size % 4 : 0);
             }
         }
     }
@@ -124,7 +124,7 @@ namespace PascalCompiler
             get
             {
                 int size = Fields.Values.Cast<VarSymbol>().Sum(field => field.Type.Size);
-                return size + size % 4;
+                return size + (size % 4 != 0 ? 4 - size % 4 : 0);
             }
         }
 
