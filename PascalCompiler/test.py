@@ -19,7 +19,7 @@ for d in os.listdir(r'tests/'):
             c += 1
             if d == 'generate':
                 # subprocess.run([r'C:/lazarus/fpc/bin/i386-win32/fpc.exe', '-MObjfpc', r'tests/{}/{}'.format(d, i)], stdout=subprocess.DEVNULL)
-                subprocess.run([r'bin/Debug/PascalCompiler.exe', '-m', d, '-i', r'tests/{}/{}'.format(d, i), '-o', 'temp.asm'])
+                subprocess.run([r'bin/Debug/PascalCompiler.exe', '-m', d, '-i', r'tests/{}/{}'.format(d, i), '-o', 'temp.asm', '--optimize'])
                 subprocess.run([r'C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/bin/HostX86/x86/ml.exe', '/c', '/coff', 'temp.asm'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 subprocess.run([r'C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/bin/HostX86/x86/link.exe', '/SUBSYSTEM:CONSOLE', 'temp.obj'], stdout=subprocess.DEVNULL)
                 s = subprocess.check_output([r'temp.exe'.format(d, name.group('name'))])

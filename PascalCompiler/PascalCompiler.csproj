@@ -54,6 +54,7 @@
     <Compile Include="Block.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="Optimizer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Parser.Statements.cs" />
     <Compile Include="Parser.Declaration.cs" />

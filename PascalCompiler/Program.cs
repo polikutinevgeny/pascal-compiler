@@ -80,6 +80,10 @@ namespace PascalCompiler
                                 using (var parser = new Parser(tokenStream))
                                 {
                                     var p = parser.Parse();
+                                    if (options.Optimize)
+                                    {
+                                        Optimizer.Optimize(p);
+                                    }
                                     var asm = new AsmCode(p);
                                     writer.WriteLine(asm);
                                 }

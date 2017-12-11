@@ -17,6 +17,9 @@ namespace PascalCompiler
           HelpText = "Output file to be written to.")]
         public string OutputFile { get; set; }
 
+        [Option("optimize", Required = false, HelpText = "Optimization")]
+        public bool Optimize { get; set; }
+
         [ParserState]
         public IParserState LastParserState { get; set; }
 

@@ -1,0 +1,6 @@
+var i: Integer;
+begin
+    for i := 2 to 1 do
+        write('Cool');
+    write('Not so cool');
+end.

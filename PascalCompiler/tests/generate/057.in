@@ -1,0 +1,5 @@
+begin
+    while 2 < 1 do
+        write('Cool');
+    write('Not so cool');
+end.

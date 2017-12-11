@@ -14,19 +14,19 @@ namespace PascalCompiler
             }
         }
 
-        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; } =
+        private static Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>> BinaryOps { get; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic, dynamic>>
             {
                 {Plus, (l, r) => l + r},
                 {Minus, (l, r) => l - r},
                 {Asterisk, (l, r) => l * r},
                 {Slash, (l, r) => (double) l / (double) r},
-                {Greater, (l, r) => Convert.ToInt32(l > r)},
-                {Less, (l, r) => Convert.ToInt32(l < r)},
-                {GEqual, (l, r) => Convert.ToInt32(l >= r)},
-                {LEqual, (l, r) => Convert.ToInt32(l <= r)},
-                {NEqual, (l, r) => Convert.ToInt32(l != r)},
-                {Equal, (l, r) => Convert.ToInt32(l == r)},
+                {Greater, (l, r) => l > r ? -1 : 0},
+                {Less, (l, r) => l < r ? -1 : 0},
+                {GEqual, (l, r) => l >= r ? -1 : 0},
+                {LEqual, (l, r) => l <= r ? -1 : 0},
+                {NEqual, (l, r) => l != r ? -1 : 0},
+                {Equal, (l, r) => l == r ? -1 : 0},
                 {Or, (l, r) => l | r},
                 {Xor, (l, r) => l ^ r},
                 {Div, (l, r) => l / r},
@@ -36,7 +36,7 @@ namespace PascalCompiler
                 {Shr, (l, r) => l >> r}
             };
 
-        private Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; } =
+        private static Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>> UnaryOps { get; } =
             new Dictionary<Tokenizer.TokenSubType, Func<dynamic, dynamic>>
             {
                 {Plus, i => i},
@@ -44,7 +44,7 @@ namespace PascalCompiler
                 {Not, i => ~i}
             };
 
-        private dynamic EvaluateConstExpr(Node expr, SymTable symTable)
+        public static dynamic EvaluateConstExpr(Node expr, SymTable symTable)
         {
             try
             {

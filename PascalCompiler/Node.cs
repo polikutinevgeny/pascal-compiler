@@ -71,6 +71,7 @@ namespace PascalCompiler
 
         public override void Generate(AsmCode asmCode, SymTable symTable)
         {
+            if (Statements == null) return;
             foreach (var child in Statements)
             {
                 child.Generate(asmCode, symTable);
@@ -123,9 +124,10 @@ namespace PascalCompiler
             {
                 asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Eax);
                 asmCode.Add(AsmCmd.Cmd.Pop, AsmReg.Reg.Ebx);
-                asmCode.Add(AsmCmd.Cmd.Mov,
-                new AsmOffset(0, 1, AsmReg.Reg.Eax),
-                AsmReg.Reg.Bl);
+                asmCode.Add(
+                    AsmCmd.Cmd.Mov,
+                    new AsmOffset(0, 1, AsmReg.Reg.Eax),
+                    AsmReg.Reg.Bl);
             }
             else if (right.Type == TypeSymbol.RealTypeSymbol)
             {
@@ -360,7 +362,7 @@ namespace PascalCompiler
 
     public class WhileStatementNode : LoopStatement
     {
-        public Node Condition { get; set; }
+        public ExpressionNode Condition { get; set; }
 
         public WhileStatementNode(
             List<Node> childs,
@@ -393,7 +395,7 @@ namespace PascalCompiler
 
     public class RepeatStatementNode : LoopStatement
     {
-        public Node Condition { get; set; }
+        public ExpressionNode Condition { get; set; }
 
         public RepeatStatementNode(
             List<Node> childs,
@@ -451,7 +453,10 @@ namespace PascalCompiler
             }
             else if (v == TypeSymbol.CharTypeSymbol)
             {
-                asmCode.Add(AsmCmd.Cmd.Movsx, AsmReg.Reg.Eax, new AsmOffset(0, 1, AsmReg.Reg.Eax));
+                asmCode.Add(
+                    AsmCmd.Cmd.Movsx,
+                    AsmReg.Reg.Eax,
+                    new AsmOffset(0, 1, AsmReg.Reg.Eax));
                 asmCode.Add(AsmCmd.Cmd.Push, AsmReg.Reg.Eax);
             }
             else if (v == TypeSymbol.RealTypeSymbol)

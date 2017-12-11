@@ -1,0 +1,6 @@
+begin
+    if 2 < 1 then
+        write('Not cool, man')
+    else
+        write('Cool');
+end.
