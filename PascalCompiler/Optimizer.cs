@@ -20,27 +20,48 @@ namespace PascalCompiler
             OptimizeBlock(program.Block);
         }
 
-        private static void OptimizeBlock(Block block)
+        private static List<Node> OptimizeStatements(List<Node> list, SymTable symTable)
         {
-            for (var i = 0; i < block.StatementList.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
-                FindAndOptimizeExpressions(block.StatementList[i], block.SymTable);
-                switch (block.StatementList[i])
+                FindAndOptimizeExpressions(list[i], symTable);
+                switch (list[i])
                 {
                     case IfStatementNode ifs:
-                        block.StatementList[i] = OptimizeIf(ifs, block.SymTable);
+                        OptimizeStatements(ifs.Childs, symTable);
+                        list[i] = OptimizeIf(ifs, symTable);
                         break;
                     case RepeatStatementNode rs:
-                        block.StatementList[i] = OptimizeRepeat(rs, block.SymTable);
+                        OptimizeStatements(rs.Childs, symTable);
+                        list[i] = OptimizeRepeat(rs, symTable);
                         break;
                     case WhileStatementNode ws:
-                        block.StatementList[i] = OptimizeWhile(ws, block.SymTable);
+                        OptimizeStatements(ws.Childs, symTable);
+                        list[i] = OptimizeWhile(ws, symTable);
                         break;
                     case ForStatementNode fs:
-                        block.StatementList[i] = OptimizeFor(fs, block.SymTable);
+                        OptimizeStatements(fs.Childs, symTable);
+                        list[i] = OptimizeFor(fs, symTable);
+                        break;
+                    case CompoundStatementNode csn:
+                        csn.Statements = OptimizeStatements(csn.Statements, symTable);
                         break;
                 }
             }
+            return list;
+        }
+
+        private static List<Statement> OptimizeStatements(
+            List<Statement> statements, SymTable symTable)
+        {
+            return OptimizeStatements(statements.Cast<Node>().ToList(), symTable).
+                Cast<Statement>().
+                ToList();
+        }
+
+        private static void OptimizeBlock(Block block)
+        {
+            block.StatementList = OptimizeStatements(block.StatementList, block.SymTable);
             foreach (Symbol sym in block.SymTable.Values)
             {
                 if (sym is SubprogramSymbol ss)
@@ -114,10 +135,12 @@ namespace PascalCompiler
             switch (start)
             {
                 case RepeatStatementNode rn:
-                    rn.Condition = OptimizeExpression((ExpressionNode) rn.Condition, symTable);
+                    rn.Condition = OptimizeExpression(
+                        (ExpressionNode) rn.Condition, symTable);
                     break;
                 case WhileStatementNode wn:
-                    wn.Condition = OptimizeExpression((ExpressionNode) wn.Condition, symTable);
+                    wn.Condition = OptimizeExpression(
+                        (ExpressionNode) wn.Condition, symTable);
                     break;
                 case CompoundStatementNode csn:
                     foreach (var statement in csn.Statements)
@@ -148,8 +171,7 @@ namespace PascalCompiler
             {
                 case UnOpNode unOp:
                     unOp.Childs[0] = OptimizeExpression(
-                        (ExpressionNode) unOp.Childs[0],
-                        symTable);
+                        (ExpressionNode) unOp.Childs[0], symTable);
                     res = unOp;
                     if (unOp.Childs[0] is ConstNode)
                     {
@@ -162,11 +184,9 @@ namespace PascalCompiler
                     break;
                 case BinOpNode binOp:
                     binOp.Childs[0] = OptimizeExpression(
-                        (ExpressionNode) binOp.Childs[0],
-                        symTable);
+                        (ExpressionNode) binOp.Childs[0], symTable);
                     binOp.Childs[1] = OptimizeExpression(
-                        (ExpressionNode) binOp.Childs[1],
-                        symTable);
+                        (ExpressionNode) binOp.Childs[1], symTable);
                     res = binOp;
                     if (binOp.Childs[0] is ConstNode && binOp.Childs[1] is ConstNode)
                     {

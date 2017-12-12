@@ -1,0 +1,7 @@
+begin
+    repeat
+        repeat
+            write('Cool');
+        until 1 + 1 * 2 > 2;
+    until 2 > 1;
+end.
